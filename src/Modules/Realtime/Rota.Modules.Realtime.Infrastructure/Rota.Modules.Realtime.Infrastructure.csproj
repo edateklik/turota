@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../Rota.Modules.Realtime.Application/Rota.Modules.Realtime.Application.csproj" />
+    <ProjectReference Include="../../Recommendation/Rota.Modules.Recommendation.Application/Rota.Modules.Recommendation.Application.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+  </ItemGroup>
+</Project>
