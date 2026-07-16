@@ -15,5 +15,24 @@ services:
       timeout: 3s
       retries: 10
 
+  ai-recommendation:
+    build:
+      context: ./ai-service
+      target: runtime
+    environment:
+      DATABASE_URL: postgresql://rota:rota_dev_password@postgres:5432/rota
+      CATALOG_CACHE_SECONDS: 30
+      MODEL_VERSION: content-based-xai-v1
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/live', timeout=2)"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
 volumes:
   rota_postgres_data:

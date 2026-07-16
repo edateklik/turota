@@ -9,7 +9,7 @@ JWT User
   → recommendation.recommendation_runs (Pending)
   → HTTP 202 Accepted + runId/statusUrl
   → Background Worker claim (FOR UPDATE SKIP LOCKED)
-  → Processing → HTTP POST FastAPI (1.5 saniye timeout)
+  → Processing → HTTP POST FastAPI content-based XAI modeli (1.5 saniye timeout)
   → Bölge + Mekanlar + Timeline + XAI
   → Aynı transaction: Run Completed/Failed + Outbox Pending
   → Outbox Dispatcher → SignalR → Outbox Processed
@@ -187,4 +187,6 @@ response değildir; durum endpoint'indeki `Failed/failureCode` alanları ve Sign
 ```
 
 Production'da `FastApi__BaseUrl` environment/secret configuration ile değiştirilmelidir.
-Yerel sözleşme testi için `tools/fastapi-contract-stub` kullanılabilir; bu araç AI modeli değildir.
+Gerçek MVP servisi `ai-service` klasöründedir ve Discovery tablolarına salt-okunur erişimle
+kategori, etiket, diyet, bütçe ve mesafe sinyallerini skorlar. Yerel hata senaryosu testi için
+`tools/fastapi-contract-stub` kullanılabilir; stub öneri modeli değildir.

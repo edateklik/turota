@@ -35,9 +35,13 @@ Rota.sln
 │       └── Realtime/                              # SignalR sınırı
 │           ├── Rota.Modules.Realtime.Application/ # Client event DTO/sözleşmeleri
 │           └── Rota.Modules.Realtime.Infrastructure/ # Hub, JWT user mapping, publisher
+├── ai-service/                                    # FastAPI content-based XAI öneri motoru
+│   ├── app/                                       # HTTP, katalog adapteri, skorlama ve Timeline
+│   └── tests/                                     # API sözleşmesi ve deterministik model testleri
 └── tests/
-    ├── Rota.Modules.Discovery.UnitTests/          # Sonraki: saf use-case testleri
-    └── Rota.Api.IntegrationTests/                 # Sonraki: Testcontainers/PostGIS
+    ├── Rota.Modules.Recommendation.UnitTests/
+    ├── Rota.Modules.Trip.UnitTests/
+    └── Rota.Api.IntegrationTests/                 # Testcontainers/PostGIS
 ```
 
 ## Bağımlılık yönü

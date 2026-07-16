@@ -5,3 +5,7 @@ obj/
 .DS_Store
 *.user
 *.suo
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
