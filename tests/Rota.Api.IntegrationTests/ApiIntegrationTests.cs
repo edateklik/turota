@@ -13,6 +13,19 @@ public sealed class ApiIntegrationTests(RotaApiFactory factory) : IClassFixture<
     private readonly HttpClient _client = factory.CreateClient();
 
     [Fact]
+    public async Task Liveness_WithValidCorrelationId_ReturnsHealthAndEchoesCorrelationId()
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Get, "/health/live");
+        request.Headers.Add("X-Correlation-ID", "integration-health-123");
+        using var response = await _client.SendAsync(request);
+        var payload = await response.Content.ReadFromJsonAsync<JsonElement>();
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("Healthy", payload.GetProperty("status").GetString());
+        Assert.Equal("integration-health-123", response.Headers.GetValues("X-Correlation-ID").Single());
+    }
+
+    [Fact]
     public async Task DiscoveryDataQuality_SeededPostGis_IsHealthy()
     {
         using var response = await _client.GetAsync("/api/discovery/data-quality");

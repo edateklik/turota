@@ -3,6 +3,10 @@ using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Rota.Modules.Discovery.Infrastructure;
 using Rota.Modules.Discovery.Infrastructure.Persistence;
 using Rota.Modules.Discovery.Infrastructure.Quality;
@@ -18,8 +22,36 @@ using Rota.Modules.Realtime.Infrastructure.Hubs;
 using Rota.Modules.Trip.Infrastructure;
 using Rota.Modules.Trip.Infrastructure.Persistence;
 using Rota.Modules.Administration.Infrastructure;
+using Rota.Api.Observability;
 
 var builder = WebApplication.CreateBuilder(args);
+
+if (builder.Configuration.GetValue<bool>("Observability:UseJsonConsole"))
+{
+    builder.Logging.ClearProviders();
+    builder.Logging.AddJsonConsole();
+}
+
+var otlpEnabled = builder.Configuration.GetValue<bool>("Observability:OtlpEnabled");
+builder.Services.AddOpenTelemetry()
+    .ConfigureResource(resource => resource.AddService(
+        serviceName: builder.Configuration["Observability:ServiceName"] ?? "rota-api",
+        serviceVersion: typeof(Program).Assembly.GetName().Version?.ToString()))
+    .WithTracing(tracing =>
+    {
+        tracing
+            .AddAspNetCoreInstrumentation(options => options.Filter = context => !context.Request.Path.StartsWithSegments("/health"))
+            .AddHttpClientInstrumentation();
+        if (otlpEnabled) tracing.AddOtlpExporter();
+    })
+    .WithMetrics(metrics =>
+    {
+        metrics
+            .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddRuntimeInstrumentation();
+        if (otlpEnabled) metrics.AddOtlpExporter();
+    });
 
 builder.Services.AddDiscoveryInfrastructure(builder.Configuration);
 builder.Services.AddIdentityInfrastructure(builder.Configuration);
@@ -70,7 +102,15 @@ builder.Services.AddRateLimiter(options =>
         limiter.AutoReplenishment = true;
     });
 });
-builder.Services.AddHealthChecks();
+builder.Services.AddHttpClient(FastApiReadinessHealthCheck.HttpClientName, client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["FastApi:BaseUrl"]
+        ?? throw new InvalidOperationException("FastApi:BaseUrl yapılandırılmalıdır."));
+    client.Timeout = TimeSpan.FromMilliseconds(750);
+});
+builder.Services.AddHealthChecks()
+    .AddCheck<PostgresReadinessHealthCheck>("postgres", tags: ["ready"])
+    .AddCheck<FastApiReadinessHealthCheck>("fastapi", tags: ["ready"]);
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.ConfigureHttpJsonOptions(options =>
@@ -107,6 +147,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 var app = builder.Build();
+app.UseMiddleware<RequestTelemetryMiddleware>();
 app.UseExceptionHandler();
 app.UseStatusCodePages(async statusCodeContext =>
 {
@@ -166,7 +207,21 @@ app.MapGet("/api/discovery/data-quality", async (
     return report.IsHealthy ? Results.Ok(report) : Results.Json(report, statusCode: StatusCodes.Status503ServiceUnavailable);
 });
 
-app.MapHealthChecks("/health").DisableRateLimiting();
+app.MapHealthChecks("/health/live", new HealthCheckOptions
+{
+    Predicate = _ => false,
+    ResponseWriter = HealthResponseWriter.WriteAsync
+}).DisableRateLimiting();
+app.MapHealthChecks("/health/ready", new HealthCheckOptions
+{
+    Predicate = check => check.Tags.Contains("ready"),
+    ResponseWriter = HealthResponseWriter.WriteAsync
+}).DisableRateLimiting();
+app.MapHealthChecks("/health", new HealthCheckOptions
+{
+    Predicate = check => check.Tags.Contains("ready"),
+    ResponseWriter = HealthResponseWriter.WriteAsync
+}).DisableRateLimiting();
 app.MapDiscoveryEndpoints();
 app.MapIdentityEndpoints();
 app.MapRecommendationEndpoints();
