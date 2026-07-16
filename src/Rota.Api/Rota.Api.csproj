@@ -1,5 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <ItemGroup>
+    <ProjectReference Include="../Modules/Administration/Rota.Modules.Administration.Application/Rota.Modules.Administration.Application.csproj" />
+    <ProjectReference Include="../Modules/Administration/Rota.Modules.Administration.Infrastructure/Rota.Modules.Administration.Infrastructure.csproj" />
     <ProjectReference Include="../Modules/Identity/Rota.Modules.Identity.Application/Rota.Modules.Identity.Application.csproj" />
     <ProjectReference Include="../Modules/Identity/Rota.Modules.Identity.Infrastructure/Rota.Modules.Identity.Infrastructure.csproj" />
     <ProjectReference Include="../Modules/Recommendation/Rota.Modules.Recommendation.Application/Rota.Modules.Recommendation.Application.csproj" />

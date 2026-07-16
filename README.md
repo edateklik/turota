@@ -128,6 +128,16 @@ POST /api/admin/places/feature-vectors/rebuild
 
 Admin endpointleri JWT `Admin` policy ile korunur.
 
+Admin dashboard ve kayıt oluşturmayan öneri simülasyonu:
+
+```text
+GET  /api/admin/dashboard
+POST /api/admin/simulations/recommendation
+```
+
+Dashboard Recommendation başarı oranı, ortalama süre, Trip/outbox durumları ve en çok önerilen
+5 mahalle/mekanı döndürür. Simülasyon gerçek FastAPI modelini çağırır ancak kalıcı veri yazmaz.
+
 ## Realtime
 
 JWT korumalı hub endpoint'i `GET/POST /hubs/notification` yolundadır. Öneri işlemi

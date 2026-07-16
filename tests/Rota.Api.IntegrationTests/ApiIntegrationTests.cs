@@ -50,6 +50,61 @@ public sealed class ApiIntegrationTests(RotaApiFactory factory) : IClassFixture<
     }
 
     [Fact]
+    public async Task AdministrationDashboardAndSimulation_AdminUser_ReturnsReadOnlyResults()
+    {
+        var email = $"admin-{Guid.NewGuid():N}@example.com";
+        using var registerResponse = await _client.PostAsJsonAsync("/api/identity/register", new
+        {
+            email,
+            password = "Rota123!",
+            firstName = "Admin",
+            lastName = "Integration"
+        });
+        Assert.Equal(HttpStatusCode.Created, registerResponse.StatusCode);
+        await _factory.PromoteToAdminAsync(email);
+
+        using var loginResponse = await _client.PostAsJsonAsync("/api/identity/login", new
+        {
+            email,
+            password = "Rota123!"
+        });
+        var login = await loginResponse.Content.ReadFromJsonAsync<JsonElement>();
+        var adminToken = login.GetProperty("accessToken").GetString()!;
+
+        using var dashboardResponse = await SendAuthorizedAsync(HttpMethod.Get, "/api/admin/dashboard", adminToken);
+        var dashboard = await dashboardResponse.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(HttpStatusCode.OK, dashboardResponse.StatusCode);
+        Assert.True(dashboard.GetProperty("userCount").GetInt64() >= 1);
+        Assert.Equal(3, dashboard.GetProperty("neighborhoodCount").GetInt64());
+        Assert.Equal(36, dashboard.GetProperty("placeCount").GetInt64());
+
+        var runCountBefore = await _factory.GetRecommendationRunCountAsync();
+        using var simulationRequest = new HttpRequestMessage(HttpMethod.Post, "/api/admin/simulations/recommendation")
+        {
+            Content = JsonContent.Create(new
+            {
+                tripDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(1),
+                startLongitude = 29.026,
+                startLatitude = 40.985,
+                availableMinutes = 240,
+                preferredCategoryIds = new[] { "30000000-0000-0000-0000-000000000001" },
+                preferredTagIds = Array.Empty<string>(),
+                dietaryPreferences = Array.Empty<string>(),
+                budgetLevel = "Moderate",
+                travelPace = "Balanced"
+            })
+        };
+        simulationRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", adminToken);
+        using var simulationResponse = await _client.SendAsync(simulationRequest);
+        var simulation = await simulationResponse.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(HttpStatusCode.OK, simulationResponse.StatusCode);
+        Assert.False(simulation.GetProperty("persisted").GetBoolean());
+        Assert.Equal("integration-test-v1", simulation.GetProperty("modelVersion").GetString());
+        Assert.NotEmpty(simulation.GetProperty("places").EnumerateArray());
+        Assert.Equal(runCountBefore, await _factory.GetRecommendationRunCountAsync());
+    }
+
+    [Fact]
     public async Task IdentityAndRecommendation_AuthenticatedUser_CompletesContract()
     {
         var email = $"integration-{Guid.NewGuid():N}@example.com";

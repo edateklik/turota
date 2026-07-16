@@ -15,6 +15,7 @@ using Rota.Modules.Realtime.Infrastructure;
 using Rota.Modules.Realtime.Infrastructure.Hubs;
 using Rota.Modules.Trip.Infrastructure;
 using Rota.Modules.Trip.Infrastructure.Persistence;
+using Rota.Modules.Administration.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,7 @@ builder.Services.AddDiscoveryInfrastructure(builder.Configuration);
 builder.Services.AddIdentityInfrastructure(builder.Configuration);
 builder.Services.AddRecommendationInfrastructure(builder.Configuration);
 builder.Services.AddTripInfrastructure(builder.Configuration);
+builder.Services.AddAdministrationInfrastructure(builder.Configuration);
 builder.Services.AddRealtimeInfrastructure();
 var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
 builder.Services.AddCors(options => options.AddPolicy("Frontend", policy =>
@@ -61,6 +63,8 @@ builder.Services.AddSwaggerGen(options =>
     if (File.Exists(recommendationXmlPath)) options.IncludeXmlComments(recommendationXmlPath);
     var tripXmlPath = Path.Combine(AppContext.BaseDirectory, "Rota.Modules.Trip.Application.xml");
     if (File.Exists(tripXmlPath)) options.IncludeXmlComments(tripXmlPath);
+    var administrationXmlPath = Path.Combine(AppContext.BaseDirectory, "Rota.Modules.Administration.Application.xml");
+    if (File.Exists(administrationXmlPath)) options.IncludeXmlComments(administrationXmlPath);
 });
 
 var app = builder.Build();
@@ -126,6 +130,7 @@ app.MapDiscoveryEndpoints();
 app.MapIdentityEndpoints();
 app.MapRecommendationEndpoints();
 app.MapTripEndpoints();
+app.MapAdministrationEndpoints();
 app.MapHub<NotificationHub>(NotificationHub.Route).RequireAuthorization("User");
 app.Run();
 

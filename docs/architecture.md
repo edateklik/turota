@@ -31,7 +31,9 @@ Rota.sln
 │       │   ├── Rota.Modules.Recommendation.Domain/
 │       │   ├── Rota.Modules.Recommendation.Application/
 │       │   └── Rota.Modules.Recommendation.Infrastructure/
-│       ├── Administration/                        # Admin use-case sınırı
+│       ├── Administration/                        # Dashboard ve salt-okunur AI simülasyonu
+│       │   ├── Rota.Modules.Administration.Application/
+│       │   └── Rota.Modules.Administration.Infrastructure/
 │       └── Realtime/                              # SignalR sınırı
 │           ├── Rota.Modules.Realtime.Application/ # Client event DTO/sözleşmeleri
 │           └── Rota.Modules.Realtime.Infrastructure/ # Hub, JWT user mapping, publisher

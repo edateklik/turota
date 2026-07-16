@@ -8,6 +8,7 @@ using Rota.Modules.Recommendation.Application.Contracts;
 using Rota.Modules.Recommendation.Application.Errors;
 using Rota.Modules.Recommendation.Infrastructure.Outbox;
 using Rota.Modules.Recommendation.Infrastructure.Persistence;
+using Rota.Modules.Identity.Infrastructure.Persistence;
 using Testcontainers.PostgreSql;
 using Xunit;
 
@@ -31,6 +32,7 @@ public sealed class RotaApiFactory : WebApplicationFactory<Program>, IAsyncLifet
         builder.UseSetting("ConnectionStrings:IdentityDb", connectionString);
         builder.UseSetting("ConnectionStrings:RecommendationDb", connectionString);
         builder.UseSetting("ConnectionStrings:TripDb", connectionString);
+        builder.UseSetting("ConnectionStrings:AdministrationReadDb", connectionString);
         builder.UseSetting("Database:ApplyMigrationsOnStartup", "true");
         builder.UseSetting("Jwt:Issuer", "Rota.Api.Tests");
         builder.UseSetting("Jwt:Audience", "Rota.Clients.Tests");
@@ -70,6 +72,23 @@ public sealed class RotaApiFactory : WebApplicationFactory<Program>, IAsyncLifet
                 message.AttemptCount,
                 message.ProcessedAt))
             .SingleOrDefaultAsync();
+    }
+
+    public async Task PromoteToAdminAsync(string email)
+    {
+        await using var scope = Services.CreateAsyncScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
+        var normalizedEmail = email.Trim().ToUpperInvariant();
+        var affected = await dbContext.Database.ExecuteSqlInterpolatedAsync(
+            $"UPDATE identity.users SET role = 'Admin' WHERE normalized_email = {normalizedEmail}");
+        if (affected != 1) throw new InvalidOperationException("Integration test admin kullanıcısı bulunamadı.");
+    }
+
+    public async Task<int> GetRecommendationRunCountAsync()
+    {
+        await using var scope = Services.CreateAsyncScope();
+        return await scope.ServiceProvider.GetRequiredService<RecommendationDbContext>()
+            .RecommendationRuns.CountAsync();
     }
 
     async Task IAsyncLifetime.DisposeAsync()

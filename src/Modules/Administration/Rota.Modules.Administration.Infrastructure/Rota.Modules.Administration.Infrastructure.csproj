@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../Rota.Modules.Administration.Application/Rota.Modules.Administration.Application.csproj" />
+    <ProjectReference Include="../../Recommendation/Rota.Modules.Recommendation.Application/Rota.Modules.Recommendation.Application.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Npgsql" />
+  </ItemGroup>
+</Project>
