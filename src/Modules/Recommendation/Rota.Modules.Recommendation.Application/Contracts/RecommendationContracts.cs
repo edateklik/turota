@@ -33,6 +33,22 @@ public sealed record RecommendationResponse(
     string ModelVersion,
     DateTimeOffset CompletedAt);
 
+public sealed record RecommendationAcceptedResponse(
+    Guid RunId,
+    string Status,
+    string StatusUrl,
+    DateTimeOffset RequestedAt);
+
+public sealed record RecommendationRunResponse(
+    Guid RunId,
+    string Status,
+    DateOnly TripDate,
+    int AttemptCount,
+    DateTimeOffset RequestedAt,
+    DateTimeOffset? CompletedAt,
+    string? FailureCode,
+    RecommendationResponse? Result);
+
 public sealed record RegionRecommendationResponse(Guid NeighborhoodId, string Name, double Score, string Explanation);
 public sealed record PlaceRecommendationResponse(int Order, Guid PlaceId, string Name, double Score, string Explanation);
 public sealed record TimelineRecommendationResponse(
@@ -95,12 +111,13 @@ public interface IRecommendationRepository
     Task AddAsync(RecommendationRun run, CancellationToken cancellationToken = default);
     Task<RecommendationRun?> GetAsync(Guid runId, CancellationToken cancellationToken = default);
     Task<RecommendationRun?> GetLatestAsync(Guid userId, CancellationToken cancellationToken = default);
+    Task<RecommendationRun?> ClaimNextAsync(DateTimeOffset now, TimeSpan leaseTimeout, CancellationToken cancellationToken = default);
     Task SaveChangesAsync(CancellationToken cancellationToken = default);
 }
 
 public interface IRecommendationOrchestrator
 {
-    Task<RecommendationResponse> GenerateAsync(Guid userId, GenerateRecommendationRequest request, string correlationId, CancellationToken cancellationToken = default);
-    Task<RecommendationResponse> GetAsync(Guid userId, Guid runId, CancellationToken cancellationToken = default);
+    Task<RecommendationAcceptedResponse> EnqueueAsync(Guid userId, GenerateRecommendationRequest request, string correlationId, CancellationToken cancellationToken = default);
+    Task<RecommendationRunResponse> GetAsync(Guid userId, Guid runId, CancellationToken cancellationToken = default);
     Task<RecommendationResponse> GetLatestAsync(Guid userId, CancellationToken cancellationToken = default);
 }

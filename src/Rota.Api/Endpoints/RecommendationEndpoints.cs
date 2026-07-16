@@ -20,22 +20,19 @@ public static class RecommendationEndpoints
                 IRecommendationOrchestrator orchestrator,
                 CancellationToken cancellationToken) =>
             {
-                var result = await orchestrator.GenerateAsync(
+                var result = await orchestrator.EnqueueAsync(
                     context.User.GetRequiredUserId(),
                     request,
                     context.TraceIdentifier,
                     cancellationToken);
-                return Results.Created($"/api/recommendations/{result.RunId}", result);
+                return Results.Accepted(result.StatusUrl, result);
             })
             .AddEndpointFilter<DataAnnotationsValidationFilter<GenerateRecommendationRequest>>()
             .WithName("GenerateRecommendation")
-            .WithSummary("TasteProfile kullanarak AI öneri paketi oluşturur")
-            .WithDescription("FastAPI'den bölge, mekan, Timeline ve Explainable AI açıklamalarını alır ve sonucu PostgreSQL'e kaydeder.")
-            .Produces<RecommendationResponse>(StatusCodes.Status201Created)
-            .Produces<ApiValidationProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")
-            .Produces<ApiProblemDetails>(StatusCodes.Status502BadGateway, "application/problem+json")
-            .Produces<ApiProblemDetails>(StatusCodes.Status503ServiceUnavailable, "application/problem+json")
-            .Produces<ApiProblemDetails>(StatusCodes.Status504GatewayTimeout, "application/problem+json");
+            .WithSummary("Asenkron AI öneri çalışması başlatır")
+            .WithDescription("İsteği kalıcı kuyruğa alır ve 202 ile durum URL'sini döndürür. Sonuç SignalR veya durum endpoint'i üzerinden izlenir.")
+            .Produces<RecommendationAcceptedResponse>(StatusCodes.Status202Accepted)
+            .Produces<ApiValidationProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json");
 
         group.MapGet("/{runId:guid}", (
                 Guid runId,
@@ -44,8 +41,8 @@ public static class RecommendationEndpoints
                 CancellationToken cancellationToken) =>
                 orchestrator.GetAsync(context.User.GetRequiredUserId(), runId, cancellationToken))
             .WithName("GetRecommendation")
-            .WithSummary("Kaydedilmiş öneri sonucunu getirir")
-            .Produces<RecommendationResponse>()
+            .WithSummary("Öneri çalışmasının durumunu ve tamamlandıysa sonucunu getirir")
+            .Produces<RecommendationRunResponse>()
             .Produces<ApiProblemDetails>(StatusCodes.Status404NotFound, "application/problem+json");
 
         group.MapGet("/me/latest", (

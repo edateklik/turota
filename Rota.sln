@@ -27,6 +27,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rota.Modules.Realtime.Appli
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rota.Modules.Realtime.Infrastructure", "src/Modules/Realtime/Rota.Modules.Realtime.Infrastructure/Rota.Modules.Realtime.Infrastructure.csproj", "{92A1F5A2-6A6F-4F34-BEBF-EB24FC2DF301}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rota.Modules.Recommendation.UnitTests", "tests/Rota.Modules.Recommendation.UnitTests/Rota.Modules.Recommendation.UnitTests.csproj", "{D78319BA-82E5-4777-A719-60D960F46EB0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rota.Api.IntegrationTests", "tests/Rota.Api.IntegrationTests/Rota.Api.IntegrationTests.csproj", "{D1A44417-74D7-49B4-B255-0C135C58EE2C}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Trip", "Trip", "{50FA2547-A2F8-42A9-8511-B898A87E378D}"
 	ProjectSection(SolutionItems) = preProject
 		src/Modules/Trip/README.md = src/Modules/Trip/README.md
@@ -46,6 +50,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Realtime", "Realtime", "{DD
 	ProjectSection(SolutionItems) = preProject
 		src/Modules/Realtime/README.md = src/Modules/Realtime/README.md
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{BE1178EF-3767-41F8-BD61-B68C79CFE5DF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -101,5 +107,17 @@ Global
 		{92A1F5A2-6A6F-4F34-BEBF-EB24FC2DF301}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{92A1F5A2-6A6F-4F34-BEBF-EB24FC2DF301}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{92A1F5A2-6A6F-4F34-BEBF-EB24FC2DF301}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D78319BA-82E5-4777-A719-60D960F46EB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D78319BA-82E5-4777-A719-60D960F46EB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D78319BA-82E5-4777-A719-60D960F46EB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D78319BA-82E5-4777-A719-60D960F46EB0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1A44417-74D7-49B4-B255-0C135C58EE2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1A44417-74D7-49B4-B255-0C135C58EE2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1A44417-74D7-49B4-B255-0C135C58EE2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1A44417-74D7-49B4-B255-0C135C58EE2C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D78319BA-82E5-4777-A719-60D960F46EB0} = {BE1178EF-3767-41F8-BD61-B68C79CFE5DF}
+		{D1A44417-74D7-49B4-B255-0C135C58EE2C} = {BE1178EF-3767-41F8-BD61-B68C79CFE5DF}
 	EndGlobalSection
 EndGlobal

@@ -7,10 +7,13 @@ JWT User
   → POST /api/recommendations/generate
   → Identity TasteProfile adapter
   → recommendation.recommendation_runs (Pending)
-  → HTTP POST FastAPI (1.5 saniye timeout)
+  → HTTP 202 Accepted + runId/statusUrl
+  → Background Worker claim (FOR UPDATE SKIP LOCKED)
+  → Processing → HTTP POST FastAPI (1.5 saniye timeout)
   → Bölge + Mekanlar + Timeline + XAI
-  → PostgreSQL (Completed veya Failed)
-  → RecommendationResponse
+  → Aynı transaction: Run Completed/Failed + Outbox Pending
+  → Outbox Dispatcher → SignalR → Outbox Processed
+  → GET status sonucu
 ```
 
 Recommendation modülü Identity veya Discovery tablolarına foreign key kurmaz. User,
@@ -86,11 +89,22 @@ PostgreSQL'e sonuç olarak yazılmaz; run `Failed / AI_INVALID_RESPONSE` olur.
 recommendation.recommendation_runs
 recommendation.recommended_places
 recommendation.timeline_items
+recommendation.outbox_messages
 ```
 
-Run önce `Pending` kaydedilir. Başarıda `Completed`; timeout, bağlantı veya sözleşme
-hatasında ilgili `failure_code` ile `Failed` olur. Ham AI yanıtı saklanmaz; sadece doğrulanmış,
-frontend sözleşmesinde kullanılan alanlar kalıcılaştırılır.
+Run önce giriş ve TasteProfile snapshot'ıyla `Pending` kaydedilir. Worker atomik olarak
+`Processing` durumuna geçirir. Başarıda `Completed`; timeout, bağlantı veya sözleşme hatasında
+üstel gecikmeyle en fazla üç kez denenip ilgili `failure_code` ile `Failed` olur. Worker
+kapanırken iş tekrar `Pending` yapılır; süresi dolmuş `Processing` lease başka worker tarafından
+geri alınabilir. Ham AI yanıtı saklanmaz; yalnız doğrulanmış alanlar kalıcılaştırılır.
+
+Run terminal durumu ile `recommendation.completed.v1` veya `recommendation.failed.v1` outbox
+mesajı aynı `SaveChanges` transaction'ında yazılır. Dispatcher mesajı `FOR UPDATE SKIP LOCKED`
+ile claim eder, başarısız yayını üstel gecikmeyle tekrar dener ve başarıda `Processed` yapar.
+Bu model at-least-once teslimat sağlar: dispatcher yayın sonrası fakat `Processed` kaydından önce
+kapanırsa event tekrar gelebilir. React ve Flutter client'ları `runId` üzerinden idempotent
+işlemeli ve sonucu REST durum endpoint'inden okuyabilmelidir. İşlenen outbox kayıtları varsayılan
+olarak yedi gün sonra temizlenir; dead-letter `Failed` mesajları otomatik silinmez.
 
 ## REST endpointleri
 
@@ -102,28 +116,46 @@ GET  /api/recommendations/me/latest
 
 Tümü JWT `User` policy gerektirir ve kullanıcı yalnızca kendi sonuçlarını okuyabilir.
 
+`POST` başarılı kuyruklamada `202 Accepted` döndürür:
+
+```json
+{
+  "runId": "8ccf07b7-b327-451f-aab2-c781401fd900",
+  "status": "Pending",
+  "statusUrl": "/api/recommendations/8ccf07b7-b327-451f-aab2-c781401fd900",
+  "requestedAt": "2026-07-16T10:00:00+00:00"
+}
+```
+
+Durum endpoint'i `Pending`, `Processing`, `Completed` veya `Failed` döndürür. `result` yalnız
+`Completed` durumunda doludur; `Failed` durumunda `failureCode` client tarafından gösterilir.
+
 ## Standart hata yanıtı
 
 Content-Type: `application/problem+json`
 
 ```json
 {
-  "type": "https://api.rota.local/errors/ai_service_timeout",
-  "title": "AI servisi zaman aşımı",
-  "status": 504,
-  "detail": "AI öneri servisi zaman aşımına uğradı.",
+  "type": "https://api.rota.local/errors/validation_error",
+  "title": "İstek doğrulanamadı",
+  "status": 400,
+  "detail": "Kullanılabilir süre 60-720 dakika aralığında olmalıdır.",
   "instance": "/api/recommendations/generate",
-  "errorCode": "AI_SERVICE_TIMEOUT",
+  "errorCode": "VALIDATION_ERROR",
   "traceId": "00-...",
   "timestamp": "2026-07-16T10:00:00+00:00"
 }
 ```
 
+FastAPI kaynaklı hatalar HTTP isteği tamamlandıktan sonra worker içinde oluştuğu için problem
+response değildir; durum endpoint'indeki `Failed/failureCode` alanları ve SignalR
+`RecommendationFailed` eventiyle iletilir.
+
 | Durum | HTTP | errorCode |
 |---|---:|---|
-| FastAPI timeout | 504 | `AI_SERVICE_TIMEOUT` |
-| FastAPI bağlantı/5xx | 503 | `AI_SERVICE_UNAVAILABLE` |
-| Geçersiz FastAPI JSON/sözleşme | 502 | `AI_INVALID_RESPONSE` |
+| FastAPI timeout | Run `Failed` | `AI_SERVICE_TIMEOUT` |
+| FastAPI bağlantı/5xx | Run `Failed` | `AI_SERVICE_UNAVAILABLE` |
+| Geçersiz FastAPI JSON/sözleşme | Run `Failed` | `AI_INVALID_RESPONSE` |
 | Request validation | 400 | `VALIDATION_ERROR` |
 | JWT eksik/geçersiz | 401 | `UNAUTHORIZED` |
 | Beklenmeyen hata | 500 | `INTERNAL_ERROR` |
@@ -136,6 +168,20 @@ Content-Type: `application/problem+json`
     "BaseUrl": "http://localhost:8000",
     "RecommendationPath": "/api/v1/recommendations/generate",
     "TimeoutMilliseconds": 1500
+  },
+  "RecommendationWorker": {
+    "PollIntervalMilliseconds": 250,
+    "LeaseSeconds": 30,
+    "MaxAttempts": 3,
+    "RetryDelayMilliseconds": 500
+  },
+  "OutboxWorker": {
+    "PollIntervalMilliseconds": 250,
+    "LeaseSeconds": 30,
+    "MaxAttempts": 10,
+    "RetryDelayMilliseconds": 500,
+    "ProcessedRetentionHours": 168,
+    "CleanupIntervalMinutes": 60
   }
 }
 ```

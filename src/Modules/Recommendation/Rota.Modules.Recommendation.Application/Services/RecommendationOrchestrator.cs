@@ -1,17 +1,15 @@
+using System.Text.Json;
 using Rota.Modules.Recommendation.Application.Contracts;
-using Rota.Modules.Recommendation.Application.Errors;
 using Rota.Modules.Recommendation.Domain.Entities;
 
 namespace Rota.Modules.Recommendation.Application.Services;
 
 public sealed class RecommendationOrchestrator(
-    IRecommendationService recommendationService,
     ITasteProfileProvider tasteProfileProvider,
     IRecommendationRepository repository,
-    IRecommendationEventPublisher eventPublisher,
     TimeProvider timeProvider) : IRecommendationOrchestrator
 {
-    public async Task<RecommendationResponse> GenerateAsync(
+    public async Task<RecommendationAcceptedResponse> EnqueueAsync(
         Guid userId,
         GenerateRecommendationRequest request,
         string correlationId,
@@ -20,75 +18,55 @@ public sealed class RecommendationOrchestrator(
         Validate(request, DateOnly.FromDateTime(timeProvider.GetUtcNow().UtcDateTime));
         var tasteProfile = await tasteProfileProvider.GetAsync(userId, cancellationToken);
         var runId = Guid.NewGuid();
-        var run = RecommendationRun.CreatePending(runId, userId, request.TripDate, correlationId, timeProvider.GetUtcNow());
+        var requestedAt = timeProvider.GetUtcNow();
+        var run = RecommendationRun.CreatePending(
+            runId,
+            userId,
+            request.TripDate,
+            correlationId,
+            new RecommendationRequestData(
+                request.AvailableMinutes,
+                request.StartLongitude,
+                request.StartLatitude,
+                JsonSerializer.Serialize(tasteProfile)),
+            requestedAt);
         await repository.AddAsync(run, cancellationToken);
         await repository.SaveChangesAsync(cancellationToken);
 
-        try
-        {
-            var aiRequest = new AiRecommendationRequest(
-                runId,
-                correlationId,
-                userId,
-                request.TripDate,
-                request.AvailableMinutes,
-                request.StartLongitude.HasValue
-                    ? new GeoPointInput(request.StartLongitude.Value, request.StartLatitude!.Value)
-                    : null,
-                tasteProfile);
-            var result = await recommendationService.GenerateAsync(aiRequest, cancellationToken);
-            run.Complete(
-                result.ModelVersion,
-                result.Region.NeighborhoodId,
-                result.Region.Name,
-                result.Region.Score,
-                result.Region.Explanation,
-                result.OverallExplanation,
-                result.Places.Select((place, index) => new RecommendedPlace(
-                    runId, index + 1, place.PlaceId, place.Name, place.Score, place.Explanation)),
-                result.Timeline.Select(item => new RecommendationTimelineItem(
-                    runId, item.Sequence, item.PlaceId, item.PlaceName, item.StartTime, item.DurationMinutes, item.Explanation)),
-                timeProvider.GetUtcNow());
-            await repository.SaveChangesAsync(cancellationToken);
-            await eventPublisher.PublishCompletedAsync(new RecommendationCompletedEvent(
-                userId,
-                run.Id,
-                run.TripDate,
-                run.NeighborhoodId!.Value,
-                run.RegionName!,
-                run.CompletedAt!.Value), CancellationToken.None);
-            return Map(run);
-        }
-        catch (Exception exception)
-        {
-            var code = exception is RecommendationIntegrationException integrationException
-                ? integrationException.ErrorCode
-                : "RECOMMENDATION_FAILED";
-            run.Fail(code, timeProvider.GetUtcNow());
-            await repository.SaveChangesAsync(CancellationToken.None);
-            await eventPublisher.PublishFailedAsync(new RecommendationFailedEvent(
-                userId,
-                run.Id,
-                run.TripDate,
-                code,
-                run.CompletedAt!.Value), CancellationToken.None);
-            throw;
-        }
+        return new RecommendationAcceptedResponse(
+            run.Id,
+            run.Status.ToString(),
+            $"/api/recommendations/{run.Id}",
+            requestedAt);
     }
 
-    public async Task<RecommendationResponse> GetAsync(Guid userId, Guid runId, CancellationToken cancellationToken = default)
+    public async Task<RecommendationRunResponse> GetAsync(
+        Guid userId,
+        Guid runId,
+        CancellationToken cancellationToken = default)
     {
         var run = await repository.GetAsync(runId, cancellationToken);
-        if (run is null || run.UserId != userId || run.Status != RecommendationRunStatus.Completed)
-            throw new KeyNotFoundException("Öneri sonucu bulunamadı.");
-        return Map(run);
+        if (run is null || run.UserId != userId)
+            throw new KeyNotFoundException("Öneri çalışması bulunamadı.");
+
+        return new RecommendationRunResponse(
+            run.Id,
+            run.Status.ToString(),
+            run.TripDate,
+            run.AttemptCount,
+            run.RequestedAt,
+            run.CompletedAt,
+            run.FailureCode,
+            run.Status == RecommendationRunStatus.Completed ? MapCompleted(run) : null);
     }
 
-    public async Task<RecommendationResponse> GetLatestAsync(Guid userId, CancellationToken cancellationToken = default)
+    public async Task<RecommendationResponse> GetLatestAsync(
+        Guid userId,
+        CancellationToken cancellationToken = default)
     {
         var run = await repository.GetLatestAsync(userId, cancellationToken)
             ?? throw new KeyNotFoundException("Tamamlanmış öneri sonucu bulunamadı.");
-        return Map(run);
+        return MapCompleted(run);
     }
 
     private static void Validate(GenerateRecommendationRequest request, DateOnly today)
@@ -103,7 +81,7 @@ public sealed class RecommendationOrchestrator(
             throw new ArgumentOutOfRangeException(nameof(request.StartLongitude), "Geçersiz WGS84 başlangıç koordinatı.");
     }
 
-    private static RecommendationResponse Map(RecommendationRun run) => new(
+    internal static RecommendationResponse MapCompleted(RecommendationRun run) => new(
         run.Id,
         run.Status.ToString(),
         run.TripDate,

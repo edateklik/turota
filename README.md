@@ -130,6 +130,29 @@ tamamlandığında `RecommendationCompleted`, başarısız olduğunda `Recommend
 event'i yalnız JWT `sub` değerindeki kullanıcıya gönderilir. SignalR endpoint'leri Swagger'a
 girmediği için taşıma ve payload sözleşmeleri `docs/realtime.md` içinde tutulur.
 
+## Asenkron öneri akışı
+
+`POST /api/recommendations/generate` FastAPI sonucunu beklemez; kalıcı job kaydı oluşturup
+`202 Accepted`, `runId` ve `statusUrl` döndürür. PostgreSQL tabanlı worker işi claim eder,
+başarısız dış servis çağrılarını en fazla üç kez yeniden dener ve sonucu SignalR ile bildirir.
+Client aynı zamanda `GET /api/recommendations/{runId}` ile durumu sorgulayabilir.
+
+Terminal job durumu ve SignalR eventi aynı transaction'da `recommendation.outbox_messages`
+tablosuna yazılır. Outbox dispatcher geçici yayın hatalarını yeniden dener; işlenen mesajlar yedi
+gün saklanır. Teslimat at-least-once olduğu için frontend `runId` ile duplicate event'leri eler.
+
+## Testler
+
+Unit testler ve gerçek `postgis/postgis:16-3.4-alpine` Testcontainer kullanan API integration
+testleri solution içindedir. Docker çalışırken tüm paket şu komutla yürütülür:
+
+```bash
+dotnet test Rota.sln
+```
+
+Integration testleri migration, seed kalitesi, gerçek spatial sıralama, JWT/admin koruması,
+`202` süresi, background completion ve retry/failure durumlarını doğrular.
+
 Doğrudan SQL ile kontrol:
 
 ```sql

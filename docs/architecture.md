@@ -55,6 +55,16 @@ Recommendation Application, altyapıdan bağımsız `IRecommendationEventPublish
 tanımlar. Realtime Infrastructure bu portu SignalR ile uygular; böylece Recommendation
 modülü Hub veya WebSocket ayrıntılarını bilmez.
 
+Recommendation üretimi HTTP request'ten ayrılmıştır. API `Pending` kaydı oluşturup `202`
+döndürür; background worker PostgreSQL kuyruğunu `FOR UPDATE SKIP LOCKED` ile claim eder.
+`Processing` lease süresi dolarsa iş tekrar alınabilir. Bu yapı tek veya birden fazla API
+instance'ında aynı job'ın eşzamanlı işlenmesini engeller.
+
+Recommendation sonucu ile entegrasyon eventi aynı PostgreSQL transaction'ında Outbox'a yazılır.
+Ayrı dispatcher event'i SignalR publisher'a iletir ve ardından `Processed` işaretler. Böylece
+DB commit sonrası process kapanması event kaybına yol açmaz. Teslimat at-least-once olduğu için
+istemciler `runId` ile duplicate event'leri etkisizleştirir.
+
 ## Spatial sorgular
 
 | Use-case | PostGIS işlemi | Index |

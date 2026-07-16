@@ -25,6 +25,14 @@ namespace Rota.Modules.Recommendation.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Rota.Modules.Recommendation.Domain.Entities.RecommendationRun", b =>
                 {
+                    b.Property<int>("AttemptCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("attempt_count");
+
+                    b.Property<int>("AvailableMinutes")
+                        .HasColumnType("integer")
+                        .HasColumnName("available_minutes");
+
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
                         .HasColumnName("id");
@@ -49,6 +57,10 @@ namespace Rota.Modules.Recommendation.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(80)")
                         .HasColumnName("model_version");
 
+                    b.Property<DateTimeOffset?>("NextAttemptAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("next_attempt_at");
+
                     b.Property<Guid?>("NeighborhoodId")
                         .HasColumnType("uuid")
                         .HasColumnName("neighborhood_id");
@@ -68,6 +80,10 @@ namespace Rota.Modules.Recommendation.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(180)")
                         .HasColumnName("region_name");
 
+                    b.Property<DateTimeOffset?>("ProcessingStartedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("processing_started_at");
+
                     b.Property<double?>("RegionScore")
                         .HasColumnType("double precision")
                         .HasColumnName("region_score");
@@ -82,6 +98,19 @@ namespace Rota.Modules.Recommendation.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(20)")
                         .HasColumnName("status");
 
+                    b.Property<double?>("StartLatitude")
+                        .HasColumnType("double precision")
+                        .HasColumnName("start_latitude");
+
+                    b.Property<double?>("StartLongitude")
+                        .HasColumnType("double precision")
+                        .HasColumnName("start_longitude");
+
+                    b.Property<string>("TasteProfileJson")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("taste_profile_json");
+
                     b.Property<DateOnly>("TripDate")
                         .HasColumnType("date")
                         .HasColumnName("trip_date");
@@ -95,11 +124,84 @@ namespace Rota.Modules.Recommendation.Infrastructure.Persistence.Migrations
                     b.HasIndex("CorrelationId")
                         .HasDatabaseName("ix_recommendation_runs_correlation_id");
 
+                    b.HasIndex("Status", "NextAttemptAt", "RequestedAt")
+                        .HasDatabaseName("ix_recommendation_runs_job_queue");
+
+                    b.HasIndex("Status", "ProcessingStartedAt")
+                        .HasDatabaseName("ix_recommendation_runs_processing_lease");
+
                     b.HasIndex("UserId", "RequestedAt")
                         .IsDescending(false, true)
                         .HasDatabaseName("ix_recommendation_runs_user_requested_at");
 
                     b.ToTable("recommendation_runs", "recommendation");
+                });
+
+            modelBuilder.Entity("Rota.Modules.Recommendation.Infrastructure.Outbox.RecommendationOutboxMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("AggregateId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("aggregate_id");
+
+                    b.Property<int>("AttemptCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("attempt_count");
+
+                    b.Property<string>("LastError")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("last_error");
+
+                    b.Property<DateTimeOffset?>("NextAttemptAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("next_attempt_at");
+
+                    b.Property<DateTimeOffset>("OccurredAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("occurred_at");
+
+                    b.Property<string>("Payload")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("payload");
+
+                    b.Property<DateTimeOffset?>("ProcessedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("processed_at");
+
+                    b.Property<DateTimeOffset?>("ProcessingStartedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("processing_started_at");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("type");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AggregateId", "Type")
+                        .IsUnique()
+                        .HasDatabaseName("ux_outbox_messages_aggregate_type");
+
+                    b.HasIndex("Status", "NextAttemptAt", "OccurredAt")
+                        .HasDatabaseName("ix_outbox_messages_dispatch_queue");
+
+                    b.HasIndex("Status", "ProcessingStartedAt")
+                        .HasDatabaseName("ix_outbox_messages_processing_lease");
+
+                    b.ToTable("outbox_messages", "recommendation");
                 });
 
             modelBuilder.Entity("Rota.Modules.Recommendation.Domain.Entities.RecommendationTimelineItem", b =>

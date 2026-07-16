@@ -41,8 +41,9 @@ SignalR bağlantıları nedeniyle wildcard origin kullanılmaz.
 }
 ```
 
-Event, öneri sonucu PostgreSQL'e kaydedildikten sonra yayınlanır. Bildirim transport'undaki
-geçici hata kayıtlı öneriyi geri almaz; reconnect sonrası client sonucu
+Event, öneri sonucu ile aynı transaction'da Outbox'a yazılır ve ayrı dispatcher tarafından
+yayınlanır. Geçici yayın hataları retry edilir. Teslimat at-least-once olduğundan client aynı
+`runId` event'ini birden fazla kez alabilecek şekilde idempotent olmalıdır. Reconnect sonrası sonucu
 `GET /api/recommendations/me/latest` veya run kimliğiyle tekrar okuyabilir.
 
 ## React bağlantısı

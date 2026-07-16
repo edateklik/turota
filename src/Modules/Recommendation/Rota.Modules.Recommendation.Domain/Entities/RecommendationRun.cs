@@ -3,9 +3,16 @@ namespace Rota.Modules.Recommendation.Domain.Entities;
 public enum RecommendationRunStatus
 {
     Pending = 0,
-    Completed = 1,
-    Failed = 2
+    Processing = 1,
+    Completed = 2,
+    Failed = 3
 }
+
+public sealed record RecommendationRequestData(
+    int AvailableMinutes,
+    double? StartLongitude,
+    double? StartLatitude,
+    string TasteProfileJson);
 
 public sealed class RecommendationRun
 {
@@ -14,12 +21,22 @@ public sealed class RecommendationRun
 
     private RecommendationRun() { }
 
-    private RecommendationRun(Guid id, Guid userId, DateOnly tripDate, string correlationId, DateTimeOffset requestedAt)
+    private RecommendationRun(
+        Guid id,
+        Guid userId,
+        DateOnly tripDate,
+        string correlationId,
+        RecommendationRequestData request,
+        DateTimeOffset requestedAt)
     {
         Id = id;
         UserId = userId;
         TripDate = tripDate;
         CorrelationId = correlationId;
+        AvailableMinutes = request.AvailableMinutes;
+        StartLongitude = request.StartLongitude;
+        StartLatitude = request.StartLatitude;
+        TasteProfileJson = request.TasteProfileJson;
         RequestedAt = requestedAt;
         Status = RecommendationRunStatus.Pending;
     }
@@ -30,6 +47,13 @@ public sealed class RecommendationRun
     public string CorrelationId { get; private set; } = null!;
     public RecommendationRunStatus Status { get; private set; }
     public DateTimeOffset RequestedAt { get; private set; }
+    public int AvailableMinutes { get; private set; }
+    public double? StartLongitude { get; private set; }
+    public double? StartLatitude { get; private set; }
+    public string TasteProfileJson { get; private set; } = null!;
+    public int AttemptCount { get; private set; }
+    public DateTimeOffset? ProcessingStartedAt { get; private set; }
+    public DateTimeOffset? NextAttemptAt { get; private set; }
     public DateTimeOffset? CompletedAt { get; private set; }
     public string? ModelVersion { get; private set; }
     public Guid? NeighborhoodId { get; private set; }
@@ -46,8 +70,21 @@ public sealed class RecommendationRun
         Guid userId,
         DateOnly tripDate,
         string correlationId,
+        RecommendationRequestData request,
         DateTimeOffset requestedAt) =>
-        new(id, userId, tripDate, correlationId, requestedAt);
+        new(id, userId, tripDate, correlationId, request, requestedAt);
+
+    public void StartProcessing(DateTimeOffset startedAt)
+    {
+        if (Status is not (RecommendationRunStatus.Pending or RecommendationRunStatus.Processing))
+            throw new InvalidOperationException("Yalnızca bekleyen veya lease süresi dolmuş öneri çalışması işlenebilir.");
+
+        Status = RecommendationRunStatus.Processing;
+        ProcessingStartedAt = startedAt;
+        NextAttemptAt = null;
+        FailureCode = null;
+        AttemptCount++;
+    }
 
     public void Complete(
         string modelVersion,
@@ -60,8 +97,8 @@ public sealed class RecommendationRun
         IEnumerable<RecommendationTimelineItem> timeline,
         DateTimeOffset completedAt)
     {
-        if (Status != RecommendationRunStatus.Pending)
-            throw new InvalidOperationException("Yalnızca bekleyen öneri çalışması tamamlanabilir.");
+        if (Status != RecommendationRunStatus.Processing)
+            throw new InvalidOperationException("Yalnızca işlenmekte olan öneri çalışması tamamlanabilir.");
 
         ModelVersion = modelVersion;
         NeighborhoodId = neighborhoodId;
@@ -72,15 +109,28 @@ public sealed class RecommendationRun
         _places.AddRange(places);
         _timeline.AddRange(timeline);
         CompletedAt = completedAt;
+        ProcessingStartedAt = null;
         Status = RecommendationRunStatus.Completed;
     }
 
     public void Fail(string failureCode, DateTimeOffset completedAt)
     {
-        if (Status != RecommendationRunStatus.Pending) return;
+        if (Status != RecommendationRunStatus.Processing)
+            throw new InvalidOperationException("Yalnızca işlenmekte olan öneri çalışması başarısız olabilir.");
         FailureCode = failureCode;
         CompletedAt = completedAt;
+        ProcessingStartedAt = null;
         Status = RecommendationRunStatus.Failed;
+    }
+
+    public void ScheduleRetry(string failureCode, DateTimeOffset nextAttemptAt)
+    {
+        if (Status != RecommendationRunStatus.Processing)
+            throw new InvalidOperationException("Yalnızca işlenmekte olan öneri çalışması yeniden denenebilir.");
+        FailureCode = failureCode;
+        ProcessingStartedAt = null;
+        NextAttemptAt = nextAttemptAt;
+        Status = RecommendationRunStatus.Pending;
     }
 }
 
