@@ -60,6 +60,19 @@ Rota.Api ──► Module.Application ──► Module.Domain
 - API yalnızca modül kaydı ve REST endpointlerini birleştirir.
 - Modüller başka bir modülün `Infrastructure` katmanına doğrudan referans vermez.
 
+## Container topolojisi
+
+```text
+Host :5121 → api :8080
+                  ├── PostgreSQL/PostGIS :5432
+                  └── FastAPI :8000 ──► PostgreSQL discovery read-model
+```
+
+ASP.NET API multi-stage image ile Release publish edilir, runtime'da non-root `app` kullanıcısı
+olarak çalışır ve `/health` ile izlenir. Compose, API'yi yalnız PostgreSQL ve FastAPI sağlıklı
+olduktan sonra başlatır. Development Compose migration'ları otomatik uygular; production
+deployment'ta migration ayrı bir job olarak çalıştırılmalıdır.
+
 Recommendation Application, altyapıdan bağımsız event publisher/handler portlarını tanımlar.
 Recommendation Infrastructure outbox olayını kayıtlı handler'lara dağıtır. Realtime handler'ı
 SignalR bildirimi gönderir, Trip handler'ı günlük rotayı idempotent oluşturur; Recommendation

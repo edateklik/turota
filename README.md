@@ -46,15 +46,30 @@ Sürümler `Directory.Packages.props` içinde merkezi olarak yönetilir.
 
 ## Çalıştırma
 
-Gereksinimler: .NET SDK 8, Docker Desktop/Engine.
+Tüm backend için tek gereksinim Docker Desktop/Engine'dir:
 
 ```bash
 docker compose up -d --build --wait
+```
+
+Bu komut PostGIS, FastAPI ve ASP.NET Core API'yi aynı ağda başlatır; API migration'ları
+development ortamında otomatik uygular. Adresler:
+
+```text
+API / Swagger : http://localhost:5121/swagger
+FastAPI Docs  : http://localhost:8000/docs
+PostgreSQL    : localhost:5432
+```
+
+Container'ları durdurmak için `docker compose down`, veritabanı volume'unu da silmek için
+bilinçli olarak `docker compose down -v` kullanılır.
+
+API'yi host üzerinde geliştirmek için .NET SDK 8 ile:
+
+```bash
+docker compose up -d postgres ai-recommendation
 dotnet tool restore
 dotnet restore
-dotnet ef database update \
-  --project src/Modules/Discovery/Rota.Modules.Discovery.Infrastructure \
-  --context DiscoveryDbContext
 dotnet run --project src/Rota.Api
 ```
 
@@ -69,6 +84,7 @@ export ConnectionStrings__DiscoveryDb='Host=localhost;Port=5432;Database=rota;Us
 export ConnectionStrings__IdentityDb="$ConnectionStrings__DiscoveryDb"
 export ConnectionStrings__RecommendationDb="$ConnectionStrings__DiscoveryDb"
 export ConnectionStrings__TripDb="$ConnectionStrings__DiscoveryDb"
+export ConnectionStrings__AdministrationReadDb="$ConnectionStrings__DiscoveryDb"
 export Jwt__SigningKey='en-az-32-byte-guvenli-secret'
 export FastApi__BaseUrl='http://localhost:8000'
 export Cors__AllowedOrigins__0='https://app.example.com'

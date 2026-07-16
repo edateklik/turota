@@ -34,5 +34,45 @@ services:
       timeout: 3s
       retries: 5
 
+  api:
+    build:
+      context: .
+      dockerfile: src/Rota.Api/Dockerfile
+      target: runtime
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: 8080
+      ConnectionStrings__DiscoveryDb: Host=postgres;Port=5432;Database=rota;Username=rota;Password=rota_dev_password;Pooling=true;Maximum Pool Size=100
+      ConnectionStrings__IdentityDb: Host=postgres;Port=5432;Database=rota;Username=rota;Password=rota_dev_password;Pooling=true;Maximum Pool Size=100
+      ConnectionStrings__RecommendationDb: Host=postgres;Port=5432;Database=rota;Username=rota;Password=rota_dev_password;Pooling=true;Maximum Pool Size=100
+      ConnectionStrings__TripDb: Host=postgres;Port=5432;Database=rota;Username=rota;Password=rota_dev_password;Pooling=true;Maximum Pool Size=100
+      ConnectionStrings__AdministrationReadDb: Host=postgres;Port=5432;Database=rota;Username=rota;Password=rota_dev_password;Pooling=true;Maximum Pool Size=20
+      FastApi__BaseUrl: http://ai-recommendation:8000
+      FastApi__RecommendationPath: /api/v1/recommendations/generate
+      FastApi__TimeoutMilliseconds: 1500
+      Jwt__Issuer: Rota.Api
+      Jwt__Audience: Rota.Clients
+      Jwt__SigningKey: rota-compose-development-signing-key-change-me-2026
+      Jwt__ExpirationMinutes: 60
+      Database__ApplyMigrationsOnStartup: "true"
+      Cors__AllowedOrigins__0: http://localhost:3000
+      Cors__AllowedOrigins__1: http://localhost:5173
+    ports:
+      - "5121:8080"
+    volumes:
+      - rota_api_data_protection_keys:/home/app/.aspnet/DataProtection-Keys
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ai-recommendation:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "http://127.0.0.1:8080/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 15s
+
 volumes:
   rota_postgres_data:
+  rota_api_data_protection_keys:
