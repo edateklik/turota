@@ -1,4 +1,4 @@
-# Rota — AI Destekli Local Discovery Platform
+# Turota — AI Destekli Local Discovery Platform
 
 ASP.NET Core 8 ve PostgreSQL/PostGIS tabanlı layered modular monolith başlangıç yapısı.
 `Discovery`; şehir, mahalle, mekan, kategori ve etiket verisini, `Identity`; User,
