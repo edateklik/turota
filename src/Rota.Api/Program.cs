@@ -15,6 +15,7 @@ using Rota.Api.Errors;
 using Rota.Modules.Identity.Infrastructure;
 using Rota.Modules.Identity.Infrastructure.Persistence;
 using Rota.Api.OpenApi;
+using Rota.Api.Security;
 using Rota.Modules.Recommendation.Infrastructure;
 using Rota.Modules.Recommendation.Infrastructure.Persistence;
 using Rota.Modules.Realtime.Infrastructure;
@@ -25,6 +26,9 @@ using Rota.Modules.Administration.Infrastructure;
 using Rota.Api.Observability;
 
 var builder = WebApplication.CreateBuilder(args);
+var rateLimits = builder.Configuration.GetSection("RateLimits").Get<RateLimitOptions>() ?? new RateLimitOptions();
+rateLimits.Validate();
+var rateLimitWindow = TimeSpan.FromSeconds(rateLimits.WindowSeconds);
 
 if (builder.Configuration.GetValue<bool>("Observability:UseJsonConsole"))
 {
@@ -75,29 +79,29 @@ builder.Services.AddRateLimiter(options =>
             ?? "anonymous",
             _ => new FixedWindowRateLimiterOptions
             {
-                PermitLimit = 120,
-                Window = TimeSpan.FromMinutes(1),
+                PermitLimit = rateLimits.GlobalPermitLimit,
+                Window = rateLimitWindow,
                 QueueLimit = 0,
                 AutoReplenishment = true
             }));
     options.AddFixedWindowLimiter("authentication", limiter =>
     {
-        limiter.PermitLimit = 10;
-        limiter.Window = TimeSpan.FromMinutes(1);
+        limiter.PermitLimit = rateLimits.AuthenticationPermitLimit;
+        limiter.Window = rateLimitWindow;
         limiter.QueueLimit = 0;
         limiter.AutoReplenishment = true;
     });
     options.AddFixedWindowLimiter("recommendation", limiter =>
     {
-        limiter.PermitLimit = 20;
-        limiter.Window = TimeSpan.FromMinutes(1);
+        limiter.PermitLimit = rateLimits.RecommendationPermitLimit;
+        limiter.Window = rateLimitWindow;
         limiter.QueueLimit = 0;
         limiter.AutoReplenishment = true;
     });
     options.AddFixedWindowLimiter("admin-simulation", limiter =>
     {
-        limiter.PermitLimit = 10;
-        limiter.Window = TimeSpan.FromMinutes(1);
+        limiter.PermitLimit = rateLimits.AdminSimulationPermitLimit;
+        limiter.Window = rateLimitWindow;
         limiter.QueueLimit = 0;
         limiter.AutoReplenishment = true;
     });

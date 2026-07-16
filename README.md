@@ -85,6 +85,7 @@ kontrol eden `http://localhost:5121/health/ready` adreslerindedir. API her yanı
 `X-Correlation-ID` döndürür ve yapılandırılmış istek süresi logları üretir. OpenTelemetry
 OTLP ihracı collector bulunan ortamda `Observability__OtlpEnabled=true` ve standart
 `OTEL_EXPORTER_OTLP_ENDPOINT` değişkeniyle açılır; ayrıntılar `docs/observability.md` içindedir.
+İki saniyelik performans kalite kapısı ve k6 çalıştırma komutları `docs/performance.md` içindedir.
 
 Development profilinde API başlarken migration otomatik uygulanır. Production için
 `Database:ApplyMigrationsOnStartup=false` bırakılmalı ve migration deployment

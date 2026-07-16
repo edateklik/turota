@@ -1,6 +1,7 @@
 using Rota.Modules.Discovery.Application.Admin;
 using Rota.Modules.Discovery.Application.Features;
 using Rota.Modules.Discovery.Application.Spatial;
+using Rota.Api.Validation;
 
 namespace Rota.Api.Endpoints;
 
@@ -61,9 +62,10 @@ public static class DiscoveryEndpoints
         {
             var item = await service.CreateAsync(request, ct);
             return Results.Created($"/api/admin/cities/{item.Id}", item);
-        });
+        }).AddEndpointFilter<DataAnnotationsValidationFilter<SaveCityRequest>>();
         cities.MapPut("/{id:guid}", async (Guid id, SaveCityRequest request, ICityAdminService service, CancellationToken ct) =>
-            await service.UpdateAsync(id, request, ct) is { } item ? Results.Ok(item) : Results.NotFound());
+            await service.UpdateAsync(id, request, ct) is { } item ? Results.Ok(item) : Results.NotFound())
+            .AddEndpointFilter<DataAnnotationsValidationFilter<SaveCityRequest>>();
         cities.MapDelete("/{id:guid}", async (Guid id, ICityAdminService service, CancellationToken ct) =>
             await service.DeleteAsync(id, ct) ? Results.NoContent() : Results.NotFound());
 
@@ -75,9 +77,10 @@ public static class DiscoveryEndpoints
         {
             var item = await service.CreateAsync(request, ct);
             return Results.Created($"/api/admin/neighborhoods/{item.Id}", item);
-        });
+        }).AddEndpointFilter<DataAnnotationsValidationFilter<SaveNeighborhoodRequest>>();
         neighborhoods.MapPut("/{id:guid}", async (Guid id, SaveNeighborhoodRequest request, INeighborhoodAdminService service, CancellationToken ct) =>
-            await service.UpdateAsync(id, request, ct) is { } item ? Results.Ok(item) : Results.NotFound());
+            await service.UpdateAsync(id, request, ct) is { } item ? Results.Ok(item) : Results.NotFound())
+            .AddEndpointFilter<DataAnnotationsValidationFilter<SaveNeighborhoodRequest>>();
         neighborhoods.MapDelete("/{id:guid}", async (Guid id, INeighborhoodAdminService service, CancellationToken ct) =>
             await service.DeleteAsync(id, ct) ? Results.NoContent() : Results.NotFound());
 
@@ -89,9 +92,10 @@ public static class DiscoveryEndpoints
         {
             var item = await service.CreateAsync(request, ct);
             return Results.Created($"/api/admin/places/{item.Id}", item);
-        });
+        }).AddEndpointFilter<DataAnnotationsValidationFilter<SavePlaceRequest>>();
         places.MapPut("/{id:guid}", async (Guid id, SavePlaceRequest request, IPlaceAdminService service, CancellationToken ct) =>
-            await service.UpdateAsync(id, request, ct) is { } item ? Results.Ok(item) : Results.NotFound());
+            await service.UpdateAsync(id, request, ct) is { } item ? Results.Ok(item) : Results.NotFound())
+            .AddEndpointFilter<DataAnnotationsValidationFilter<SavePlaceRequest>>();
         places.MapDelete("/{id:guid}", async (Guid id, IPlaceAdminService service, CancellationToken ct) =>
             await service.DeleteAsync(id, ct) ? Results.NoContent() : Results.NotFound());
         places.MapGet("/{id:guid}/feature-vector", async (Guid id, IPlaceFeatureVectorService service, CancellationToken ct) =>
@@ -111,9 +115,10 @@ public static class DiscoveryEndpoints
         {
             var item = await service.CreateAsync(request, ct);
             return Results.Created($"/api/admin/categories/{item.Id}", item);
-        });
+        }).AddEndpointFilter<DataAnnotationsValidationFilter<SaveCategoryRequest>>();
         categories.MapPut("/{id:guid}", async (Guid id, SaveCategoryRequest request, ICategoryAdminService service, CancellationToken ct) =>
-            await service.UpdateAsync(id, request, ct) is { } item ? Results.Ok(item) : Results.NotFound());
+            await service.UpdateAsync(id, request, ct) is { } item ? Results.Ok(item) : Results.NotFound())
+            .AddEndpointFilter<DataAnnotationsValidationFilter<SaveCategoryRequest>>();
         categories.MapDelete("/{id:guid}", async (Guid id, ICategoryAdminService service, CancellationToken ct) =>
             await service.DeleteAsync(id, ct) ? Results.NoContent() : Results.NotFound());
 
@@ -125,9 +130,10 @@ public static class DiscoveryEndpoints
         {
             var item = await service.CreateAsync(request, ct);
             return Results.Created($"/api/admin/tags/{item.Id}", item);
-        });
+        }).AddEndpointFilter<DataAnnotationsValidationFilter<SaveTagRequest>>();
         tags.MapPut("/{id:guid}", async (Guid id, SaveTagRequest request, ITagAdminService service, CancellationToken ct) =>
-            await service.UpdateAsync(id, request, ct) is { } item ? Results.Ok(item) : Results.NotFound());
+            await service.UpdateAsync(id, request, ct) is { } item ? Results.Ok(item) : Results.NotFound())
+            .AddEndpointFilter<DataAnnotationsValidationFilter<SaveTagRequest>>();
         tags.MapDelete("/{id:guid}", async (Guid id, ITagAdminService service, CancellationToken ct) =>
             await service.DeleteAsync(id, ct) ? Results.NoContent() : Results.NotFound());
     }

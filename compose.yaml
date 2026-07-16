@@ -61,6 +61,8 @@ services:
       AdminBootstrap__Password: ${ROTA_ADMIN_PASSWORD:?ROTA_ADMIN_PASSWORD must be set in .env}
       AdminBootstrap__FirstName: Rota
       AdminBootstrap__LastName: Admin
+      RateLimits__GlobalPermitLimit: ${RATE_LIMIT_GLOBAL_PERMIT:-120}
+      RateLimits__RecommendationPermitLimit: ${RATE_LIMIT_RECOMMENDATION_PERMIT:-20}
       Database__ApplyMigrationsOnStartup: "true"
       Cors__AllowedOrigins__0: http://localhost:3000
       Cors__AllowedOrigins__1: http://localhost:5173
@@ -79,6 +81,18 @@ services:
       timeout: 3s
       retries: 5
       start_period: 15s
+
+  load-test:
+    image: grafana/k6:2.1.0
+    profiles: ["load"]
+    environment:
+      BASE_URL: http://api:8080
+    volumes:
+      - ./tests/load:/scripts:ro
+    command: run /scripts/mvp.js
+    depends_on:
+      api:
+        condition: service_healthy
 
 volumes:
   rota_postgres_data:
