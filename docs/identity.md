@@ -9,6 +9,8 @@
 | GET | `/api/identity/me` | Bearer | `200 UserResponse` |
 | GET | `/api/identity/me/taste-profile` | Bearer | `200 TasteProfileResponse` |
 | PUT | `/api/identity/me/taste-profile` | Bearer | `200 TasteProfileResponse` |
+| GET | `/api/admin/users` | `Admin` | `200 AdminUserPageResponse` |
+| PUT | `/api/admin/users/{id}/access` | `Admin` | `200 AdminUserResponse` |
 | CRUD | `/api/admin/**` | `Admin` rolü | Kaynağa göre |
 
 `AuthResponse.accessToken`, React/Flutter tarafından `Authorization: Bearer {token}` header'ında
@@ -39,6 +41,14 @@ export Jwt__Audience='Rota.Clients'
 
 Kullanıcı parolaları ASP.NET Core `PasswordHasher<TUser>` ile hashlenir. E-posta lookup'u
 normalize edilmiş unique index üzerinden yapılır. API hiçbir yanıtta hash döndürmez.
+
+Development/Compose ortamında admin bootstrap yalnız `AdminBootstrap:Enabled=true` iken
+çalışır ve aynı e-posta için tekrarlı hesap oluşturmaz. Production varsayılanı kapalıdır.
+Rol yönetimi, işlem yapan admin'in kendi yetkisini kaldırmasını ve son aktif admin'in devre
+dışı bırakılmasını engeller.
+
+Register/Login kullanıcı/IP başına dakikada 10 istekle sınırlıdır; global API limiti dakikada
+120 istektir. Aşım standart `429 RATE_LIMIT_EXCEEDED` problem yanıtı üretir.
 
 ## Swagger
 

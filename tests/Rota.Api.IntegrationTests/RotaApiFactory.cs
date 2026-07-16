@@ -41,6 +41,7 @@ public sealed class RotaApiFactory : WebApplicationFactory<Program>, IAsyncLifet
         builder.UseSetting("FastApi:BaseUrl", "http://127.0.0.1:1");
         builder.UseSetting("FastApi:RecommendationPath", "/api/v1/recommendations/generate");
         builder.UseSetting("FastApi:TimeoutMilliseconds", "500");
+        builder.UseSetting("FastApi:ServiceApiKey", "rota-integration-fastapi-service-key-2026");
         builder.UseSetting("RecommendationWorker:PollIntervalMilliseconds", "50");
         builder.UseSetting("RecommendationWorker:LeaseSeconds", "5");
         builder.UseSetting("RecommendationWorker:MaxAttempts", "3");

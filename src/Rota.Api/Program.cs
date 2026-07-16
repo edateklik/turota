@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
+using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.RateLimiting;
 using Rota.Modules.Discovery.Infrastructure;
 using Rota.Modules.Discovery.Infrastructure.Persistence;
 using Rota.Modules.Discovery.Infrastructure.Quality;
@@ -31,6 +33,43 @@ builder.Services.AddCors(options => options.AddPolicy("Frontend", policy =>
     if (allowedOrigins.Length > 0)
         policy.WithOrigins(allowedOrigins).AllowAnyHeader().AllowAnyMethod().AllowCredentials();
 }));
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            context.User.FindFirst("sub")?.Value
+            ?? context.Connection.RemoteIpAddress?.ToString()
+            ?? "anonymous",
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 120,
+                Window = TimeSpan.FromMinutes(1),
+                QueueLimit = 0,
+                AutoReplenishment = true
+            }));
+    options.AddFixedWindowLimiter("authentication", limiter =>
+    {
+        limiter.PermitLimit = 10;
+        limiter.Window = TimeSpan.FromMinutes(1);
+        limiter.QueueLimit = 0;
+        limiter.AutoReplenishment = true;
+    });
+    options.AddFixedWindowLimiter("recommendation", limiter =>
+    {
+        limiter.PermitLimit = 20;
+        limiter.Window = TimeSpan.FromMinutes(1);
+        limiter.QueueLimit = 0;
+        limiter.AutoReplenishment = true;
+    });
+    options.AddFixedWindowLimiter("admin-simulation", limiter =>
+    {
+        limiter.PermitLimit = 10;
+        limiter.Window = TimeSpan.FromMinutes(1);
+        limiter.QueueLimit = 0;
+        limiter.AutoReplenishment = true;
+    });
+});
 builder.Services.AddHealthChecks();
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
@@ -77,6 +116,7 @@ app.UseStatusCodePages(async statusCodeContext =>
         StatusCodes.Status401Unauthorized => ("Kimlik doğrulama gerekli", "UNAUTHORIZED"),
         StatusCodes.Status403Forbidden => ("Bu işlem için yetkiniz yok", "FORBIDDEN"),
         StatusCodes.Status404NotFound => ("Kaynak bulunamadı", "ROUTE_NOT_FOUND"),
+        StatusCodes.Status429TooManyRequests => ("Çok fazla istek gönderildi", "RATE_LIMIT_EXCEEDED"),
         _ => ("İstek tamamlanamadı", "HTTP_ERROR")
     };
     var problem = new ApiProblemDetails
@@ -116,6 +156,7 @@ if (app.Configuration.GetValue<bool>("Database:ApplyMigrationsOnStartup"))
 
 app.UseCors("Frontend");
 app.UseAuthentication();
+app.UseRateLimiter();
 app.UseAuthorization();
 app.MapGet("/api/discovery/data-quality", async (
     DiscoveryDataQualityService qualityService,
@@ -125,7 +166,7 @@ app.MapGet("/api/discovery/data-quality", async (
     return report.IsHealthy ? Results.Ok(report) : Results.Json(report, statusCode: StatusCodes.Status503ServiceUnavailable);
 });
 
-app.MapHealthChecks("/health");
+app.MapHealthChecks("/health").DisableRateLimiting();
 app.MapDiscoveryEndpoints();
 app.MapIdentityEndpoints();
 app.MapRecommendationEndpoints();

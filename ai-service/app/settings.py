@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     )
     catalog_cache_seconds: int = Field(default=30, ge=0, le=300)
     model_version: str = "content-based-xai-v1"
+    service_api_key: str = "rota-development-fastapi-service-key-change-me-2026"
 
 
 settings = Settings()

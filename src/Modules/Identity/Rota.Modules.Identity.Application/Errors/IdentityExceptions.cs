@@ -14,3 +14,5 @@ public sealed class InactiveUserException : Exception
 {
     public InactiveUserException() : base("Kullanıcı hesabı aktif değil.") { }
 }
+
+public sealed class IdentityConflictException(string message) : Exception(message);

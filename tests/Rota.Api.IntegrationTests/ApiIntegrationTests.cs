@@ -70,6 +70,22 @@ public sealed class ApiIntegrationTests(RotaApiFactory factory) : IClassFixture<
         });
         var login = await loginResponse.Content.ReadFromJsonAsync<JsonElement>();
         var adminToken = login.GetProperty("accessToken").GetString()!;
+        var adminUserId = login.GetProperty("user").GetProperty("id").GetGuid();
+
+        using var usersResponse = await SendAuthorizedAsync(HttpMethod.Get, "/api/admin/users?page=1&pageSize=20", adminToken);
+        var users = await usersResponse.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(HttpStatusCode.OK, usersResponse.StatusCode);
+        Assert.True(users.GetProperty("totalCount").GetInt32() >= 1);
+
+        using var selfDemotionRequest = new HttpRequestMessage(
+            HttpMethod.Put,
+            $"/api/admin/users/{adminUserId}/access")
+        {
+            Content = JsonContent.Create(new { role = "User", isActive = false })
+        };
+        selfDemotionRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", adminToken);
+        using var selfDemotionResponse = await _client.SendAsync(selfDemotionRequest);
+        Assert.Equal(HttpStatusCode.Conflict, selfDemotionResponse.StatusCode);
 
         using var dashboardResponse = await SendAuthorizedAsync(HttpMethod.Get, "/api/admin/dashboard", adminToken);
         var dashboard = await dashboardResponse.Content.ReadFromJsonAsync<JsonElement>();

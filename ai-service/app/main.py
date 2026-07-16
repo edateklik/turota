@@ -1,4 +1,5 @@
 from contextlib import asynccontextmanager
+import hmac
 from typing import Annotated, AsyncIterator
 
 import asyncpg
@@ -64,7 +65,10 @@ async def generate_recommendation(
     repository: Annotated[DiscoveryCatalogRepository, Depends(get_repository)],
     recommender: Annotated[ExplainableRecommender, Depends(get_recommender)],
     correlation_id: Annotated[str | None, Header(alias="X-Correlation-ID")] = None,
+    service_key: Annotated[str | None, Header(alias="X-Service-Key")] = None,
 ) -> RecommendationResponse:
+    if service_key is None or not hmac.compare_digest(service_key, settings.service_api_key):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid service credentials")
     if correlation_id != payload.correlation_id:
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Correlation ID mismatch")
     catalog = await repository.get_places()

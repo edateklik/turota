@@ -26,6 +26,10 @@ docker compose up -d --build
 Servis dokümantasyonu `http://localhost:8000/docs`, liveness `/health/live`, veritabanı
 readiness `/health/ready` adresindedir.
 
+Recommendation endpoint'i `X-Service-Key` ister. Anahtar `SERVICE_API_KEY` environment
+değişkeninden gelir ve ASP.NET `FastApi__ServiceApiKey` değeriyle aynı olmalıdır. Health
+endpointleri servis anahtarı istemez.
+
 Yalnız Python servisi:
 
 ```bash

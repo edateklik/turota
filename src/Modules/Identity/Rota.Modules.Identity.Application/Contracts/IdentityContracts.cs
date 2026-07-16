@@ -78,3 +78,34 @@ public interface IJwtTokenService
 {
     AuthResponse CreateToken(User user);
 }
+
+public sealed record AdminUserResponse(
+    Guid Id,
+    string Email,
+    string FirstName,
+    string LastName,
+    UserRole Role,
+    bool IsActive,
+    DateTimeOffset CreatedAt);
+
+public sealed record AdminUserPageResponse(
+    IReadOnlyList<AdminUserResponse> Items,
+    int Page,
+    int PageSize,
+    int TotalCount);
+
+public sealed class UpdateUserAccessRequest
+{
+    public UserRole Role { get; init; }
+    public bool IsActive { get; init; } = true;
+}
+
+public interface IAdminIdentityService
+{
+    Task<AdminUserPageResponse> GetPageAsync(int page, int pageSize, CancellationToken cancellationToken = default);
+    Task<AdminUserResponse> UpdateAccessAsync(
+        Guid actingAdminId,
+        Guid userId,
+        UpdateUserAccessRequest request,
+        CancellationToken cancellationToken = default);
+}

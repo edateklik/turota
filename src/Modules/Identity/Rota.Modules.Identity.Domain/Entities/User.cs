@@ -36,4 +36,5 @@ public sealed class User
     public void SetPasswordHash(string passwordHash) => PasswordHash = passwordHash;
     public void ChangeRole(UserRole role) => Role = role;
     public void Deactivate() => IsActive = false;
+    public void Activate() => IsActive = true;
 }

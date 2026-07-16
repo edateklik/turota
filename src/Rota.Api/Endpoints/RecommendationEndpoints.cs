@@ -27,6 +27,7 @@ public static class RecommendationEndpoints
                     cancellationToken);
                 return Results.Accepted(result.StatusUrl, result);
             })
+            .RequireRateLimiting("recommendation")
             .AddEndpointFilter<DataAnnotationsValidationFilter<GenerateRecommendationRequest>>()
             .WithName("GenerateRecommendation")
             .WithSummary("Asenkron AI öneri çalışması başlatır")

@@ -21,6 +21,7 @@ public static class IdentityEndpoints
                 return Results.Created($"/api/identity/users/{response.User.Id}", response);
             })
             .AllowAnonymous()
+            .RequireRateLimiting("authentication")
             .AddEndpointFilter<DataAnnotationsValidationFilter<RegisterRequest>>()
             .WithName("Register")
             .WithSummary("Yeni kullanıcı hesabı oluşturur")
@@ -38,6 +39,7 @@ public static class IdentityEndpoints
                 return Results.Ok(response);
             })
             .AllowAnonymous()
+            .RequireRateLimiting("authentication")
             .AddEndpointFilter<DataAnnotationsValidationFilter<LoginRequest>>()
             .WithName("Login")
             .WithSummary("E-posta ve parola ile oturum açar")

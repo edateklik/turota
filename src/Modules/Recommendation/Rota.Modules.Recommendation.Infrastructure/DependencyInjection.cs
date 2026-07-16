@@ -55,6 +55,7 @@ public static class DependencyInjection
             client.BaseAddress = new Uri(fastApiOptions.BaseUrl, UriKind.Absolute);
             client.Timeout = TimeSpan.FromMilliseconds(fastApiOptions.TimeoutMilliseconds);
             client.DefaultRequestHeaders.UserAgent.ParseAdd("Rota-Api/1.0");
+            client.DefaultRequestHeaders.Add("X-Service-Key", fastApiOptions.ServiceApiKey);
         });
         return services;
     }
@@ -67,6 +68,8 @@ public static class DependencyInjection
             throw new InvalidOperationException("FastApi:RecommendationPath '/' ile başlayan bir yol olmalıdır.");
         if (options.TimeoutMilliseconds is < 250 or > 1_800)
             throw new InvalidOperationException("FastApi timeout 250-1800 ms aralığında olmalıdır.");
+        if (options.ServiceApiKey.Length < 32)
+            throw new InvalidOperationException("FastApi:ServiceApiKey en az 32 karakter olmalıdır.");
     }
 
     private static void Validate(RecommendationWorkerOptions options)

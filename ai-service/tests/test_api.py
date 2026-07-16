@@ -63,7 +63,10 @@ def test_generate_matches_dotnet_contract() -> None:
         response = client.post(
             "/api/v1/recommendations/generate",
             json=payload(),
-            headers={"X-Correlation-ID": "contract-test"},
+            headers={
+                "X-Correlation-ID": "contract-test",
+                "X-Service-Key": "rota-development-fastapi-service-key-change-me-2026",
+            },
         )
 
     assert response.status_code == 200
@@ -79,7 +82,21 @@ def test_generate_rejects_correlation_mismatch() -> None:
         response = client.post(
             "/api/v1/recommendations/generate",
             json=payload(),
-            headers={"X-Correlation-ID": "different"},
+            headers={
+                "X-Correlation-ID": "different",
+                "X-Service-Key": "rota-development-fastapi-service-key-change-me-2026",
+            },
         )
 
     assert response.status_code == 422
+
+
+def test_generate_rejects_missing_service_key() -> None:
+    with TestClient(app) as client:
+        response = client.post(
+            "/api/v1/recommendations/generate",
+            json=payload(),
+            headers={"X-Correlation-ID": "contract-test"},
+        )
+
+    assert response.status_code == 401

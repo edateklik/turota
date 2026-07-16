@@ -25,6 +25,8 @@ public static class DependencyInjection
         var jwtOptions = configuration.GetRequiredSection(JwtOptions.SectionName).Get<JwtOptions>()
             ?? throw new InvalidOperationException("Jwt yapılandırması bulunamadı.");
         ValidateJwtOptions(jwtOptions);
+        var adminBootstrapOptions = configuration.GetSection(AdminBootstrapOptions.SectionName)
+            .Get<AdminBootstrapOptions>() ?? new AdminBootstrapOptions();
 
         services.AddOptions<JwtOptions>()
             .Bind(configuration.GetRequiredSection(JwtOptions.SectionName))
@@ -42,6 +44,9 @@ public static class DependencyInjection
         services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
         services.AddScoped<IJwtTokenService, JwtTokenService>();
         services.AddScoped<IIdentityService, IdentityService>();
+        services.AddScoped<IAdminIdentityService, AdminIdentityService>();
+        services.AddSingleton(adminBootstrapOptions);
+        services.AddHostedService<AdminBootstrapHostedService>();
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>

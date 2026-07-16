@@ -49,6 +49,7 @@ Sürümler `Directory.Packages.props` içinde merkezi olarak yönetilir.
 Tüm backend için tek gereksinim Docker Desktop/Engine'dir:
 
 ```bash
+cp .env.example .env
 docker compose up -d --build --wait
 ```
 
@@ -60,6 +61,10 @@ API / Swagger : http://localhost:5121/swagger
 FastAPI Docs  : http://localhost:8000/docs
 PostgreSQL    : localhost:5432
 ```
+
+Development admin hesabı `.env` içindeki `ROTA_ADMIN_EMAIL` ve `ROTA_ADMIN_PASSWORD`
+değerleriyle ilk açılışta idempotent oluşturulur. Production'da bootstrap varsayılan olarak
+kapalıdır ve secret değerleri deployment platformundan verilmelidir.
 
 Container'ları durdurmak için `docker compose down`, veritabanı volume'unu da silmek için
 bilinçli olarak `docker compose down -v` kullanılır.
@@ -144,6 +149,15 @@ POST /api/admin/places/feature-vectors/rebuild
 
 Admin endpointleri JWT `Admin` policy ile korunur.
 
+Kullanıcı rol/erişim yönetimi:
+
+```text
+GET /api/admin/users?page=1&pageSize=20
+PUT /api/admin/users/{userId}/access
+```
+
+Bir admin kendi yetkisini kaldıramaz ve sistem son aktif admin'in devre dışı bırakılmasına izin vermez.
+
 Admin dashboard ve kayıt oluşturmayan öneri simülasyonu:
 
 ```text
@@ -160,6 +174,14 @@ JWT korumalı hub endpoint'i `GET/POST /hubs/notification` yolundadır. Öneri i
 tamamlandığında `RecommendationCompleted`, başarısız olduğunda `RecommendationFailed`
 event'i yalnız JWT `sub` değerindeki kullanıcıya gönderilir. SignalR endpoint'leri Swagger'a
 girmediği için taşıma ve payload sözleşmeleri `docs/realtime.md` içinde tutulur.
+
+## Güvenlik sınırları
+
+- Tüm API için kullanıcı/IP başına dakikada 120 istek global limit uygulanır.
+- Register/Login dakikada 10, Recommendation dakikada 20, Admin simülasyonu dakikada 10 istekle sınırlıdır.
+- Limit aşımı `429 RATE_LIMIT_EXCEEDED` problem yanıtı döndürür.
+- ASP.NET → FastAPI çağrıları `X-Service-Key` ile doğrulanır; karşılaştırma sabit-zamanlıdır.
+- `.env` git tarafından dışlanır; yalnız güvenli olmayan development örneği `.env.example` olarak tutulur.
 
 ## Asenkron öneri akışı
 

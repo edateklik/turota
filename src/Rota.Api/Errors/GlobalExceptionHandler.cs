@@ -51,6 +51,7 @@ public sealed class GlobalExceptionHandler(
         UnauthorizedAccessException => new(401, "Yetkisiz istek", "UNAUTHORIZED", true),
         InactiveUserException => new(403, "Hesap aktif değil", "USER_INACTIVE", true),
         EmailAlreadyExistsException => new(409, "E-posta zaten kayıtlı", "EMAIL_ALREADY_EXISTS", true),
+        IdentityConflictException => new(409, "Kimlik erişimi çakışıyor", "IDENTITY_CONFLICT", true),
         TripStateConflictException => new(409, "Rota durumu çakışıyor", "TRIP_STATE_CONFLICT", true),
         AiContractException integration => new(502, "AI yanıtı geçersiz", integration.ErrorCode, true),
         AiServiceUnavailableException integration => new(503, "AI servisi kullanılamıyor", integration.ErrorCode, true),

@@ -4,7 +4,7 @@ services:
     environment:
       POSTGRES_DB: rota
       POSTGRES_USER: rota
-      POSTGRES_PASSWORD: rota_dev_password
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in .env}
     ports:
       - "5432:5432"
     volumes:
@@ -20,7 +20,8 @@ services:
       context: ./ai-service
       target: runtime
     environment:
-      DATABASE_URL: postgresql://rota:rota_dev_password@postgres:5432/rota
+      DATABASE_URL: postgresql://rota:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in .env}@postgres:5432/rota
+      SERVICE_API_KEY: ${FASTAPI_SERVICE_KEY:?FASTAPI_SERVICE_KEY must be set in .env}
       CATALOG_CACHE_SECONDS: 30
       MODEL_VERSION: content-based-xai-v1
     ports:
@@ -42,18 +43,24 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_HTTP_PORTS: 8080
-      ConnectionStrings__DiscoveryDb: Host=postgres;Port=5432;Database=rota;Username=rota;Password=rota_dev_password;Pooling=true;Maximum Pool Size=100
-      ConnectionStrings__IdentityDb: Host=postgres;Port=5432;Database=rota;Username=rota;Password=rota_dev_password;Pooling=true;Maximum Pool Size=100
-      ConnectionStrings__RecommendationDb: Host=postgres;Port=5432;Database=rota;Username=rota;Password=rota_dev_password;Pooling=true;Maximum Pool Size=100
-      ConnectionStrings__TripDb: Host=postgres;Port=5432;Database=rota;Username=rota;Password=rota_dev_password;Pooling=true;Maximum Pool Size=100
-      ConnectionStrings__AdministrationReadDb: Host=postgres;Port=5432;Database=rota;Username=rota;Password=rota_dev_password;Pooling=true;Maximum Pool Size=20
+      ConnectionStrings__DiscoveryDb: Host=postgres;Port=5432;Database=rota;Username=rota;Password=${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in .env};Pooling=true;Maximum Pool Size=100
+      ConnectionStrings__IdentityDb: Host=postgres;Port=5432;Database=rota;Username=rota;Password=${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in .env};Pooling=true;Maximum Pool Size=100
+      ConnectionStrings__RecommendationDb: Host=postgres;Port=5432;Database=rota;Username=rota;Password=${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in .env};Pooling=true;Maximum Pool Size=100
+      ConnectionStrings__TripDb: Host=postgres;Port=5432;Database=rota;Username=rota;Password=${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in .env};Pooling=true;Maximum Pool Size=100
+      ConnectionStrings__AdministrationReadDb: Host=postgres;Port=5432;Database=rota;Username=rota;Password=${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in .env};Pooling=true;Maximum Pool Size=20
       FastApi__BaseUrl: http://ai-recommendation:8000
       FastApi__RecommendationPath: /api/v1/recommendations/generate
       FastApi__TimeoutMilliseconds: 1500
+      FastApi__ServiceApiKey: ${FASTAPI_SERVICE_KEY:?FASTAPI_SERVICE_KEY must be set in .env}
       Jwt__Issuer: Rota.Api
       Jwt__Audience: Rota.Clients
-      Jwt__SigningKey: rota-compose-development-signing-key-change-me-2026
+      Jwt__SigningKey: ${JWT_SIGNING_KEY:?JWT_SIGNING_KEY must be set in .env}
       Jwt__ExpirationMinutes: 60
+      AdminBootstrap__Enabled: "true"
+      AdminBootstrap__Email: ${ROTA_ADMIN_EMAIL:-admin@rota.local}
+      AdminBootstrap__Password: ${ROTA_ADMIN_PASSWORD:?ROTA_ADMIN_PASSWORD must be set in .env}
+      AdminBootstrap__FirstName: Rota
+      AdminBootstrap__LastName: Admin
       Database__ApplyMigrationsOnStartup: "true"
       Cors__AllowedOrigins__0: http://localhost:3000
       Cors__AllowedOrigins__1: http://localhost:5173
