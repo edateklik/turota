@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Rota.Modules.Identity.Application.Errors;
 using Rota.Modules.Recommendation.Application.Errors;
+using Rota.Modules.Trip.Application.Errors;
 
 namespace Rota.Api.Errors;
 
@@ -50,6 +51,7 @@ public sealed class GlobalExceptionHandler(
         UnauthorizedAccessException => new(401, "Yetkisiz istek", "UNAUTHORIZED", true),
         InactiveUserException => new(403, "Hesap aktif değil", "USER_INACTIVE", true),
         EmailAlreadyExistsException => new(409, "E-posta zaten kayıtlı", "EMAIL_ALREADY_EXISTS", true),
+        TripStateConflictException => new(409, "Rota durumu çakışıyor", "TRIP_STATE_CONFLICT", true),
         AiContractException integration => new(502, "AI yanıtı geçersiz", integration.ErrorCode, true),
         AiServiceUnavailableException integration => new(503, "AI servisi kullanılamıyor", integration.ErrorCode, true),
         AiServiceTimeoutException integration => new(504, "AI servisi zaman aşımı", integration.ErrorCode, true),

@@ -3,7 +3,7 @@
 ASP.NET Core 8 ve PostgreSQL/PostGIS tabanlı layered modular monolith başlangıç yapısı.
 `Discovery`; şehir, mahalle, mekan, kategori ve etiket verisini, `Identity`; User,
 TasteProfile ve JWT akışını, `Recommendation`; FastAPI orchestration'ını, `Realtime` ise
-kullanıcıya özel SignalR bildirimlerini yönetir.
+kullanıcıya özel SignalR bildirimlerini, `Trip` kalıcı günlük rota ve Timeline'ı yönetir.
 
 ## Mimari
 
@@ -14,7 +14,8 @@ src/
     ├── Discovery/               # PostGIS, spatial query, admin CRUD
     ├── Identity/                # User, TasteProfile, JWT ve roller
     ├── Recommendation/          # FastAPI client, orchestration, persistence
-    └── Realtime/                # SignalR hub ve event publisher
+    ├── Trip/                    # Günlük rota, Timeline ve durum geçişleri
+    └── Realtime/                # SignalR hub ve event handler
 ```
 
 Ayrıntılı hedef solution yapısı ve bağımlılık kuralları için
@@ -24,6 +25,7 @@ FastAPI sözleşmesi ve hata matrisi için
 [`docs/recommendation-integration.md`](docs/recommendation-integration.md) dosyasına bakın.
 SignalR event sözleşmesi ve frontend bağlantı örneği için
 [`docs/realtime.md`](docs/realtime.md) dosyasına bakın.
+Trip/Timeline sözleşmesi için [`docs/trip.md`](docs/trip.md) dosyasına bakın.
 
 Veritabanı nesneleri modül izolasyonu için `discovery` şemasındadır. Mahalle sınırı
 `geometry(MultiPolygon,4326)`, mekan konumu `geometry(Point,4326)` olarak tutulur.
@@ -64,6 +66,7 @@ pipeline'ında uygulanmalıdır. Bağlantı bilgisi secret/environment ile ezile
 export ConnectionStrings__DiscoveryDb='Host=localhost;Port=5432;Database=rota;Username=rota;Password=...'
 export ConnectionStrings__IdentityDb="$ConnectionStrings__DiscoveryDb"
 export ConnectionStrings__RecommendationDb="$ConnectionStrings__DiscoveryDb"
+export ConnectionStrings__TripDb="$ConnectionStrings__DiscoveryDb"
 export Jwt__SigningKey='en-az-32-byte-guvenli-secret'
 export FastApi__BaseUrl='http://localhost:8000'
 export Cors__AllowedOrigins__0='https://app.example.com'
@@ -141,6 +144,19 @@ Terminal job durumu ve SignalR eventi aynı transaction'da `recommendation.outbo
 tablosuna yazılır. Outbox dispatcher geçici yayın hatalarını yeniden dener; işlenen mesajlar yedi
 gün saklanır. Teslimat at-least-once olduğu için frontend `runId` ile duplicate event'leri eler.
 
+Tamamlanma olayı SignalR ve Trip tüketicilerine dağıtılır. Trip tüketicisi aynı `runId` için
+idempotenttir; AI Timeline verisini doğrular, Discovery'den mekan koordinatlarını alır ve
+`trip` şemasına harita snapshot'ıyla kaydeder.
+
+## Trip REST API
+
+```text
+GET  /api/trips?page=1&pageSize=20
+GET  /api/trips/{tripId}
+POST /api/trips/{tripId}/cancel
+POST /api/trips/{tripId}/complete
+```
+
 ## Testler
 
 Unit testler ve gerçek `postgis/postgis:16-3.4-alpine` Testcontainer kullanan API integration
@@ -151,7 +167,8 @@ dotnet test Rota.sln
 ```
 
 Integration testleri migration, seed kalitesi, gerçek spatial sıralama, JWT/admin koruması,
-`202` süresi, background completion ve retry/failure durumlarını doğrular.
+`202` süresi, background completion, retry/failure, idempotent Trip üretimi, koordinat snapshot'ı
+ve rota durum geçişlerini doğrular.
 
 Doğrudan SQL ile kontrol:
 

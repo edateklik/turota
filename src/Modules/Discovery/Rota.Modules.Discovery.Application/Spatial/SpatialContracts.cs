@@ -16,6 +16,15 @@ public sealed record SpatialNeighborhoodResult(
     Guid CityId,
     double DistanceMeters);
 
+public sealed record PlaceLocationResult(Guid Id, double Longitude, double Latitude);
+
+public interface IPlaceLocationReader
+{
+    Task<IReadOnlyDictionary<Guid, PlaceLocationResult>> GetByIdsAsync(
+        IReadOnlyCollection<Guid> placeIds,
+        CancellationToken cancellationToken = default);
+}
+
 public interface ISpatialPlaceRepository
 {
     Task<IReadOnlyList<SpatialPlaceResult>> GetInsideNeighborhoodAsync(

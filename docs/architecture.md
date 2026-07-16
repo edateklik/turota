@@ -24,6 +24,9 @@ Rota.sln
 │       │   ├── Rota.Modules.Identity.Application/
 │       │   └── Rota.Modules.Identity.Infrastructure/
 │       ├── Trip/                                  # Timeline/günlük rota sınırı
+│       │   ├── Rota.Modules.Trip.Domain/
+│       │   ├── Rota.Modules.Trip.Application/
+│       │   └── Rota.Modules.Trip.Infrastructure/
 │       ├── Recommendation/                        # FastAPI orchestration ve kalıcılık
 │       │   ├── Rota.Modules.Recommendation.Domain/
 │       │   ├── Rota.Modules.Recommendation.Application/
@@ -51,9 +54,10 @@ Rota.Api ──► Module.Application ──► Module.Domain
 - API yalnızca modül kaydı ve REST endpointlerini birleştirir.
 - Modüller başka bir modülün `Infrastructure` katmanına doğrudan referans vermez.
 
-Recommendation Application, altyapıdan bağımsız `IRecommendationEventPublisher` portunu
-tanımlar. Realtime Infrastructure bu portu SignalR ile uygular; böylece Recommendation
-modülü Hub veya WebSocket ayrıntılarını bilmez.
+Recommendation Application, altyapıdan bağımsız event publisher/handler portlarını tanımlar.
+Recommendation Infrastructure outbox olayını kayıtlı handler'lara dağıtır. Realtime handler'ı
+SignalR bildirimi gönderir, Trip handler'ı günlük rotayı idempotent oluşturur; Recommendation
+modülü Hub, WebSocket veya Trip kalıcılığı ayrıntılarını bilmez.
 
 Recommendation üretimi HTTP request'ten ayrılmıştır. API `Pending` kaydı oluşturup `202`
 döndürür; background worker PostgreSQL kuyruğunu `FOR UPDATE SKIP LOCKED` ile claim eder.
@@ -61,7 +65,7 @@ döndürür; background worker PostgreSQL kuyruğunu `FOR UPDATE SKIP LOCKED` il
 instance'ında aynı job'ın eşzamanlı işlenmesini engeller.
 
 Recommendation sonucu ile entegrasyon eventi aynı PostgreSQL transaction'ında Outbox'a yazılır.
-Ayrı dispatcher event'i SignalR publisher'a iletir ve ardından `Processed` işaretler. Böylece
+Ayrı dispatcher event'i SignalR ve Trip handler'larına iletir ve ardından `Processed` işaretler. Böylece
 DB commit sonrası process kapanması event kaybına yol açmaz. Teslimat at-least-once olduğu için
 istemciler `runId` ile duplicate event'leri etkisizleştirir.
 

@@ -44,6 +44,7 @@ public static class DependencyInjection
         services.AddScoped<RecommendationOutboxWriter>();
         services.AddScoped<RecommendationOutboxStore>();
         services.AddScoped<RecommendationOutboxDispatcher>();
+        services.AddScoped<IRecommendationEventPublisher, CompositeRecommendationEventPublisher>();
         services.AddSingleton(fastApiOptions);
         services.AddSingleton(workerOptions);
         services.AddSingleton(outboxOptions);

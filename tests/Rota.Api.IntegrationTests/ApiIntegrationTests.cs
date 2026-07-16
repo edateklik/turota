@@ -93,6 +93,27 @@ public sealed class ApiIntegrationTests(RotaApiFactory factory) : IClassFixture<
         var outbox = await WaitForProcessedOutboxAsync(runId);
         Assert.Equal("recommendation.completed.v1", outbox.Type);
         Assert.Equal(2, outbox.AttemptCount);
+
+        using var tripsResponse = await SendAuthorizedAsync(HttpMethod.Get, "/api/trips?page=1&pageSize=20", accessToken!);
+        var trips = await tripsResponse.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(HttpStatusCode.OK, tripsResponse.StatusCode);
+        Assert.Equal(1, trips.GetProperty("totalCount").GetInt32());
+        var tripId = trips.GetProperty("items")[0].GetProperty("id").GetGuid();
+
+        using var tripResponse = await SendAuthorizedAsync(HttpMethod.Get, $"/api/trips/{tripId}", accessToken!);
+        var trip = await tripResponse.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(runId, trip.GetProperty("sourceRecommendationRunId").GetGuid());
+        Assert.Equal("Planned", trip.GetProperty("status").GetString());
+        Assert.Equal(29.0257, trip.GetProperty("stops")[0].GetProperty("longitude").GetDouble(), 4);
+        Assert.Equal(40.9848, trip.GetProperty("stops")[0].GetProperty("latitude").GetDouble(), 4);
+
+        using var cancelResponse = await SendAuthorizedAsync(HttpMethod.Post, $"/api/trips/{tripId}/cancel", accessToken!);
+        var cancelled = await cancelResponse.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(HttpStatusCode.OK, cancelResponse.StatusCode);
+        Assert.Equal("Cancelled", cancelled.GetProperty("status").GetString());
+
+        using var secondCancelResponse = await SendAuthorizedAsync(HttpMethod.Post, $"/api/trips/{tripId}/cancel", accessToken!);
+        Assert.Equal(HttpStatusCode.Conflict, secondCancelResponse.StatusCode);
     }
 
     [Fact]
@@ -134,6 +155,13 @@ public sealed class ApiIntegrationTests(RotaApiFactory factory) : IClassFixture<
         var registration = await response.Content.ReadFromJsonAsync<JsonElement>();
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         return registration.GetProperty("accessToken").GetString()!;
+    }
+
+    private async Task<HttpResponseMessage> SendAuthorizedAsync(HttpMethod method, string path, string accessToken)
+    {
+        var request = new HttpRequestMessage(method, path);
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+        return await _client.SendAsync(request);
     }
 
     private async Task<JsonElement> WaitForTerminalRunAsync(Guid runId, string accessToken)

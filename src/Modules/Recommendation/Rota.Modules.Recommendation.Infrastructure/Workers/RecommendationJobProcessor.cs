@@ -54,8 +54,17 @@ public sealed class RecommendationJobProcessor(
                 run.UserId,
                 run.Id,
                 run.TripDate,
+                run.AvailableMinutes,
                 run.NeighborhoodId!.Value,
                 run.RegionName!,
+                run.OverallExplanation!,
+                run.Timeline.OrderBy(x => x.Sequence).Select(x => new RecommendationTimelineEventItem(
+                    x.Sequence,
+                    x.PlaceId,
+                    x.PlaceName,
+                    x.StartTime,
+                    x.DurationMinutes,
+                    x.Explanation)).ToList(),
                 run.CompletedAt!.Value));
             await repository.SaveChangesAsync(cancellationToken);
         }

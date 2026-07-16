@@ -30,7 +30,9 @@ public static class DependencyInjection
                 npgsql.CommandTimeout(2);
             }));
         services.AddScoped<DiscoveryDataQualityService>();
-        services.AddScoped<ISpatialPlaceRepository, PostGisSpatialPlaceRepository>();
+        services.AddScoped<PostGisSpatialPlaceRepository>();
+        services.AddScoped<ISpatialPlaceRepository>(provider => provider.GetRequiredService<PostGisSpatialPlaceRepository>());
+        services.AddScoped<IPlaceLocationReader>(provider => provider.GetRequiredService<PostGisSpatialPlaceRepository>());
         services.AddScoped<IPlaceDiscoveryService, PlaceDiscoveryService>();
         services.AddScoped<ICityAdminService, CityAdminService>();
         services.AddScoped<INeighborhoodAdminService, NeighborhoodAdminService>();

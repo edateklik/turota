@@ -6,6 +6,8 @@
     <ProjectReference Include="../Modules/Recommendation/Rota.Modules.Recommendation.Infrastructure/Rota.Modules.Recommendation.Infrastructure.csproj" />
     <ProjectReference Include="../Modules/Realtime/Rota.Modules.Realtime.Application/Rota.Modules.Realtime.Application.csproj" />
     <ProjectReference Include="../Modules/Realtime/Rota.Modules.Realtime.Infrastructure/Rota.Modules.Realtime.Infrastructure.csproj" />
+    <ProjectReference Include="../Modules/Trip/Rota.Modules.Trip.Application/Rota.Modules.Trip.Application.csproj" />
+    <ProjectReference Include="../Modules/Trip/Rota.Modules.Trip.Infrastructure/Rota.Modules.Trip.Infrastructure.csproj" />
     <ProjectReference Include="../Modules/Discovery/Rota.Modules.Discovery.Application/Rota.Modules.Discovery.Application.csproj" />
     <ProjectReference Include="../Modules/Discovery/Rota.Modules.Discovery.Infrastructure/Rota.Modules.Discovery.Infrastructure.csproj" />
   </ItemGroup>

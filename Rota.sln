@@ -31,6 +31,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rota.Modules.Recommendation
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rota.Api.IntegrationTests", "tests/Rota.Api.IntegrationTests/Rota.Api.IntegrationTests.csproj", "{D1A44417-74D7-49B4-B255-0C135C58EE2C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rota.Modules.Trip.Domain", "src/Modules/Trip/Rota.Modules.Trip.Domain/Rota.Modules.Trip.Domain.csproj", "{A1F7C5B2-7602-4F26-9D54-33CE8231A101}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rota.Modules.Trip.Application", "src/Modules/Trip/Rota.Modules.Trip.Application/Rota.Modules.Trip.Application.csproj", "{B2A8D6C3-8713-4037-AE65-44DF9342B202}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rota.Modules.Trip.Infrastructure", "src/Modules/Trip/Rota.Modules.Trip.Infrastructure/Rota.Modules.Trip.Infrastructure.csproj", "{C3B9E7D4-9824-4148-BF76-55EFA453C303}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rota.Modules.Trip.UnitTests", "tests/Rota.Modules.Trip.UnitTests/Rota.Modules.Trip.UnitTests.csproj", "{D4CAF8E5-A935-4259-C087-66F0B564D404}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Trip", "Trip", "{50FA2547-A2F8-42A9-8511-B898A87E378D}"
 	ProjectSection(SolutionItems) = preProject
 		src/Modules/Trip/README.md = src/Modules/Trip/README.md
@@ -115,9 +123,29 @@ Global
 		{D1A44417-74D7-49B4-B255-0C135C58EE2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D1A44417-74D7-49B4-B255-0C135C58EE2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D1A44417-74D7-49B4-B255-0C135C58EE2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1F7C5B2-7602-4F26-9D54-33CE8231A101}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1F7C5B2-7602-4F26-9D54-33CE8231A101}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1F7C5B2-7602-4F26-9D54-33CE8231A101}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1F7C5B2-7602-4F26-9D54-33CE8231A101}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2A8D6C3-8713-4037-AE65-44DF9342B202}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2A8D6C3-8713-4037-AE65-44DF9342B202}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2A8D6C3-8713-4037-AE65-44DF9342B202}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2A8D6C3-8713-4037-AE65-44DF9342B202}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3B9E7D4-9824-4148-BF76-55EFA453C303}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3B9E7D4-9824-4148-BF76-55EFA453C303}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3B9E7D4-9824-4148-BF76-55EFA453C303}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3B9E7D4-9824-4148-BF76-55EFA453C303}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4CAF8E5-A935-4259-C087-66F0B564D404}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4CAF8E5-A935-4259-C087-66F0B564D404}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4CAF8E5-A935-4259-C087-66F0B564D404}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4CAF8E5-A935-4259-C087-66F0B564D404}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{D78319BA-82E5-4777-A719-60D960F46EB0} = {BE1178EF-3767-41F8-BD61-B68C79CFE5DF}
 		{D1A44417-74D7-49B4-B255-0C135C58EE2C} = {BE1178EF-3767-41F8-BD61-B68C79CFE5DF}
+		{A1F7C5B2-7602-4F26-9D54-33CE8231A101} = {50FA2547-A2F8-42A9-8511-B898A87E378D}
+		{B2A8D6C3-8713-4037-AE65-44DF9342B202} = {50FA2547-A2F8-42A9-8511-B898A87E378D}
+		{C3B9E7D4-9824-4148-BF76-55EFA453C303} = {50FA2547-A2F8-42A9-8511-B898A87E378D}
+		{D4CAF8E5-A935-4259-C087-66F0B564D404} = {BE1178EF-3767-41F8-BD61-B68C79CFE5DF}
 	EndGlobalSection
 EndGlobal

@@ -13,12 +13,15 @@ using Rota.Modules.Recommendation.Infrastructure;
 using Rota.Modules.Recommendation.Infrastructure.Persistence;
 using Rota.Modules.Realtime.Infrastructure;
 using Rota.Modules.Realtime.Infrastructure.Hubs;
+using Rota.Modules.Trip.Infrastructure;
+using Rota.Modules.Trip.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDiscoveryInfrastructure(builder.Configuration);
 builder.Services.AddIdentityInfrastructure(builder.Configuration);
 builder.Services.AddRecommendationInfrastructure(builder.Configuration);
+builder.Services.AddTripInfrastructure(builder.Configuration);
 builder.Services.AddRealtimeInfrastructure();
 var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
 builder.Services.AddCors(options => options.AddPolicy("Frontend", policy =>
@@ -56,6 +59,8 @@ builder.Services.AddSwaggerGen(options =>
     if (File.Exists(identityXmlPath)) options.IncludeXmlComments(identityXmlPath);
     var recommendationXmlPath = Path.Combine(AppContext.BaseDirectory, "Rota.Modules.Recommendation.Application.xml");
     if (File.Exists(recommendationXmlPath)) options.IncludeXmlComments(recommendationXmlPath);
+    var tripXmlPath = Path.Combine(AppContext.BaseDirectory, "Rota.Modules.Trip.Application.xml");
+    if (File.Exists(tripXmlPath)) options.IncludeXmlComments(tripXmlPath);
 });
 
 var app = builder.Build();
@@ -102,6 +107,7 @@ if (app.Configuration.GetValue<bool>("Database:ApplyMigrationsOnStartup"))
     await scope.ServiceProvider.GetRequiredService<DiscoveryDbContext>().Database.MigrateAsync();
     await scope.ServiceProvider.GetRequiredService<IdentityDbContext>().Database.MigrateAsync();
     await scope.ServiceProvider.GetRequiredService<RecommendationDbContext>().Database.MigrateAsync();
+    await scope.ServiceProvider.GetRequiredService<TripDbContext>().Database.MigrateAsync();
 }
 
 app.UseCors("Frontend");
@@ -119,6 +125,7 @@ app.MapHealthChecks("/health");
 app.MapDiscoveryEndpoints();
 app.MapIdentityEndpoints();
 app.MapRecommendationEndpoints();
+app.MapTripEndpoints();
 app.MapHub<NotificationHub>(NotificationHub.Route).RequireAuthorization("User");
 app.Run();
 

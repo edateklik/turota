@@ -30,6 +30,7 @@ public sealed class RotaApiFactory : WebApplicationFactory<Program>, IAsyncLifet
         builder.UseSetting("ConnectionStrings:DiscoveryDb", connectionString);
         builder.UseSetting("ConnectionStrings:IdentityDb", connectionString);
         builder.UseSetting("ConnectionStrings:RecommendationDb", connectionString);
+        builder.UseSetting("ConnectionStrings:TripDb", connectionString);
         builder.UseSetting("Database:ApplyMigrationsOnStartup", "true");
         builder.UseSetting("Jwt:Issuer", "Rota.Api.Tests");
         builder.UseSetting("Jwt:Audience", "Rota.Clients.Tests");
@@ -52,8 +53,7 @@ public sealed class RotaApiFactory : WebApplicationFactory<Program>, IAsyncLifet
         {
             services.RemoveAll<IRecommendationService>();
             services.AddSingleton<IRecommendationService, FakeRecommendationService>();
-            services.RemoveAll<IRecommendationEventPublisher>();
-            services.AddSingleton<IRecommendationEventPublisher, FlakyRecommendationEventPublisher>();
+            services.AddSingleton<IRecommendationEventHandler, FlakyRecommendationEventHandler>();
         });
     }
 
@@ -121,16 +121,16 @@ internal sealed class FakeRecommendationService : IRecommendationService
     }
 }
 
-internal sealed class FlakyRecommendationEventPublisher : IRecommendationEventPublisher
+internal sealed class FlakyRecommendationEventHandler : IRecommendationEventHandler
 {
     private readonly ConcurrentDictionary<(Guid RunId, string Type), int> _attempts = new();
 
-    public Task PublishCompletedAsync(
+    public Task HandleCompletedAsync(
         RecommendationCompletedEvent notification,
         CancellationToken cancellationToken = default) =>
         PublishAsync(notification.RunId, RecommendationOutboxTypes.Completed);
 
-    public Task PublishFailedAsync(
+    public Task HandleFailedAsync(
         RecommendationFailedEvent notification,
         CancellationToken cancellationToken = default) =>
         PublishAsync(notification.RunId, RecommendationOutboxTypes.Failed);

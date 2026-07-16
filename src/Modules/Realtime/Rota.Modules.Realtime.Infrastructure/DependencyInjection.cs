@@ -21,7 +21,7 @@ public static class DependencyInjection
             options.KeepAliveInterval = TimeSpan.FromSeconds(15);
         });
         services.AddSingleton<IUserIdProvider, SubClaimUserIdProvider>();
-        services.AddSingleton<IRecommendationEventPublisher, SignalRRecommendationEventPublisher>();
+        services.AddSingleton<IRecommendationEventHandler, SignalRRecommendationEventPublisher>();
         services.AddSingleton<IPostConfigureOptions<JwtBearerOptions>, SignalRJwtBearerPostConfigure>();
         return services;
     }

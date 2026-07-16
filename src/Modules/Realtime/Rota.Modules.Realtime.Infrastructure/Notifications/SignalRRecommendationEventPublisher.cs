@@ -6,9 +6,9 @@ using Rota.Modules.Recommendation.Application.Contracts;
 namespace Rota.Modules.Realtime.Infrastructure.Notifications;
 
 public sealed class SignalRRecommendationEventPublisher(
-    IHubContext<NotificationHub, INotificationClient> hubContext) : IRecommendationEventPublisher
+    IHubContext<NotificationHub, INotificationClient> hubContext) : IRecommendationEventHandler
 {
-    public async Task PublishCompletedAsync(
+    public async Task HandleCompletedAsync(
         RecommendationCompletedEvent notification,
         CancellationToken cancellationToken = default)
     {
@@ -21,7 +21,7 @@ public sealed class SignalRRecommendationEventPublisher(
                 notification.CompletedAt));
     }
 
-    public async Task PublishFailedAsync(
+    public async Task HandleFailedAsync(
         RecommendationFailedEvent notification,
         CancellationToken cancellationToken = default)
     {

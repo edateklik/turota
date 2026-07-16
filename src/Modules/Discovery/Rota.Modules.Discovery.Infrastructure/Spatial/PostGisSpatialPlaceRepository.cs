@@ -5,8 +5,20 @@ using Rota.Modules.Discovery.Infrastructure.Persistence;
 
 namespace Rota.Modules.Discovery.Infrastructure.Spatial;
 
-public sealed class PostGisSpatialPlaceRepository(DiscoveryDbContext dbContext) : ISpatialPlaceRepository
+public sealed class PostGisSpatialPlaceRepository(DiscoveryDbContext dbContext) : ISpatialPlaceRepository, IPlaceLocationReader
 {
+    public async Task<IReadOnlyDictionary<Guid, PlaceLocationResult>> GetByIdsAsync(
+        IReadOnlyCollection<Guid> placeIds,
+        CancellationToken cancellationToken = default)
+    {
+        if (placeIds.Count == 0) return new Dictionary<Guid, PlaceLocationResult>();
+
+        return await dbContext.Places.AsNoTracking()
+            .Where(place => placeIds.Contains(place.Id))
+            .Select(place => new PlaceLocationResult(place.Id, place.Location.X, place.Location.Y))
+            .ToDictionaryAsync(place => place.Id, cancellationToken);
+    }
+
     public async Task<IReadOnlyList<SpatialPlaceResult>> GetInsideNeighborhoodAsync(
         Guid neighborhoodId,
         CancellationToken cancellationToken = default)
