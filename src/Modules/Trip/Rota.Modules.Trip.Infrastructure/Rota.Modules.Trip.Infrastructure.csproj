@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../Rota.Modules.Trip.Domain/Rota.Modules.Trip.Domain.csproj" />
+    <ProjectReference Include="../Rota.Modules.Trip.Application/Rota.Modules.Trip.Application.csproj" />
+    <ProjectReference Include="../../Discovery/Rota.Modules.Discovery.Application/Rota.Modules.Discovery.Application.csproj" />
+    <ProjectReference Include="../../Recommendation/Rota.Modules.Recommendation.Application/Rota.Modules.Recommendation.Application.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+  </ItemGroup>
+</Project>

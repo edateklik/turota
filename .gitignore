@@ -1,0 +1,14 @@
+bin/
+obj/
+.vs/
+.idea/
+.DS_Store
+*.user
+*.suo
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+.env
+.env.*
+!.env.example

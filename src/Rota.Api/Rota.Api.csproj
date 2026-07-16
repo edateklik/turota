@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <ItemGroup>
+    <ProjectReference Include="../Modules/Administration/Rota.Modules.Administration.Application/Rota.Modules.Administration.Application.csproj" />
+    <ProjectReference Include="../Modules/Administration/Rota.Modules.Administration.Infrastructure/Rota.Modules.Administration.Infrastructure.csproj" />
+    <ProjectReference Include="../Modules/Identity/Rota.Modules.Identity.Application/Rota.Modules.Identity.Application.csproj" />
+    <ProjectReference Include="../Modules/Identity/Rota.Modules.Identity.Infrastructure/Rota.Modules.Identity.Infrastructure.csproj" />
+    <ProjectReference Include="../Modules/Recommendation/Rota.Modules.Recommendation.Application/Rota.Modules.Recommendation.Application.csproj" />
+    <ProjectReference Include="../Modules/Recommendation/Rota.Modules.Recommendation.Infrastructure/Rota.Modules.Recommendation.Infrastructure.csproj" />
+    <ProjectReference Include="../Modules/Realtime/Rota.Modules.Realtime.Application/Rota.Modules.Realtime.Application.csproj" />
+    <ProjectReference Include="../Modules/Realtime/Rota.Modules.Realtime.Infrastructure/Rota.Modules.Realtime.Infrastructure.csproj" />
+    <ProjectReference Include="../Modules/Trip/Rota.Modules.Trip.Application/Rota.Modules.Trip.Application.csproj" />
+    <ProjectReference Include="../Modules/Trip/Rota.Modules.Trip.Infrastructure/Rota.Modules.Trip.Infrastructure.csproj" />
+    <ProjectReference Include="../Modules/Discovery/Rota.Modules.Discovery.Application/Rota.Modules.Discovery.Application.csproj" />
+    <ProjectReference Include="../Modules/Discovery/Rota.Modules.Discovery.Infrastructure/Rota.Modules.Discovery.Infrastructure.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Http" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" />
+    <PackageReference Include="Swashbuckle.AspNetCore" />
+  </ItemGroup>
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+  </PropertyGroup>
+</Project>

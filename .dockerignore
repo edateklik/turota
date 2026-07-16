@@ -1,0 +1,16 @@
+.git/
+.github/
+.vs/
+.idea/
+**/bin/
+**/obj/
+**/__pycache__/
+**/.pytest_cache/
+**/.venv/
+ai-service/
+tests/
+tools/
+*.user
+*.suo
+README.md
+docs/
