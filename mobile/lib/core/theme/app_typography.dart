@@ -4,6 +4,14 @@ import 'package:turota_mobile/core/theme/app_colors.dart';
 abstract final class AppTypography {
   static const String? fontFamily = null;
 
+  static const TextStyle splashBrand = TextStyle(
+    fontSize: 30,
+    fontWeight: FontWeight.w800,
+    height: 1.2,
+    letterSpacing: 8,
+    color: AppColors.splashBrand,
+  );
+
   static const TextTheme textTheme = TextTheme(
     headlineSmall: TextStyle(
       fontSize: 24,

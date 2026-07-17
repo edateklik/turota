@@ -12,7 +12,7 @@ class TurotaApp extends StatelessWidget {
       title: AppConstants.appName,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
-      initialRoute: AppRouter.home,
+      initialRoute: AppRouter.splash,
       onGenerateRoute: AppRouter.onGenerateRoute,
     );
   }
