@@ -1,20 +1,71 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:turota_mobile/app/app.dart';
 import 'package:turota_mobile/app/router/app_router.dart';
 import 'package:turota_mobile/core/constants/app_constants.dart';
 import 'package:turota_mobile/core/theme/app_colors.dart';
 import 'package:turota_mobile/core/theme/app_theme.dart';
+import 'package:turota_mobile/features/authentication/domain/models/auth_user.dart';
+import 'package:turota_mobile/features/authentication/domain/repositories/auth_repository.dart';
 import 'package:turota_mobile/features/authentication/presentation/pages/login_page.dart';
 import 'package:turota_mobile/features/authentication/presentation/pages/register_page.dart';
+import 'package:turota_mobile/features/authentication/presentation/providers/auth_providers.dart';
 import 'package:turota_mobile/features/discover/presentation/pages/discover_page.dart';
 import 'package:turota_mobile/features/onboarding/location/presentation/pages/location_permission_page.dart';
 import 'package:turota_mobile/features/saved/presentation/pages/saved_page.dart';
 import 'package:turota_mobile/features/splash/presentation/pages/splash_page.dart';
 
+class _FakeAuthRepository implements AuthRepository {
+  @override
+  Future<String?> getStoredToken() async => 'test-token';
+
+  @override
+  Future<AuthUser> login({
+    required String email,
+    required String password,
+  }) async {
+    return AuthUser(
+      id: 'test-user',
+      email: email,
+      firstName: 'Şevval',
+      lastName: 'Test',
+      role: 'User',
+    );
+  }
+
+  @override
+  Future<void> logout() async {}
+
+  @override
+  Future<AuthUser> register({
+    required String email,
+    required String password,
+    required String firstName,
+    required String lastName,
+  }) async {
+    return AuthUser(
+      id: 'test-user',
+      email: email,
+      firstName: firstName,
+      lastName: lastName,
+      role: 'User',
+    );
+  }
+}
+
 void main() {
+  Widget withTestProviders(Widget child) {
+    return ProviderScope(
+      overrides: [
+        authRepositoryProvider.overrideWithValue(_FakeAuthRepository()),
+      ],
+      child: child,
+    );
+  }
+
   Future<void> pumpToLocationPermission(WidgetTester tester) async {
-    await tester.pumpWidget(const TurotaApp());
+    await tester.pumpWidget(withTestProviders(const TurotaApp()));
     await tester.pump(AppConstants.splashDisplayDuration);
     await tester.pumpAndSettle();
   }
@@ -33,40 +84,48 @@ void main() {
 
   Future<void> pumpLoginPage(WidgetTester tester) async {
     await tester.pumpWidget(
-      MaterialApp(
-        theme: AppTheme.light,
-        onGenerateRoute: AppRouter.onGenerateRoute,
-        home: const LoginPage(),
+      withTestProviders(
+        MaterialApp(
+          theme: AppTheme.light,
+          onGenerateRoute: AppRouter.onGenerateRoute,
+          home: const LoginPage(),
+        ),
       ),
     );
   }
 
   Future<void> pumpRegisterPage(WidgetTester tester) async {
     await tester.pumpWidget(
-      MaterialApp(
-        theme: AppTheme.light,
-        onGenerateRoute: AppRouter.onGenerateRoute,
-        home: const RegisterPage(),
+      withTestProviders(
+        MaterialApp(
+          theme: AppTheme.light,
+          onGenerateRoute: AppRouter.onGenerateRoute,
+          home: const RegisterPage(),
+        ),
       ),
     );
   }
 
   Future<void> pumpDiscoverPage(WidgetTester tester) async {
     await tester.pumpWidget(
-      MaterialApp(
-        theme: AppTheme.light,
-        onGenerateRoute: AppRouter.onGenerateRoute,
-        home: const DiscoverPage(),
+      withTestProviders(
+        MaterialApp(
+          theme: AppTheme.light,
+          onGenerateRoute: AppRouter.onGenerateRoute,
+          home: const DiscoverPage(),
+        ),
       ),
     );
   }
 
   Future<void> pumpSavedPage(WidgetTester tester) async {
     await tester.pumpWidget(
-      MaterialApp(
-        theme: AppTheme.light,
-        onGenerateRoute: AppRouter.onGenerateRoute,
-        home: const SavedPage(),
+      withTestProviders(
+        MaterialApp(
+          theme: AppTheme.light,
+          onGenerateRoute: AppRouter.onGenerateRoute,
+          home: const SavedPage(),
+        ),
       ),
     );
   }
@@ -124,7 +183,7 @@ void main() {
   }
 
   testWidgets('SplashPage is shown first', (tester) async {
-    await tester.pumpWidget(const TurotaApp());
+    await tester.pumpWidget(withTestProviders(const TurotaApp()));
 
     expect(find.byType(SplashPage), findsOneWidget);
 
@@ -133,7 +192,7 @@ void main() {
   });
 
   testWidgets('SplashPage contains the local logo asset', (tester) async {
-    await tester.pumpWidget(const TurotaApp());
+    await tester.pumpWidget(withTestProviders(const TurotaApp()));
 
     final image = tester.widget<Image>(find.byType(Image));
     expect(image.image, isA<AssetImage>());
@@ -144,7 +203,7 @@ void main() {
   });
 
   testWidgets('SplashPage uses the branded background', (tester) async {
-    await tester.pumpWidget(const TurotaApp());
+    await tester.pumpWidget(withTestProviders(const TurotaApp()));
 
     final scaffold = tester.widget<Scaffold>(find.byType(Scaffold));
     expect(scaffold.backgroundColor, AppColors.splashBackground);

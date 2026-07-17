@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:turota_mobile/app/router/app_router.dart';
 import 'package:turota_mobile/core/constants/app_constants.dart';
+import 'package:turota_mobile/core/networking/api_exception.dart';
 import 'package:turota_mobile/core/theme/app_colors.dart';
 import 'package:turota_mobile/core/theme/app_radius.dart';
 import 'package:turota_mobile/core/theme/app_spacing.dart';
@@ -8,22 +10,24 @@ import 'package:turota_mobile/core/theme/app_typography.dart';
 import 'package:turota_mobile/core/widgets/app_button.dart';
 import 'package:turota_mobile/core/widgets/app_card.dart';
 import 'package:turota_mobile/core/widgets/app_scaffold.dart';
+import 'package:turota_mobile/features/authentication/presentation/providers/auth_providers.dart';
 import 'package:turota_mobile/features/authentication/presentation/widgets/auth_text_field.dart';
 import 'package:turota_mobile/features/authentication/presentation/widgets/social_login_button.dart';
 
-class LoginPage extends StatefulWidget {
+class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  ConsumerState<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends ConsumerState<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
   bool _isPasswordVisible = false;
+  bool _isSubmitting = false;
   bool _hasNavigated = false;
 
   @override
@@ -51,15 +55,46 @@ class _LoginPageState extends State<LoginPage> {
     _showMessage('Google ile giriş yakında eklenecek.');
   }
 
-  void _submitLogin() {
+  Future<void> _submitLogin() async {
     FocusScope.of(context).unfocus();
-    if (!_formKey.currentState!.validate() || _hasNavigated) {
+    if (!_formKey.currentState!.validate() || _hasNavigated || _isSubmitting) {
       return;
     }
 
-    _hasNavigated = true;
-    // TODO: Replace this temporary navigation with backend authentication.
-    Navigator.of(context).pushReplacementNamed(AppRouter.discover);
+    setState(() => _isSubmitting = true);
+
+    try {
+      final repository = ref.read(authRepositoryProvider);
+      await repository.login(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+      );
+
+      if (!mounted) return;
+      _hasNavigated = true;
+      Navigator.of(context).pushReplacementNamed(AppRouter.discover);
+    } on ApiException catch (e) {
+      _showMessage(_loginErrorMessage(e));
+    } catch (_) {
+      _showMessage('Giriş yaparken beklenmeyen bir hata oluştu.');
+    } finally {
+      if (mounted && !_hasNavigated) {
+        setState(() => _isSubmitting = false);
+      }
+    }
+  }
+
+  String _loginErrorMessage(ApiException exception) {
+    if (exception.isUnauthorized) {
+      return 'E-posta adresi veya şifre hatalı.';
+    }
+    if (exception.errorCode == 'NETWORK_ERROR') {
+      return 'İnternet bağlantınızı kontrol edip tekrar deneyin.';
+    }
+    if (exception.statusCode >= 500) {
+      return 'Şu anda giriş yapılamıyor. Lütfen daha sonra tekrar deneyin.';
+    }
+    return 'Giriş yapılamadı. Bilgilerinizi kontrol edip tekrar deneyin.';
   }
 
   String? _validateEmail(String? value) {
@@ -211,6 +246,7 @@ class _LoginPageState extends State<LoginPage> {
                                             iconPosition:
                                                 AppButtonIconPosition.trailing,
                                             onPressed: _submitLogin,
+                                            isLoading: _isSubmitting,
                                             isFullWidth: true,
                                           ),
                                         ],

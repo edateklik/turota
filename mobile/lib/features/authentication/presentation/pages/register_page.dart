@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:turota_mobile/app/router/app_router.dart';
 import 'package:turota_mobile/core/constants/app_constants.dart';
+import 'package:turota_mobile/core/networking/api_exception.dart';
 import 'package:turota_mobile/core/theme/app_colors.dart';
 import 'package:turota_mobile/core/theme/app_radius.dart';
 import 'package:turota_mobile/core/theme/app_spacing.dart';
@@ -8,23 +10,25 @@ import 'package:turota_mobile/core/theme/app_typography.dart';
 import 'package:turota_mobile/core/widgets/app_button.dart';
 import 'package:turota_mobile/core/widgets/app_card.dart';
 import 'package:turota_mobile/core/widgets/app_scaffold.dart';
+import 'package:turota_mobile/features/authentication/presentation/providers/auth_providers.dart';
 import 'package:turota_mobile/features/authentication/presentation/widgets/auth_text_field.dart';
 import 'package:turota_mobile/features/authentication/presentation/widgets/social_login_button.dart';
 import 'package:turota_mobile/features/authentication/presentation/widgets/terms_acceptance_row.dart';
 
-class RegisterPage extends StatefulWidget {
+class RegisterPage extends ConsumerStatefulWidget {
   const RegisterPage({super.key});
 
   @override
-  State<RegisterPage> createState() => _RegisterPageState();
+  ConsumerState<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
+class _RegisterPageState extends ConsumerState<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+
   final _emailFocusNode = FocusNode();
   final _passwordFocusNode = FocusNode();
   final _confirmPasswordFocusNode = FocusNode();
@@ -67,7 +71,7 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
-  void _submitRegistration() {
+  Future<void> _submitRegistration() async {
     FocusScope.of(context).unfocus();
     if (_isSubmitting || _hasNavigated) {
       return;
@@ -80,9 +84,42 @@ class _RegisterPageState extends State<RegisterPage> {
     }
 
     setState(() => _isSubmitting = true);
-    _hasNavigated = true;
-    // TODO: Replace this temporary navigation with backend registration.
-    Navigator.of(context).pushReplacementNamed(AppRouter.discover);
+
+    try {
+      final nameParts = _nameController.text.trim().split(RegExp(r'\s+'));
+      final repository = ref.read(authRepositoryProvider);
+      await repository.register(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+        firstName: nameParts.first,
+        lastName: nameParts.skip(1).join(' '),
+      );
+
+      if (!mounted) return;
+      _hasNavigated = true;
+      Navigator.of(context).pushReplacementNamed(AppRouter.discover);
+    } on ApiException catch (e) {
+      _showMessage(_registrationErrorMessage(e));
+    } catch (_) {
+      _showMessage('Kayıt olurken beklenmeyen bir hata oluştu.');
+    } finally {
+      if (mounted && !_hasNavigated) {
+        setState(() => _isSubmitting = false);
+      }
+    }
+  }
+
+  String _registrationErrorMessage(ApiException exception) {
+    if (exception.isConflict) {
+      return 'Bu e-posta adresi zaten kayıtlı.';
+    }
+    if (exception.errorCode == 'NETWORK_ERROR') {
+      return 'İnternet bağlantınızı kontrol edip tekrar deneyin.';
+    }
+    if (exception.statusCode >= 500) {
+      return 'Şu anda hesap oluşturulamıyor. Lütfen daha sonra tekrar deneyin.';
+    }
+    return 'Hesap oluşturulamadı. Bilgilerinizi kontrol edip tekrar deneyin.';
   }
 
   String? _validateName(String? value) {
@@ -92,6 +129,9 @@ class _RegisterPageState extends State<RegisterPage> {
     }
     if (name.length < 2) {
       return 'Ad soyad en az 2 karakter olmalıdır.';
+    }
+    if (!name.contains(RegExp(r'\s'))) {
+      return 'Ad ve soyadınızı girin.';
     }
     return null;
   }
@@ -164,8 +204,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             ),
                             const SizedBox(height: AppSpacing.sm),
                             Text(
-                              'Hesabını oluştur ve sana özel mekanları '
-                              'keşfetmeye başla.',
+                              'Hesabını oluştur ve sana özel mekanları keşfetmeye başla.',
                               textAlign: TextAlign.center,
                               style: Theme.of(context).textTheme.bodyLarge
                                   ?.copyWith(color: AppColors.textSecondary),
@@ -302,8 +341,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                       TermsAcceptanceRow(
                                         value: _hasAcceptedTerms,
                                         errorText: _showTermsError
-                                            ? 'Devam etmek için şartları '
-                                                  'kabul etmelisiniz.'
+                                            ? 'Devam etmek için şartları kabul etmelisiniz.'
                                             : null,
                                         onChanged: (value) => setState(() {
                                           _hasAcceptedTerms = value;
@@ -312,12 +350,10 @@ class _RegisterPageState extends State<RegisterPage> {
                                           }
                                         }),
                                         onTermsPressed: () => _showMessage(
-                                          'Kullanım şartları yakında '
-                                          'eklenecek.',
+                                          'Kullanım şartları yakında eklenecek.',
                                         ),
                                         onPrivacyPressed: () => _showMessage(
-                                          'Gizlilik politikası yakında '
-                                          'eklenecek.',
+                                          'Gizlilik politikası yakında eklenecek.',
                                         ),
                                       ),
                                       const SizedBox(height: AppSpacing.lg),

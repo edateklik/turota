@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:turota_mobile/app/app.dart';
 
 void main() {
-  runApp(const TurotaApp());
+  runApp(const ProviderScope(child: TurotaApp()));
 }
