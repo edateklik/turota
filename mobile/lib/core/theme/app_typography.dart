@@ -12,6 +12,14 @@ abstract final class AppTypography {
     color: AppColors.splashBrand,
   );
 
+  static const TextStyle authBrand = TextStyle(
+    fontSize: 34,
+    fontWeight: FontWeight.w800,
+    height: 1.15,
+    letterSpacing: 7,
+    color: AppColors.primary,
+  );
+
   static const TextTheme textTheme = TextTheme(
     headlineSmall: TextStyle(
       fontSize: 24,

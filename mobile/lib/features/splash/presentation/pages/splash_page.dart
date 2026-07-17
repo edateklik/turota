@@ -42,17 +42,17 @@ class _SplashPageState extends State<SplashPage>
     _animationController.forward();
     _navigationTimer = Timer(
       AppConstants.splashDisplayDuration,
-      _navigateToHome,
+      _navigateToOnboarding,
     );
   }
 
-  void _navigateToHome() {
+  void _navigateToOnboarding() {
     if (!mounted || _hasNavigated) {
       return;
     }
 
     _hasNavigated = true;
-    Navigator.of(context).pushReplacementNamed(AppRouter.home);
+    Navigator.of(context).pushReplacementNamed(AppRouter.locationPermission);
   }
 
   @override
