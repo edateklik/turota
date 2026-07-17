@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:turota_mobile/app/router/app_router.dart';
 import 'package:turota_mobile/core/constants/app_constants.dart';
+import 'package:turota_mobile/core/networking/api_exception.dart';
 import 'package:turota_mobile/core/theme/app_colors.dart';
 import 'package:turota_mobile/core/theme/app_radius.dart';
 import 'package:turota_mobile/core/theme/app_spacing.dart';
@@ -8,23 +10,27 @@ import 'package:turota_mobile/core/theme/app_typography.dart';
 import 'package:turota_mobile/core/widgets/app_button.dart';
 import 'package:turota_mobile/core/widgets/app_card.dart';
 import 'package:turota_mobile/core/widgets/app_scaffold.dart';
+import 'package:turota_mobile/features/authentication/presentation/providers/auth_providers.dart';
 import 'package:turota_mobile/features/authentication/presentation/widgets/auth_text_field.dart';
 import 'package:turota_mobile/features/authentication/presentation/widgets/social_login_button.dart';
 import 'package:turota_mobile/features/authentication/presentation/widgets/terms_acceptance_row.dart';
 
-class RegisterPage extends StatefulWidget {
+class RegisterPage extends ConsumerStatefulWidget {
   const RegisterPage({super.key});
 
   @override
-  State<RegisterPage> createState() => _RegisterPageState();
+  ConsumerState<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
+class _RegisterPageState extends ConsumerState<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  
+  final _lastNameFocusNode = FocusNode();
   final _emailFocusNode = FocusNode();
   final _passwordFocusNode = FocusNode();
   final _confirmPasswordFocusNode = FocusNode();
@@ -38,10 +44,12 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   void dispose() {
-    _nameController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _lastNameFocusNode.dispose();
     _emailFocusNode.dispose();
     _passwordFocusNode.dispose();
     _confirmPasswordFocusNode.dispose();
@@ -67,7 +75,7 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
-  void _submitRegistration() {
+  Future<void> _submitRegistration() async {
     FocusScope.of(context).unfocus();
     if (_isSubmitting || _hasNavigated) {
       return;
@@ -80,18 +88,46 @@ class _RegisterPageState extends State<RegisterPage> {
     }
 
     setState(() => _isSubmitting = true);
-    _hasNavigated = true;
-    // TODO: Replace this temporary navigation with backend registration.
-    Navigator.of(context).pushReplacementNamed(AppRouter.home);
+
+    try {
+      final repository = ref.read(authRepositoryProvider);
+      await repository.register(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+        firstName: _firstNameController.text.trim(),
+        lastName: _lastNameController.text.trim(),
+      );
+
+      if (!mounted) return;
+      _hasNavigated = true;
+      Navigator.of(context).pushReplacementNamed(AppRouter.home);
+    } on ApiException catch (e) {
+      if (e.isConflict) {
+        _showMessage('Bu e-posta adresi zaten kayıtlı.');
+      } else {
+        _showMessage(e.message);
+      }
+    } catch (e) {
+      _showMessage('Kayıt olurken beklenmeyen bir hata oluştu.');
+    } finally {
+      if (mounted && !_hasNavigated) {
+        setState(() => _isSubmitting = false);
+      }
+    }
   }
 
-  String? _validateName(String? value) {
+  String? _validateFirstName(String? value) {
     final name = value?.trim() ?? '';
     if (name.isEmpty) {
-      return 'Ad soyad alanı zorunludur.';
+      return 'Ad alanı zorunludur.';
     }
-    if (name.length < 2) {
-      return 'Ad soyad en az 2 karakter olmalıdır.';
+    return null;
+  }
+
+  String? _validateLastName(String? value) {
+    final name = value?.trim() ?? '';
+    if (name.isEmpty) {
+      return 'Soyad alanı zorunludur.';
     }
     return null;
   }
@@ -164,8 +200,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             ),
                             const SizedBox(height: AppSpacing.sm),
                             Text(
-                              'Hesabını oluştur ve sana özel mekanları '
-                              'keşfetmeye başla.',
+                              'Hesabını oluştur ve sana özel mekanları keşfetmeye başla.',
                               textAlign: TextAlign.center,
                               style: Theme.of(context).textTheme.bodyLarge
                                   ?.copyWith(color: AppColors.textSecondary),
@@ -185,49 +220,59 @@ class _RegisterPageState extends State<RegisterPage> {
                                   key: _formKey,
                                   child: Column(
                                     children: [
-                                      AuthTextField(
-                                        fieldKey: const ValueKey(
-                                          'register-name-field',
-                                        ),
-                                        label: 'Ad Soyad',
-                                        hintText: 'John Doe',
-                                        controller: _nameController,
-                                        prefixIcon: Icons.person_outline,
-                                        fillColor: AppColors.surfaceLow,
-                                        textInputAction: TextInputAction.next,
-                                        autofillHints: const [
-                                          AutofillHints.name,
+                                      Row(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Expanded(
+                                            child: AuthTextField(
+                                              fieldKey: const ValueKey('register-first-name-field'),
+                                              label: 'Ad',
+                                              hintText: 'John',
+                                              controller: _firstNameController,
+                                              prefixIcon: Icons.person_outline,
+                                              fillColor: AppColors.surfaceLow,
+                                              textInputAction: TextInputAction.next,
+                                              autofillHints: const [AutofillHints.givenName],
+                                              validator: _validateFirstName,
+                                              onFieldSubmitted: (_) => _lastNameFocusNode.requestFocus(),
+                                            ),
+                                          ),
+                                          const SizedBox(width: AppSpacing.md),
+                                          Expanded(
+                                            child: AuthTextField(
+                                              fieldKey: const ValueKey('register-last-name-field'),
+                                              label: 'Soyad',
+                                              hintText: 'Doe',
+                                              controller: _lastNameController,
+                                              focusNode: _lastNameFocusNode,
+                                              prefixIcon: Icons.person_outline,
+                                              fillColor: AppColors.surfaceLow,
+                                              textInputAction: TextInputAction.next,
+                                              autofillHints: const [AutofillHints.familyName],
+                                              validator: _validateLastName,
+                                              onFieldSubmitted: (_) => _emailFocusNode.requestFocus(),
+                                            ),
+                                          ),
                                         ],
-                                        validator: _validateName,
-                                        onFieldSubmitted: (_) =>
-                                            _emailFocusNode.requestFocus(),
                                       ),
                                       const SizedBox(height: AppSpacing.md),
                                       AuthTextField(
-                                        fieldKey: const ValueKey(
-                                          'register-email-field',
-                                        ),
+                                        fieldKey: const ValueKey('register-email-field'),
                                         label: 'E-posta Adresi',
                                         hintText: 'ornek@eposta.com',
                                         controller: _emailController,
                                         focusNode: _emailFocusNode,
                                         prefixIcon: Icons.email_outlined,
                                         fillColor: AppColors.surfaceLow,
-                                        keyboardType:
-                                            TextInputType.emailAddress,
+                                        keyboardType: TextInputType.emailAddress,
                                         textInputAction: TextInputAction.next,
-                                        autofillHints: const [
-                                          AutofillHints.email,
-                                        ],
+                                        autofillHints: const [AutofillHints.email],
                                         validator: _validateEmail,
-                                        onFieldSubmitted: (_) =>
-                                            _passwordFocusNode.requestFocus(),
+                                        onFieldSubmitted: (_) => _passwordFocusNode.requestFocus(),
                                       ),
                                       const SizedBox(height: AppSpacing.md),
                                       AuthTextField(
-                                        fieldKey: const ValueKey(
-                                          'register-password-field',
-                                        ),
+                                        fieldKey: const ValueKey('register-password-field'),
                                         label: 'Şifre',
                                         hintText: '••••••••',
                                         controller: _passwordController,
@@ -235,37 +280,24 @@ class _RegisterPageState extends State<RegisterPage> {
                                         prefixIcon: Icons.lock_outline,
                                         fillColor: AppColors.surfaceLow,
                                         textInputAction: TextInputAction.next,
-                                        autofillHints: const [
-                                          AutofillHints.newPassword,
-                                        ],
+                                        autofillHints: const [AutofillHints.newPassword],
                                         obscureText: !_isPasswordVisible,
                                         validator: _validatePassword,
-                                        onFieldSubmitted: (_) =>
-                                            _confirmPasswordFocusNode
-                                                .requestFocus(),
+                                        onFieldSubmitted: (_) => _confirmPasswordFocusNode.requestFocus(),
                                         suffixIcon: IconButton(
-                                          key: const ValueKey(
-                                            'register-password-toggle',
-                                          ),
+                                          key: const ValueKey('register-password-toggle'),
                                           onPressed: () => setState(() {
-                                            _isPasswordVisible =
-                                                !_isPasswordVisible;
+                                            _isPasswordVisible = !_isPasswordVisible;
                                           }),
-                                          tooltip: _isPasswordVisible
-                                              ? 'Şifreyi gizle'
-                                              : 'Şifreyi göster',
+                                          tooltip: _isPasswordVisible ? 'Şifreyi gizle' : 'Şifreyi göster',
                                           icon: Icon(
-                                            _isPasswordVisible
-                                                ? Icons.visibility_off
-                                                : Icons.visibility,
+                                            _isPasswordVisible ? Icons.visibility_off : Icons.visibility,
                                           ),
                                         ),
                                       ),
                                       const SizedBox(height: AppSpacing.md),
                                       AuthTextField(
-                                        fieldKey: const ValueKey(
-                                          'register-confirm-password-field',
-                                        ),
+                                        fieldKey: const ValueKey('register-confirm-password-field'),
                                         label: 'Şifreyi Onayla',
                                         hintText: '••••••••',
                                         controller: _confirmPasswordController,
@@ -273,60 +305,40 @@ class _RegisterPageState extends State<RegisterPage> {
                                         prefixIcon: Icons.lock_outline,
                                         fillColor: AppColors.surfaceLow,
                                         textInputAction: TextInputAction.done,
-                                        autofillHints: const [
-                                          AutofillHints.newPassword,
-                                        ],
+                                        autofillHints: const [AutofillHints.newPassword],
                                         obscureText: !_isConfirmPasswordVisible,
                                         validator: _validateConfirmPassword,
-                                        onFieldSubmitted: (_) =>
-                                            _submitRegistration(),
+                                        onFieldSubmitted: (_) => _submitRegistration(),
                                         suffixIcon: IconButton(
-                                          key: const ValueKey(
-                                            'register-confirm-password-toggle',
-                                          ),
+                                          key: const ValueKey('register-confirm-password-toggle'),
                                           onPressed: () => setState(() {
-                                            _isConfirmPasswordVisible =
-                                                !_isConfirmPasswordVisible;
+                                            _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
                                           }),
-                                          tooltip: _isConfirmPasswordVisible
-                                              ? 'Şifre onayını gizle'
-                                              : 'Şifre onayını göster',
+                                          tooltip: _isConfirmPasswordVisible ? 'Şifre onayını gizle' : 'Şifre onayını göster',
                                           icon: Icon(
-                                            _isConfirmPasswordVisible
-                                                ? Icons.visibility_off
-                                                : Icons.visibility,
+                                            _isConfirmPasswordVisible ? Icons.visibility_off : Icons.visibility,
                                           ),
                                         ),
                                       ),
                                       const SizedBox(height: AppSpacing.md),
                                       TermsAcceptanceRow(
                                         value: _hasAcceptedTerms,
-                                        errorText: _showTermsError
-                                            ? 'Devam etmek için şartları '
-                                                  'kabul etmelisiniz.'
-                                            : null,
+                                        errorText: _showTermsError ? 'Devam etmek için şartları kabul etmelisiniz.' : null,
                                         onChanged: (value) => setState(() {
                                           _hasAcceptedTerms = value;
                                           if (value) {
                                             _showTermsError = false;
                                           }
                                         }),
-                                        onTermsPressed: () => _showMessage(
-                                          'Kullanım şartları yakında '
-                                          'eklenecek.',
-                                        ),
-                                        onPrivacyPressed: () => _showMessage(
-                                          'Gizlilik politikası yakında '
-                                          'eklenecek.',
-                                        ),
+                                        onTermsPressed: () => _showMessage('Kullanım şartları yakında eklenecek.'),
+                                        onPrivacyPressed: () => _showMessage('Gizlilik politikası yakında eklenecek.'),
                                       ),
                                       const SizedBox(height: AppSpacing.lg),
                                       AppButton(
                                         key: const ValueKey('register-submit'),
                                         label: 'Hesap Oluştur',
                                         icon: Icons.arrow_forward_rounded,
-                                        iconPosition:
-                                            AppButtonIconPosition.trailing,
+                                        iconPosition: AppButtonIconPosition.trailing,
                                         onPressed: _submitRegistration,
                                         isLoading: _isSubmitting,
                                         isFullWidth: true,
@@ -336,9 +348,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                       const SizedBox(height: AppSpacing.md),
                                       SocialLoginButton(
                                         label: 'Google ile devam et',
-                                        onPressed: () => _showMessage(
-                                          'Google ile kayıt yakında eklenecek.',
-                                        ),
+                                        onPressed: () => _showMessage('Google ile kayıt yakında eklenecek.'),
                                       ),
                                     ],
                                   ),
