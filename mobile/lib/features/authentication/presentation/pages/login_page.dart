@@ -59,7 +59,7 @@ class _LoginPageState extends State<LoginPage> {
 
     _hasNavigated = true;
     // TODO: Replace this temporary navigation with backend authentication.
-    Navigator.of(context).pushReplacementNamed(AppRouter.home);
+    Navigator.of(context).pushReplacementNamed(AppRouter.discover);
   }
 
   String? _validateEmail(String? value) {

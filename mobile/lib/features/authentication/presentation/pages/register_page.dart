@@ -82,7 +82,7 @@ class _RegisterPageState extends State<RegisterPage> {
     setState(() => _isSubmitting = true);
     _hasNavigated = true;
     // TODO: Replace this temporary navigation with backend registration.
-    Navigator.of(context).pushReplacementNamed(AppRouter.home);
+    Navigator.of(context).pushReplacementNamed(AppRouter.discover);
   }
 
   String? _validateName(String? value) {

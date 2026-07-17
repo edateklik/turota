@@ -8,6 +8,7 @@ class AppScaffold extends StatelessWidget {
     this.title,
     this.padding = const EdgeInsets.all(AppSpacing.md),
     this.backgroundColor = AppColors.background,
+    this.bottomNavigationBar,
     super.key,
   });
 
@@ -15,12 +16,14 @@ class AppScaffold extends StatelessWidget {
   final String? title;
   final EdgeInsetsGeometry padding;
   final Color backgroundColor;
+  final Widget? bottomNavigationBar;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: title == null ? null : AppBar(title: Text(title!)),
+      bottomNavigationBar: bottomNavigationBar,
       body: SafeArea(
         child: Padding(padding: padding, child: body),
       ),

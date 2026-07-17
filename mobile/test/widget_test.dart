@@ -7,7 +7,7 @@ import 'package:turota_mobile/core/theme/app_colors.dart';
 import 'package:turota_mobile/core/theme/app_theme.dart';
 import 'package:turota_mobile/features/authentication/presentation/pages/login_page.dart';
 import 'package:turota_mobile/features/authentication/presentation/pages/register_page.dart';
-import 'package:turota_mobile/features/home/presentation/pages/placeholder_home_page.dart';
+import 'package:turota_mobile/features/discover/presentation/pages/discover_page.dart';
 import 'package:turota_mobile/features/onboarding/location/presentation/pages/location_permission_page.dart';
 import 'package:turota_mobile/features/splash/presentation/pages/splash_page.dart';
 
@@ -47,6 +47,12 @@ void main() {
         onGenerateRoute: AppRouter.onGenerateRoute,
         home: const RegisterPage(),
       ),
+    );
+  }
+
+  Future<void> pumpDiscoverPage(WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(theme: AppTheme.light, home: const DiscoverPage()),
     );
   }
 
@@ -245,9 +251,7 @@ void main() {
     expect(find.text('Şifrenizi girin.'), findsOneWidget);
   });
 
-  testWidgets('valid temporary login opens the placeholder home', (
-    tester,
-  ) async {
+  testWidgets('valid temporary login opens DiscoverPage', (tester) async {
     await pumpLoginPage(tester);
     await tester.enterText(
       find.byKey(const ValueKey('email-field')),
@@ -261,7 +265,7 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('login-submit')));
     await tester.pumpAndSettle();
 
-    expect(find.byType(PlaceholderHomePage), findsOneWidget);
+    expect(find.byType(DiscoverPage), findsOneWidget);
   });
 
   testWidgets('forgot-password action shows its SnackBar', (tester) async {
@@ -422,7 +426,7 @@ void main() {
     expect(find.byType(RegisterPage), findsOneWidget);
   });
 
-  testWidgets('valid temporary registration opens placeholder home', (
+  testWidgets('valid temporary registration opens DiscoverPage', (
     tester,
   ) async {
     await pumpRegisterPage(tester);
@@ -430,7 +434,7 @@ void main() {
     await submitRegistration(tester);
     await tester.pumpAndSettle();
 
-    expect(find.byType(PlaceholderHomePage), findsOneWidget);
+    expect(find.byType(DiscoverPage), findsOneWidget);
   });
 
   testWidgets('registration Google action shows its SnackBar', (tester) async {
@@ -494,6 +498,156 @@ void main() {
     await pumpRegisterPage(tester);
 
     expect(find.byType(RegisterPage), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('DiscoverPage shows the sample greeting and date', (
+    tester,
+  ) async {
+    await pumpDiscoverPage(tester);
+
+    expect(find.text('Günaydın, Şevval'), findsOneWidget);
+    expect(find.text('12 Ekim Cumartesi'), findsOneWidget);
+  });
+
+  testWidgets('DiscoverPage renders the weather sample cards', (tester) async {
+    await pumpDiscoverPage(tester);
+
+    expect(find.text('7 Günlük Hava Durumu'), findsOneWidget);
+    for (final day in ['Bugün', 'Paz', 'Pzt', 'Sal', 'Çar']) {
+      expect(find.byKey(ValueKey('weather-$day')), findsOneWidget);
+    }
+    for (final temperature in ['24°', '22°', '19°', '17°', '20°']) {
+      expect(find.text(temperature), findsOneWidget);
+    }
+  });
+
+  testWidgets('DiscoverPage renders current location preview', (tester) async {
+    await pumpDiscoverPage(tester);
+
+    expect(find.text('Mevcut Konumunuz'), findsOneWidget);
+    expect(find.byKey(const ValueKey('full-map-button')), findsOneWidget);
+  });
+
+  testWidgets('full map action shows temporary feedback', (tester) async {
+    await pumpDiscoverPage(tester);
+    await tester.ensureVisible(find.byKey(const ValueKey('full-map-button')));
+    await tester.tap(find.byKey(const ValueKey('full-map-button')));
+    await tester.pump();
+
+    expect(find.text('Tam harita ekranı yakında eklenecek.'), findsOneWidget);
+  });
+
+  testWidgets('DiscoverPage renders all category cards', (tester) async {
+    await pumpDiscoverPage(tester);
+
+    for (final category in [
+      'Gastronomi',
+      'Sanat ve Kültür',
+      'Gece Hayatı ve Etkinlik',
+    ]) {
+      expect(find.byKey(ValueKey('category-$category')), findsOneWidget);
+      expect(find.text(category), findsOneWidget);
+    }
+  });
+
+  testWidgets('category action shows category-specific feedback', (
+    tester,
+  ) async {
+    await pumpDiscoverPage(tester);
+    final category = find.byKey(const ValueKey('category-Gastronomi'));
+    await tester.ensureVisible(category);
+    await tester.tap(category);
+    await tester.pump();
+
+    expect(
+      find.text('Gastronomi kategorisi yakında açılacak.'),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('DiscoverPage renders all nearby places', (tester) async {
+    await pumpDiscoverPage(tester);
+
+    expect(find.text('Yakınındaki Mekanlar'), findsOneWidget);
+    for (final place in ['Balat', 'Nişantaşı', 'Moda, Kadıköy']) {
+      expect(find.byKey(ValueKey('place-$place')), findsOneWidget);
+      expect(find.text(place), findsOneWidget);
+    }
+  });
+
+  testWidgets('see-all places action shows temporary feedback', (tester) async {
+    await pumpDiscoverPage(tester);
+    final action = find.byKey(const ValueKey('see-all-places'));
+    await tester.ensureVisible(action);
+    await tester.tap(action);
+    await tester.pump();
+
+    expect(find.text('Tüm mekanlar ekranı yakında eklenecek.'), findsOneWidget);
+  });
+
+  testWidgets('notification action shows temporary feedback', (tester) async {
+    await pumpDiscoverPage(tester);
+    await tester.tap(find.byKey(const ValueKey('discover-notifications')));
+    await tester.pump();
+
+    expect(find.text('Bildirimler yakında eklenecek.'), findsOneWidget);
+  });
+
+  testWidgets('DiscoverPage renders all bottom navigation destinations', (
+    tester,
+  ) async {
+    await pumpDiscoverPage(tester);
+
+    for (final label in ['Keşfet', 'Kaydedilenler', 'Yapay Zeka', 'Profil']) {
+      expect(find.text(label), findsOneWidget);
+    }
+  });
+
+  testWidgets('inactive bottom navigation items show temporary feedback', (
+    tester,
+  ) async {
+    await pumpDiscoverPage(tester);
+
+    const expectations = {
+      'Kaydedilenler': 'Kaydedilenler ekranı yakında eklenecek.',
+      'Yapay Zeka': 'Yapay zeka planlayıcı yakında eklenecek.',
+      'Profil': 'Profil ekranı yakında eklenecek.',
+    };
+    for (final entry in expectations.entries) {
+      await tester.tap(find.text(entry.key));
+      await tester.pump();
+      expect(find.text(entry.value), findsOneWidget);
+    }
+  });
+
+  testWidgets('DiscoverPage does not overflow on a small phone', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(320, 568);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await pumpDiscoverPage(tester);
+    await tester.pump(const Duration(milliseconds: 950));
+
+    expect(find.byType(DiscoverPage), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('weather strip scrolls horizontally without layout errors', (
+    tester,
+  ) async {
+    await pumpDiscoverPage(tester);
+    final weatherStrip = find.byKey(
+      const ValueKey('weather-horizontal-scroll'),
+    );
+
+    await tester.drag(weatherStrip, const Offset(-180, 0));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('weather-Çar')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }

@@ -9,6 +9,12 @@ abstract final class AppColors {
   static const Color onboardingBackground = Color(0xFFF3F4F6);
   static const Color authBackground = Color(0xFFFAFAFA);
   static const Color registrationBackground = Color(0xFFF1F8F9);
+  static const Color discoverBackground = Color(0xFFFFFFF0);
+  static const Color discoverPrimaryContainer = Color(0xFFA3DEFE);
+  static const Color onDiscoverPrimaryContainer = Color(0xFF001F29);
+  static const Color discoverSecondary = Color(0xFFD4B2A7);
+  static const Color discoverOnSurfaceVariant = Color(0xFF49454F);
+  static const Color discoverOutline = Color(0xFF79747E);
   static const Color inputBackground = Color(0xFFF5F5F5);
   static const Color surfaceLow = Color(0xFFF5F3F3);
   static const Color illustrationBackground = Color(0xFFF1F5F9);
