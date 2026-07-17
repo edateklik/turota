@@ -8,7 +8,9 @@ abstract final class AppColors {
   static const Color splashBrand = primary;
   static const Color onboardingBackground = Color(0xFFF3F4F6);
   static const Color authBackground = Color(0xFFFAFAFA);
+  static const Color registrationBackground = Color(0xFFF1F8F9);
   static const Color inputBackground = Color(0xFFF5F5F5);
+  static const Color surfaceLow = Color(0xFFF5F3F3);
   static const Color illustrationBackground = Color(0xFFF1F5F9);
   static const Color progressTrack = Color(0xFFE5E7EB);
   static const Color background = Color(0xFFF7F9F8);
@@ -17,6 +19,7 @@ abstract final class AppColors {
   static const Color textPrimary = Color(0xFF1B1C1C);
   static const Color textSecondary = Color(0xFF3F4945);
   static const Color outline = Color(0xFF707975);
+  static const Color outlineVariant = Color(0xFFBFC9C4);
   static const Color border = Color(0xFFDDE4E1);
   static const Color shadow = Color(0x140F172A);
   static const Color error = Color(0xFFBA1A1A);

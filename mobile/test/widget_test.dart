@@ -6,6 +6,7 @@ import 'package:turota_mobile/core/constants/app_constants.dart';
 import 'package:turota_mobile/core/theme/app_colors.dart';
 import 'package:turota_mobile/core/theme/app_theme.dart';
 import 'package:turota_mobile/features/authentication/presentation/pages/login_page.dart';
+import 'package:turota_mobile/features/authentication/presentation/pages/register_page.dart';
 import 'package:turota_mobile/features/home/presentation/pages/placeholder_home_page.dart';
 import 'package:turota_mobile/features/onboarding/location/presentation/pages/location_permission_page.dart';
 import 'package:turota_mobile/features/splash/presentation/pages/splash_page.dart';
@@ -35,6 +36,68 @@ void main() {
         theme: AppTheme.light,
         onGenerateRoute: AppRouter.onGenerateRoute,
         home: const LoginPage(),
+      ),
+    );
+  }
+
+  Future<void> pumpRegisterPage(WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.light,
+        onGenerateRoute: AppRouter.onGenerateRoute,
+        home: const RegisterPage(),
+      ),
+    );
+  }
+
+  Future<void> openRegisterFromLogin(WidgetTester tester) async {
+    await pumpLoginPage(tester);
+    await tester.tap(find.text('Kayıt Ol'));
+    await tester.pumpAndSettle();
+  }
+
+  Future<void> fillRegistration(
+    WidgetTester tester, {
+    String name = 'Ada Yılmaz',
+    String email = 'ada@example.com',
+    String password = 'guvenli123',
+    String confirmPassword = 'guvenli123',
+    bool acceptTerms = true,
+  }) async {
+    await tester.enterText(
+      find.byKey(const ValueKey('register-name-field')),
+      name,
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('register-email-field')),
+      email,
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('register-password-field')),
+      password,
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('register-confirm-password-field')),
+      confirmPassword,
+    );
+    if (acceptTerms) {
+      await tester.ensureVisible(find.byType(Checkbox));
+      await tester.tap(find.byType(Checkbox));
+      await tester.pump();
+    }
+  }
+
+  Future<void> submitRegistration(WidgetTester tester) async {
+    await tester.ensureVisible(find.byKey(const ValueKey('register-submit')));
+    await tester.tap(find.byKey(const ValueKey('register-submit')));
+    await tester.pump();
+  }
+
+  EditableText editableField(WidgetTester tester, String key) {
+    return tester.widget(
+      find.descendant(
+        of: find.byKey(ValueKey(key)),
+        matching: find.byType(EditableText),
       ),
     );
   }
@@ -141,12 +204,12 @@ void main() {
     expect(decoration.color, AppColors.primary);
   });
 
-  testWidgets('registration placeholder shows its SnackBar', (tester) async {
-    await pumpLoginPage(tester);
-    await tester.tap(find.text('Kayıt Ol'));
-    await tester.pump();
+  testWidgets('LoginPage registration action opens RegisterPage', (
+    tester,
+  ) async {
+    await openRegisterFromLogin(tester);
 
-    expect(find.text('Kayıt ol ekranı yakında eklenecek.'), findsOneWidget);
+    expect(find.byType(RegisterPage), findsOneWidget);
   });
 
   testWidgets('password visibility toggles', (tester) async {
@@ -231,6 +294,206 @@ void main() {
     await pumpLoginPage(tester);
 
     expect(find.byType(LoginPage), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('RegisterPage renders all fields and header content', (
+    tester,
+  ) async {
+    await pumpRegisterPage(tester);
+
+    expect(find.text("TUROTA'ya Katıl"), findsOneWidget);
+    expect(
+      find.text('Hesabını oluştur ve sana özel mekanları keşfetmeye başla.'),
+      findsOneWidget,
+    );
+    expect(find.byKey(const ValueKey('register-name-field')), findsOneWidget);
+    expect(find.byKey(const ValueKey('register-email-field')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('register-password-field')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('register-confirm-password-field')),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('registration password visibility toggles independently', (
+    tester,
+  ) async {
+    await pumpRegisterPage(tester);
+
+    expect(
+      editableField(tester, 'register-password-field').obscureText,
+      isTrue,
+    );
+    expect(
+      editableField(tester, 'register-confirm-password-field').obscureText,
+      isTrue,
+    );
+
+    await tester.tap(find.byKey(const ValueKey('register-password-toggle')));
+    await tester.pump();
+
+    expect(
+      editableField(tester, 'register-password-field').obscureText,
+      isFalse,
+    );
+    expect(
+      editableField(tester, 'register-confirm-password-field').obscureText,
+      isTrue,
+    );
+
+    await tester.tap(
+      find.byKey(const ValueKey('register-confirm-password-toggle')),
+    );
+    await tester.pump();
+
+    expect(
+      editableField(tester, 'register-password-field').obscureText,
+      isFalse,
+    );
+    expect(
+      editableField(tester, 'register-confirm-password-field').obscureText,
+      isFalse,
+    );
+  });
+
+  testWidgets('empty registration shows Turkish validation errors', (
+    tester,
+  ) async {
+    await pumpRegisterPage(tester);
+    await submitRegistration(tester);
+
+    expect(find.text('Ad soyad alanı zorunludur.'), findsOneWidget);
+    expect(find.text('E-posta adresi zorunludur.'), findsOneWidget);
+    expect(find.text('Şifre alanı zorunludur.'), findsOneWidget);
+    expect(find.text('Şifre onayı zorunludur.'), findsOneWidget);
+    expect(
+      find.text('Devam etmek için şartları kabul etmelisiniz.'),
+      findsOneWidget,
+    );
+    expect(find.byType(RegisterPage), findsOneWidget);
+  });
+
+  testWidgets('invalid registration email shows validation error', (
+    tester,
+  ) async {
+    await pumpRegisterPage(tester);
+    await fillRegistration(tester, email: 'gecersiz-eposta');
+    await submitRegistration(tester);
+
+    expect(find.text('Geçerli bir e-posta adresi girin.'), findsOneWidget);
+    expect(find.byType(RegisterPage), findsOneWidget);
+  });
+
+  testWidgets('short registration password shows validation error', (
+    tester,
+  ) async {
+    await pumpRegisterPage(tester);
+    await fillRegistration(tester, password: 'kisa', confirmPassword: 'kisa');
+    await submitRegistration(tester);
+
+    expect(find.text('Şifre en az 8 karakter olmalıdır.'), findsOneWidget);
+    expect(find.byType(RegisterPage), findsOneWidget);
+  });
+
+  testWidgets('non-matching registration passwords show validation error', (
+    tester,
+  ) async {
+    await pumpRegisterPage(tester);
+    await fillRegistration(tester, confirmPassword: 'baska-sifre');
+    await submitRegistration(tester);
+
+    expect(find.text('Şifreler eşleşmiyor.'), findsOneWidget);
+    expect(find.byType(RegisterPage), findsOneWidget);
+  });
+
+  testWidgets('unaccepted terms prevent registration', (tester) async {
+    await pumpRegisterPage(tester);
+    await fillRegistration(tester, acceptTerms: false);
+    await submitRegistration(tester);
+
+    expect(
+      find.text('Devam etmek için şartları kabul etmelisiniz.'),
+      findsOneWidget,
+    );
+    expect(find.byType(RegisterPage), findsOneWidget);
+  });
+
+  testWidgets('valid temporary registration opens placeholder home', (
+    tester,
+  ) async {
+    await pumpRegisterPage(tester);
+    await fillRegistration(tester);
+    await submitRegistration(tester);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(PlaceholderHomePage), findsOneWidget);
+  });
+
+  testWidgets('registration Google action shows its SnackBar', (tester) async {
+    await pumpRegisterPage(tester);
+    await tester.ensureVisible(find.text('Google ile devam et'));
+    await tester.tap(find.text('Google ile devam et'));
+    await tester.pump();
+
+    expect(find.text('Google ile kayıt yakında eklenecek.'), findsOneWidget);
+  });
+
+  testWidgets('registration terms action shows its SnackBar', (tester) async {
+    await pumpRegisterPage(tester);
+    await tester.ensureVisible(find.text('Kullanım Şartları'));
+    await tester.tap(find.text('Kullanım Şartları'));
+    await tester.pump();
+
+    expect(find.text('Kullanım şartları yakında eklenecek.'), findsOneWidget);
+  });
+
+  testWidgets('registration privacy action shows its SnackBar', (tester) async {
+    await pumpRegisterPage(tester);
+    await tester.ensureVisible(find.text('Gizlilik Politikası'));
+    await tester.tap(find.text('Gizlilik Politikası'));
+    await tester.pump();
+
+    expect(find.text('Gizlilik politikası yakında eklenecek.'), findsOneWidget);
+  });
+
+  testWidgets('registration back button returns to LoginPage', (tester) async {
+    await openRegisterFromLogin(tester);
+    await tester.tap(find.byKey(const ValueKey('register-back')));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(LoginPage), findsOneWidget);
+    expect(find.byType(RegisterPage), findsNothing);
+  });
+
+  testWidgets('registration bottom login action returns to LoginPage', (
+    tester,
+  ) async {
+    await openRegisterFromLogin(tester);
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('register-login-action')),
+    );
+    await tester.tap(find.byKey(const ValueKey('register-login-action')));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(LoginPage), findsOneWidget);
+    expect(find.byType(RegisterPage), findsNothing);
+  });
+
+  testWidgets('RegisterPage does not overflow on a small phone', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(320, 568);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await pumpRegisterPage(tester);
+
+    expect(find.byType(RegisterPage), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }

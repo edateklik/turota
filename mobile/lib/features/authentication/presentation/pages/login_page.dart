@@ -40,8 +40,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _showRegistrationPlaceholder() {
-    // TODO: Navigate to the separate registration page when it is implemented.
-    _showMessage('Kayıt ol ekranı yakında eklenecek.');
+    Navigator.of(context).pushNamed(AppRouter.register);
   }
 
   void _showForgotPasswordPlaceholder() {
