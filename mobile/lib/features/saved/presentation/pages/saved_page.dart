@@ -3,10 +3,8 @@ import 'package:turota_mobile/app/router/app_router.dart';
 import 'package:turota_mobile/core/theme/app_colors.dart';
 import 'package:turota_mobile/core/theme/app_radius.dart';
 import 'package:turota_mobile/core/theme/app_spacing.dart';
-import 'package:turota_mobile/core/widgets/app_bottom_navigation.dart';
 import 'package:turota_mobile/core/widgets/app_button.dart';
 import 'package:turota_mobile/core/widgets/app_card.dart';
-import 'package:turota_mobile/core/widgets/app_scaffold.dart';
 
 class SavedPage extends StatefulWidget {
   const SavedPage({super.key});
@@ -64,17 +62,7 @@ class _SavedPageState extends State<SavedPage> {
       ..showSnackBar(SnackBar(content: Text(message)));
   }
 
-  void _handleBottomNavigation(int index) {
-    if (index == 0) {
-      Navigator.of(context).pushReplacementNamed(AppRouter.discover);
-      return;
-    }
-    if (index == 2) {
-      _showMessage('AI asistan ekranı yakında eklenecek.');
-    } else if (index == 3) {
-      _showMessage('Profil ekranı yakında eklenecek.');
-    }
-  }
+
 
   void _toggleBookmark(_SavedPlaceUiModel place) {
     final wasBookmarked = _bookmarkedPlaceIds.contains(place.id);
@@ -94,13 +82,8 @@ class _SavedPageState extends State<SavedPage> {
 
   @override
   Widget build(BuildContext context) {
-    return AppScaffold(
-      backgroundColor: AppColors.savedBackground,
-      padding: EdgeInsets.zero,
-      bottomNavigationBar: AppBottomNavigation(
-        selectedIndex: 1,
-        onDestinationSelected: _handleBottomNavigation,
-      ),
+    return Scaffold(
+      backgroundColor: AppColors.background,
       body: Column(
         children: [
           _SavedHeader(
@@ -144,7 +127,7 @@ class _SavedPageState extends State<SavedPage> {
                       key: const ValueKey('saved-plans-tab'),
                       onDiscoverPressed: () => Navigator.of(
                         context,
-                      ).pushReplacementNamed(AppRouter.discover),
+                      ).pushReplacementNamed(AppRouter.home),
                     ),
             ),
           ),
@@ -242,7 +225,7 @@ class _SavedHeader extends StatelessWidget {
                   ),
                   child: const CircleAvatar(
                     radius: 18,
-                    backgroundColor: AppColors.savedAccentLight,
+                    backgroundColor: AppColors.surfaceLow,
                     foregroundColor: AppColors.primaryContainer,
                     child: Text(
                       'Ş',
@@ -323,7 +306,7 @@ class _SavedTab extends StatelessWidget {
             Text(
               label,
               style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                color: isActive ? AppColors.primary : AppColors.savedOutline,
+                color: isActive ? AppColors.primary : AppColors.outline,
               ),
             ),
             const SizedBox(height: AppSpacing.sm),
@@ -486,12 +469,12 @@ class _CollectionCard extends StatelessWidget {
               width: 148,
               height: 148,
               decoration: BoxDecoration(
-                color: isNew ? AppColors.savedAccentLight : AppColors.surface,
+                color: isNew ? AppColors.surfaceLow : AppColors.surface,
                 borderRadius: BorderRadius.circular(AppRadius.xl),
                 border: Border.all(
                   color: isNew
                       ? AppColors.primary
-                      : AppColors.savedOutlineVariant,
+                      : AppColors.outlineVariant,
                 ),
                 boxShadow: isNew
                     ? null
@@ -513,7 +496,7 @@ class _CollectionCard extends StatelessWidget {
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppColors.savedTextPrimary,
+                color: AppColors.textPrimary,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -657,7 +640,6 @@ class _SavedPlaceCard extends StatelessWidget {
     return AppCard(
       padding: EdgeInsets.zero,
       borderRadius: AppRadius.xl,
-      borderColor: AppColors.savedOutlineVariant,
       boxShadow: const [
         BoxShadow(
           color: AppColors.shadow,
@@ -752,7 +734,7 @@ class _SavedPlaceCard extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: Theme.of(context).textTheme.bodyMedium
-                              ?.copyWith(color: AppColors.savedTextSecondary),
+                              ?.copyWith(color: AppColors.textSecondary),
                         ),
                       ),
                     ],
@@ -875,12 +857,11 @@ class _PlansEmptyState extends StatelessWidget {
           constraints: const BoxConstraints(maxWidth: 420),
           child: AppCard(
             borderRadius: AppRadius.xl,
-            borderColor: AppColors.savedOutlineVariant,
             child: Column(
               children: [
                 const CircleAvatar(
                   radius: 42,
-                  backgroundColor: AppColors.savedAccentLight,
+                  backgroundColor: AppColors.surfaceLow,
                   foregroundColor: AppColors.primary,
                   child: Icon(Icons.route_rounded, size: 46),
                 ),

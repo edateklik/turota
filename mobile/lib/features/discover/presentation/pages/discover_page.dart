@@ -4,8 +4,6 @@ import 'package:turota_mobile/core/theme/app_colors.dart';
 import 'package:turota_mobile/core/theme/app_radius.dart';
 import 'package:turota_mobile/core/theme/app_spacing.dart';
 import 'package:turota_mobile/core/widgets/app_card.dart';
-import 'package:turota_mobile/core/widgets/app_bottom_navigation.dart';
-import 'package:turota_mobile/core/widgets/app_scaffold.dart';
 
 class DiscoverPage extends StatefulWidget {
   const DiscoverPage({super.key});
@@ -78,7 +76,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
 
   void _selectTemporaryDestination(int index) {
     if (index == 1) {
-      Navigator.of(context).pushReplacementNamed(AppRouter.saved);
+      Navigator.of(context).pushReplacementNamed(AppRouter.home);
       return;
     }
     const messages = {
@@ -93,13 +91,8 @@ class _DiscoverPageState extends State<DiscoverPage> {
 
   @override
   Widget build(BuildContext context) {
-    return AppScaffold(
-      backgroundColor: AppColors.discoverBackground,
-      padding: EdgeInsets.zero,
-      bottomNavigationBar: AppBottomNavigation(
-        selectedIndex: 0,
-        onDestinationSelected: _selectTemporaryDestination,
-      ),
+    return Scaffold(
+      backgroundColor: AppColors.background,
       body: SingleChildScrollView(
         key: const ValueKey('discover-scroll-view'),
         padding: const EdgeInsets.only(bottom: AppSpacing.xl),
@@ -228,14 +221,16 @@ class _DiscoverHeader extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.surface.withValues(alpha: 0.88),
         border: const Border(
-          bottom: BorderSide(color: AppColors.discoverSecondary),
+          bottom: BorderSide(color: AppColors.primary),
         ),
       ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.lg,
-          vertical: AppSpacing.md,
-        ),
+      child: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.lg,
+            vertical: AppSpacing.md,
+          ),
         child: Row(
           children: [
             Expanded(
@@ -278,8 +273,8 @@ class _DiscoverHeader extends StatelessWidget {
                   ),
                   child: const CircleAvatar(
                     radius: 20,
-                    backgroundColor: AppColors.discoverPrimaryContainer,
-                    foregroundColor: AppColors.onDiscoverPrimaryContainer,
+                    backgroundColor: AppColors.primaryContainer,
+                    foregroundColor: AppColors.onPrimary,
                     child: Text(
                       'Ş',
                       style: TextStyle(fontWeight: FontWeight.w700),
@@ -290,6 +285,7 @@ class _DiscoverHeader extends StatelessWidget {
             ),
           ],
         ),
+      ),
       ),
     );
   }
@@ -349,7 +345,7 @@ class _WeatherDayCard extends StatelessWidget {
         color: day.isActive ? AppColors.primary : AppColors.surface,
         borderRadius: BorderRadius.circular(AppRadius.lg),
         border: Border.all(
-          color: day.isActive ? AppColors.primary : AppColors.discoverSecondary,
+          color: day.isActive ? AppColors.primary : AppColors.primary,
         ),
       ),
       child: Column(
@@ -418,7 +414,6 @@ class _LocationPreviewCardState extends State<_LocationPreviewCard>
     return AppCard(
       padding: EdgeInsets.zero,
       borderRadius: AppRadius.xl,
-      borderColor: AppColors.discoverSecondary,
       boxShadow: const [
         BoxShadow(
           color: AppColors.shadow,
@@ -473,13 +468,13 @@ class _MapPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     canvas.drawColor(AppColors.illustrationBackground, BlendMode.src);
-    final blockPaint = Paint()..color = AppColors.discoverPrimaryContainer;
+    final blockPaint = Paint()..color = AppColors.primaryContainer;
     final roadPaint = Paint()
       ..color = AppColors.surface
       ..strokeWidth = 14
       ..strokeCap = StrokeCap.round;
     final routePaint = Paint()
-      ..color = AppColors.discoverSecondary
+      ..color = AppColors.primary
       ..strokeWidth = 4
       ..strokeCap = StrokeCap.round;
 
@@ -558,7 +553,6 @@ class _CategoryCard extends StatelessWidget {
       height: 128,
       child: AppCard(
         padding: EdgeInsets.zero,
-        borderColor: AppColors.discoverSecondary,
         boxShadow: const [
           BoxShadow(
             color: AppColors.shadow,
@@ -576,8 +570,8 @@ class _CategoryCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CircleAvatar(
-                  backgroundColor: AppColors.discoverPrimaryContainer,
-                  foregroundColor: AppColors.onDiscoverPrimaryContainer,
+                  backgroundColor: AppColors.primaryContainer,
+                  foregroundColor: AppColors.onPrimary,
                   child: Icon(category.icon),
                 ),
                 const SizedBox(height: AppSpacing.sm),
@@ -637,7 +631,6 @@ class _NearbyPlaceCard extends StatelessWidget {
       height: 136,
       child: AppCard(
         padding: EdgeInsets.zero,
-        borderColor: AppColors.discoverSecondary,
         boxShadow: const [
           BoxShadow(
             color: AppColors.shadow,

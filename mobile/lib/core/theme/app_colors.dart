@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 abstract final class AppColors {
-  static const Color primary = Color(0xFF0096A6);
-  static const Color primaryContainer = Color(0xFF007A87);
+  static const Color primary = Color(0xFF77DDE7);
+  static const Color primaryContainer = Color(0xFF5AB6C0); // Slightly darker for contrast
   static const Color onPrimary = Color(0xFFFFFFFF);
-  static const Color splashBackground = Color(0xFF0794A3);
-  static const Color splashBrand = primary;
+  static const Color splashBackground = Color(0xFF77DDE7);
+  static const Color splashBrand = Color(0xFFFFFFFF); // White looks better on light turquoise
   static const Color onboardingBackground = Color(0xFFF3F4F6);
   static const Color authBackground = Color(0xFFFAFAFA);
   static const Color registrationBackground = Color(0xFFF1F8F9);
