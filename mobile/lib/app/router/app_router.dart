@@ -4,6 +4,7 @@ import 'package:turota_mobile/features/authentication/presentation/pages/registe
 import 'package:turota_mobile/features/discover/presentation/pages/discover_page.dart';
 import 'package:turota_mobile/features/home/presentation/pages/placeholder_home_page.dart';
 import 'package:turota_mobile/features/onboarding/location/presentation/pages/location_permission_page.dart';
+import 'package:turota_mobile/features/saved/presentation/pages/saved_page.dart';
 import 'package:turota_mobile/features/splash/presentation/pages/splash_page.dart';
 
 abstract final class AppRouter {
@@ -12,6 +13,7 @@ abstract final class AppRouter {
   static const String login = '/authentication/login';
   static const String register = '/authentication/register';
   static const String discover = '/discover';
+  static const String saved = '/saved';
   static const String home = '/home';
 
   static Route<void> onGenerateRoute(RouteSettings settings) {
@@ -34,6 +36,10 @@ abstract final class AppRouter {
       ),
       discover => MaterialPageRoute<void>(
         builder: (_) => const DiscoverPage(),
+        settings: settings,
+      ),
+      saved => MaterialPageRoute<void>(
+        builder: (_) => const SavedPage(),
         settings: settings,
       ),
       home => MaterialPageRoute<void>(

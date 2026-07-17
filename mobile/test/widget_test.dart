@@ -9,6 +9,7 @@ import 'package:turota_mobile/features/authentication/presentation/pages/login_p
 import 'package:turota_mobile/features/authentication/presentation/pages/register_page.dart';
 import 'package:turota_mobile/features/discover/presentation/pages/discover_page.dart';
 import 'package:turota_mobile/features/onboarding/location/presentation/pages/location_permission_page.dart';
+import 'package:turota_mobile/features/saved/presentation/pages/saved_page.dart';
 import 'package:turota_mobile/features/splash/presentation/pages/splash_page.dart';
 
 void main() {
@@ -52,7 +53,21 @@ void main() {
 
   Future<void> pumpDiscoverPage(WidgetTester tester) async {
     await tester.pumpWidget(
-      MaterialApp(theme: AppTheme.light, home: const DiscoverPage()),
+      MaterialApp(
+        theme: AppTheme.light,
+        onGenerateRoute: AppRouter.onGenerateRoute,
+        home: const DiscoverPage(),
+      ),
+    );
+  }
+
+  Future<void> pumpSavedPage(WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.light,
+        onGenerateRoute: AppRouter.onGenerateRoute,
+        home: const SavedPage(),
+      ),
     );
   }
 
@@ -599,7 +614,7 @@ void main() {
   ) async {
     await pumpDiscoverPage(tester);
 
-    for (final label in ['Keşfet', 'Kaydedilenler', 'Yapay Zeka', 'Profil']) {
+    for (final label in ['Keşfet', 'Kaydedilenler', 'AI Asistan', 'Profil']) {
       expect(find.text(label), findsOneWidget);
     }
   });
@@ -610,8 +625,7 @@ void main() {
     await pumpDiscoverPage(tester);
 
     const expectations = {
-      'Kaydedilenler': 'Kaydedilenler ekranı yakında eklenecek.',
-      'Yapay Zeka': 'Yapay zeka planlayıcı yakında eklenecek.',
+      'AI Asistan': 'AI asistan ekranı yakında eklenecek.',
       'Profil': 'Profil ekranı yakında eklenecek.',
     };
     for (final entry in expectations.entries) {
@@ -648,6 +662,251 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byKey(const ValueKey('weather-Çar')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Discover Kaydedilenler destination opens SavedPage', (
+    tester,
+  ) async {
+    await pumpDiscoverPage(tester);
+    await tester.tap(find.text('Kaydedilenler'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(SavedPage), findsOneWidget);
+  });
+
+  testWidgets('SavedPage title and initial places tab render', (tester) async {
+    await pumpSavedPage(tester);
+
+    expect(find.byKey(const ValueKey('saved-page-title')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('saved-active-tab-Mekanlar')),
+      findsOneWidget,
+    );
+    expect(find.byKey(const ValueKey('saved-places-tab')), findsOneWidget);
+  });
+
+  testWidgets('SavedPage renders all collection names', (tester) async {
+    await pumpSavedPage(tester);
+
+    for (final collection in [
+      'Hafta Sonu Kahvaltısı',
+      'Sanat Rotası',
+      'Gizli Cevherler',
+      'Yeni Liste',
+    ]) {
+      expect(find.text(collection), findsOneWidget);
+    }
+  });
+
+  testWidgets('normal collection shows temporary feedback', (tester) async {
+    await pumpSavedPage(tester);
+    final collection = find.byKey(
+      const ValueKey('collection-Hafta Sonu Kahvaltısı'),
+    );
+    await tester.ensureVisible(collection);
+    await tester.tap(collection);
+    await tester.pump();
+
+    expect(
+      find.text('Hafta Sonu Kahvaltısı koleksiyonu yakında açılacak.'),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('new collection card shows temporary feedback', (tester) async {
+    await pumpSavedPage(tester);
+    final collection = find.byKey(const ValueKey('collection-Yeni Liste'));
+    await tester.ensureVisible(collection);
+    await tester.tap(collection);
+    await tester.pump();
+
+    expect(
+      find.text('Yeni koleksiyon oluşturma yakında eklenecek.'),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('SavedPage renders places and match badges', (tester) async {
+    await pumpSavedPage(tester);
+
+    for (final place in [
+      'Minoa Books & Coffee',
+      'The Hearth Bakery',
+      'Vantage Point Bar',
+    ]) {
+      expect(find.text(place), findsOneWidget);
+    }
+    for (final match in ['%94 Eşleşme', '%88 Eşleşme', '%91 Eşleşme']) {
+      expect(find.text(match), findsOneWidget);
+    }
+  });
+
+  testWidgets('saved place bookmarks toggle independently', (tester) async {
+    await pumpSavedPage(tester);
+    final minoaBookmark = find.byKey(const ValueKey('bookmark-minoa'));
+    await tester.ensureVisible(minoaBookmark);
+
+    IconButton minoaButton = tester.widget(minoaBookmark);
+    IconButton hearthButton = tester.widget(
+      find.byKey(const ValueKey('bookmark-hearth')),
+    );
+    expect((minoaButton.icon as Icon).icon, Icons.bookmark_rounded);
+    expect((hearthButton.icon as Icon).icon, Icons.bookmark_rounded);
+
+    await tester.tap(minoaBookmark);
+    await tester.pump();
+
+    minoaButton = tester.widget(minoaBookmark);
+    hearthButton = tester.widget(find.byKey(const ValueKey('bookmark-hearth')));
+    expect((minoaButton.icon as Icon).icon, Icons.bookmark_border_rounded);
+    expect((hearthButton.icon as Icon).icon, Icons.bookmark_rounded);
+    expect(
+      find.text('Minoa Books & Coffee kaydedilenlerden çıkarıldı.'),
+      findsOneWidget,
+    );
+    expect(
+      find.text('Minoa Books & Coffee detay ekranı yakında eklenecek.'),
+      findsNothing,
+    );
+
+    await tester.tap(minoaBookmark);
+    await tester.pump();
+    expect(
+      find.text('Minoa Books & Coffee kaydedilenlere eklendi.'),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('saved place card shows detail feedback', (tester) async {
+    await pumpSavedPage(tester);
+    final place = find.byKey(const ValueKey('saved-place-minoa'));
+    await tester.ensureVisible(place);
+    await tester.tap(place);
+    await tester.pump();
+
+    expect(
+      find.text('Minoa Books & Coffee detay ekranı yakında eklenecek.'),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('Planlar tab shows its empty state', (tester) async {
+    await pumpSavedPage(tester);
+    await tester.tap(find.byKey(const ValueKey('saved-tab-Planlar')));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('saved-plans-tab')), findsOneWidget);
+    expect(find.text('Henüz kayıtlı planın yok'), findsOneWidget);
+    expect(
+      find.text('Beğendiğin rotaları kaydettiğinde burada görebilirsin.'),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('saved plans discover action opens DiscoverPage', (tester) async {
+    await pumpSavedPage(tester);
+    await tester.tap(find.byKey(const ValueKey('saved-tab-Planlar')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('saved-discover-action')));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(DiscoverPage), findsOneWidget);
+  });
+
+  testWidgets('switching back to Mekanlar restores saved places', (
+    tester,
+  ) async {
+    await pumpSavedPage(tester);
+    await tester.tap(find.byKey(const ValueKey('saved-tab-Planlar')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('saved-tab-Mekanlar')));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('saved-places-tab')), findsOneWidget);
+    expect(find.text('Minoa Books & Coffee'), findsOneWidget);
+  });
+
+  testWidgets('saved search action shows temporary feedback', (tester) async {
+    await pumpSavedPage(tester);
+    await tester.tap(find.byKey(const ValueKey('saved-search')));
+    await tester.pump();
+
+    expect(
+      find.text('Kayıtlı içeriklerde arama yakında eklenecek.'),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('saved add action shows temporary feedback', (tester) async {
+    await pumpSavedPage(tester);
+    await tester.tap(find.byKey(const ValueKey('saved-add-collection')));
+    await tester.pump();
+
+    expect(
+      find.text('Yeni koleksiyon oluşturma yakında eklenecek.'),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('SavedPage bottom navigation marks Kaydedilenler active', (
+    tester,
+  ) async {
+    await pumpSavedPage(tester);
+
+    final navigation = tester.widget<NavigationBar>(
+      find.byKey(const ValueKey('app-bottom-navigation')),
+    );
+    expect(navigation.selectedIndex, 1);
+  });
+
+  testWidgets('SavedPage Keşfet destination returns to DiscoverPage', (
+    tester,
+  ) async {
+    await pumpSavedPage(tester);
+    await tester.tap(find.text('Keşfet'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(DiscoverPage), findsOneWidget);
+  });
+
+  testWidgets('SavedPage AI and profile destinations show feedback', (
+    tester,
+  ) async {
+    await pumpSavedPage(tester);
+
+    const expectations = {
+      'AI Asistan': 'AI asistan ekranı yakında eklenecek.',
+      'Profil': 'Profil ekranı yakında eklenecek.',
+    };
+    for (final entry in expectations.entries) {
+      await tester.tap(find.text(entry.key));
+      await tester.pump();
+      expect(find.text(entry.value), findsOneWidget);
+    }
+  });
+
+  testWidgets('SavedPage does not overflow on a small phone', (tester) async {
+    tester.view.physicalSize = const Size(320, 568);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await pumpSavedPage(tester);
+
+    expect(find.byType(SavedPage), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('saved collections scroll horizontally without layout errors', (
+    tester,
+  ) async {
+    await pumpSavedPage(tester);
+    final collections = find.byKey(const ValueKey('saved-collections-scroll'));
+    await tester.drag(collections, const Offset(-220, 0));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Yeni Liste'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }

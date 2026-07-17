@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:turota_mobile/app/router/app_router.dart';
 import 'package:turota_mobile/core/theme/app_colors.dart';
 import 'package:turota_mobile/core/theme/app_radius.dart';
 import 'package:turota_mobile/core/theme/app_spacing.dart';
 import 'package:turota_mobile/core/widgets/app_card.dart';
+import 'package:turota_mobile/core/widgets/app_bottom_navigation.dart';
 import 'package:turota_mobile/core/widgets/app_scaffold.dart';
 
 class DiscoverPage extends StatefulWidget {
@@ -75,9 +77,12 @@ class _DiscoverPageState extends State<DiscoverPage> {
   }
 
   void _selectTemporaryDestination(int index) {
+    if (index == 1) {
+      Navigator.of(context).pushReplacementNamed(AppRouter.saved);
+      return;
+    }
     const messages = {
-      1: 'Kaydedilenler ekranı yakında eklenecek.',
-      2: 'Yapay zeka planlayıcı yakında eklenecek.',
+      2: 'AI asistan ekranı yakında eklenecek.',
       3: 'Profil ekranı yakında eklenecek.',
     };
     final message = messages[index];
@@ -91,7 +96,8 @@ class _DiscoverPageState extends State<DiscoverPage> {
     return AppScaffold(
       backgroundColor: AppColors.discoverBackground,
       padding: EdgeInsets.zero,
-      bottomNavigationBar: _DiscoverBottomNavigation(
+      bottomNavigationBar: AppBottomNavigation(
+        selectedIndex: 0,
         onDestinationSelected: _selectTemporaryDestination,
       ),
       body: SingleChildScrollView(
@@ -775,54 +781,6 @@ class _ModaVisual extends StatelessWidget {
         Icons.tram_rounded,
         size: 54,
         color: AppColors.primaryContainer,
-      ),
-    );
-  }
-}
-
-class _DiscoverBottomNavigation extends StatelessWidget {
-  const _DiscoverBottomNavigation({required this.onDestinationSelected});
-
-  final ValueChanged<int> onDestinationSelected;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.surface,
-      elevation: 12,
-      borderRadius: const BorderRadius.vertical(
-        top: Radius.circular(AppRadius.xl),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: SafeArea(
-        top: false,
-        child: NavigationBar(
-          key: const ValueKey('discover-bottom-navigation'),
-          selectedIndex: 0,
-          onDestinationSelected: onDestinationSelected,
-          backgroundColor: AppColors.surface,
-          indicatorColor: AppColors.discoverPrimaryContainer,
-          labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-          destinations: const [
-            NavigationDestination(
-              icon: Icon(Icons.explore_outlined),
-              selectedIcon: Icon(Icons.explore_rounded),
-              label: 'Keşfet',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.bookmark_border_rounded),
-              label: 'Kaydedilenler',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.smart_toy_outlined),
-              label: 'Yapay Zeka',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.person_outline_rounded),
-              label: 'Profil',
-            ),
-          ],
-        ),
       ),
     );
   }
