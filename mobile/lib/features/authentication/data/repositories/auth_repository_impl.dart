@@ -51,4 +51,10 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<String?> getStoredToken() async {
     return _tokenStorage.getToken();
   }
+
+  @override
+  Future<AuthUser> getCurrentUser() async {
+    final responseDto = await _dataSource.getCurrentUser();
+    return responseDto.toDomain();
+  }
 }

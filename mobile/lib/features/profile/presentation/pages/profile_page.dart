@@ -129,11 +129,16 @@ class ProfilePage extends ConsumerWidget {
   }
 }
 
-class _ProfileHeader extends StatelessWidget {
+class _ProfileHeader extends ConsumerWidget {
   const _ProfileHeader();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final userState = ref.watch(currentUserProvider);
+    final fullName = userState.value != null 
+        ? '${userState.value!.firstName} ${userState.value!.lastName}' 
+        : '...';
+
     return Column(
       children: [
         Stack(
@@ -183,7 +188,7 @@ class _ProfileHeader extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.md),
         Text(
-          'Sarah Johnson',
+          fullName,
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.w700,
             color: AppColors.textPrimary,
