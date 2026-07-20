@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+import '../controllers/weather_controller.dart';
 import 'package:turota_mobile/app/router/app_router.dart';
 import 'package:turota_mobile/core/theme/app_colors.dart';
 import 'package:turota_mobile/core/theme/app_radius.dart';
 import 'package:turota_mobile/core/theme/app_spacing.dart';
 import 'package:turota_mobile/core/widgets/app_card.dart';
-import 'package:turota_mobile/core/widgets/app_bottom_navigation.dart';
-import 'package:turota_mobile/core/widgets/app_scaffold.dart';
+import 'package:turota_mobile/features/discover/presentation/widgets/neighborhood_detail_bottom_sheet.dart';
 
-class DiscoverPage extends StatefulWidget {
+class DiscoverPage extends ConsumerStatefulWidget {
   const DiscoverPage({super.key});
 
   @override
-  State<DiscoverPage> createState() => _DiscoverPageState();
+  ConsumerState<DiscoverPage> createState() => _DiscoverPageState();
 }
 
-class _DiscoverPageState extends State<DiscoverPage> {
+class _DiscoverPageState extends ConsumerState<DiscoverPage> {
   // TODO: Replace the sample identity and date with authenticated user and
   // localized current-date data.
   static const _header = _DiscoverHeaderModel(
@@ -22,20 +25,13 @@ class _DiscoverPageState extends State<DiscoverPage> {
     dateLabel: '12 Ekim Cumartesi',
   );
 
-  // TODO: Replace this sample forecast with weather API data.
-  static const _weatherDays = [
-    _WeatherDayUiModel('Bugün', '24°', Icons.wb_sunny_rounded, true),
-    _WeatherDayUiModel('Paz', '22°', Icons.cloud_queue_rounded, false),
-    _WeatherDayUiModel('Pzt', '19°', Icons.cloud_rounded, false),
-    _WeatherDayUiModel('Sal', '17°', Icons.grain_rounded, false),
-    _WeatherDayUiModel('Çar', '20°', Icons.cloud_queue_rounded, false),
-  ];
+
 
   static const _categories = [
     _DiscoverCategoryUiModel('Gastronomi', Icons.restaurant_rounded),
     _DiscoverCategoryUiModel('Sanat ve Kültür', Icons.museum_rounded),
     _DiscoverCategoryUiModel(
-      'Gece Hayatı ve Etkinlik',
+      'Şehrin Işıkları',
       Icons.celebration_rounded,
     ),
   ];
@@ -44,29 +40,26 @@ class _DiscoverPageState extends State<DiscoverPage> {
     _NearbyPlaceUiModel(
       name: 'Balat',
       description:
-          'Tarihi dokusu ve renkli evleriyle ünlü, fotoğraf çekmek için '
-          'ideal bir semt.',
+          "İstanbul'un tarihi yarımadasında, Haliç'in güney kıyısında yer alan Balat, dar ve yokuşlu sokakları, cumbalı rengarenk tarihi evleri ve farklı kültürlerin bir arada yaşadığı kozmopolit yapısıyla büyüleyici bir semttir. Özellikle Fener Rum Ortodoks Patrikhanesi ve Kırmızı Mektep (Özel Fener Rum Lisesi) gibi mimari şaheserlere ev sahipliği yapar. Son yıllarda açılan üçüncü nesil kahveciler, antikacılar ve sanat atölyeleriyle hem nostaljiyi hem de modern hayatı bir arada sunar. Mahalle kültürünün hala yaşadığı sokaklarda kaybolmak ve bol bol fotoğraf çekmek için harika bir rotadır.",
       distance: '2.4 km uzaklıkta',
       transportIcon: Icons.directions_walk_rounded,
-      visual: _PlaceVisual.balat,
+      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Balat_houses.jpg/960px-Balat_houses.jpg',
     ),
     _NearbyPlaceUiModel(
       name: 'Nişantaşı',
       description:
-          "Lüks mağazalar, şık kafeler ve hareketli sokaklarıyla İstanbul'un "
-          'moda merkezi.',
+          "Avrupa Yakası'nın kalbinde yer alan Nişantaşı, lüks butikleri, dünyaca ünlü markaların mağazaları ve şık kafeleriyle İstanbul'un moda, sanat ve alışveriş merkezidir. Abdi İpekçi ve Teşvikiye Caddesi boyunca uzanan vitrinler, dünya başkentlerini aratmayan bir atmosfere sahiptir. Aynı zamanda tarihi Teşvikiye Camii ve neo-klasik mimarideki apartmanlarıyla estetik bir görsellik sunar. Sadece alışveriş değil, popüler restoranları, sanat galerileri ve hareketli gece hayatıyla da turistlerin gözde uğrak noktalarından biridir.",
       distance: '4.1 km uzaklıkta',
       transportIcon: Icons.directions_car_rounded,
-      visual: _PlaceVisual.nisantasi,
+      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Ni%C5%9Fanta%C5%9F%C4%B1_Abdi_%C4%B0pek%C3%A7i_Avenue.jpg/960px-Ni%C5%9Fanta%C5%9F%C4%B1_Abdi_%C4%B0pek%C3%A7i_Avenue.jpg',
     ),
     _NearbyPlaceUiModel(
       name: 'Moda, Kadıköy',
       description:
-          "Sahili, tarihi tramvayı ve üçüncü nesil kahvecileriyle Anadolu "
-          "Yakası'nın gözdesi.",
+          "Anadolu Yakası'nın en nezih ve popüler semtlerinden olan Moda, deniz kenarındaki harika konumu, tarihi tramvayı ve nostaljik atmosferiyle öne çıkar. Moda Sahili'nden Prens Adaları'na doğru batan güneşi izlemek, tarihi Moda İskelesi'nde veya ünlü çay bahçelerinde vakit geçirmek İstanbullular için vazgeçilmez bir klasiktir. Çikolatacıları, dondurmacıları, bağımsız tiyatro sahneleri ve her köşeden karşınıza çıkan kedileriyle sakin ama bir o kadar da yaşayan, samimi bir semttir.",
       distance: '8.5 km uzaklıkta',
       transportIcon: Icons.directions_transit_rounded,
-      visual: _PlaceVisual.moda,
+      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/e/eb/Moda_IMAGE.jpg',
     ),
   ];
 
@@ -78,29 +71,96 @@ class _DiscoverPageState extends State<DiscoverPage> {
 
   void _selectTemporaryDestination(int index) {
     if (index == 1) {
-      Navigator.of(context).pushReplacementNamed(AppRouter.saved);
+      Navigator.of(context).pushReplacementNamed(AppRouter.home);
       return;
     }
-    if (index == 2) {
-      Navigator.of(context).pushReplacementNamed(AppRouter.aiPlannerTimeline);
-      return;
-    }
-    const messages = {3: 'Profil ekranı yakında eklenecek.'};
+    const messages = {
+      2: 'AI asistan ekranı yakında eklenecek.',
+      3: 'Profil ekranı yakında eklenecek.',
+    };
     final message = messages[index];
     if (message != null) {
       _showMessage(message);
     }
   }
 
+  Widget _buildWeatherSection() {
+    final weatherState = ref.watch(weatherControllerProvider);
+
+    return weatherState.when(
+      data: (forecast) {
+        final days = forecast.dailyForecasts.asMap().entries.map((entry) {
+          final index = entry.key;
+          final dto = entry.value;
+          final isToday = index == 0;
+          final dayName = isToday ? 'Bugün' : _getDayName(dto.date.weekday);
+
+          return _WeatherDayUiModel(
+            dayName,
+            '${dto.maxTemperature.round()}°',
+            _getWeatherIcon(dto.weatherCode),
+            isToday,
+          );
+        }).toList();
+
+        return _WeatherStrip(days: days);
+      },
+      loading: () => const Center(
+        child: Padding(
+          padding: EdgeInsets.all(AppSpacing.xl),
+          child: CircularProgressIndicator(),
+        ),
+      ),
+      error: (error, stack) => Center(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.xl),
+          child: Column(
+            children: [
+              const Icon(Icons.error_outline, color: AppColors.error),
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                'Hava durumu yüklenemedi',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.error),
+              ),
+              TextButton(
+                onPressed: () => ref.refresh(weatherControllerProvider),
+                child: const Text('Tekrar Dene'),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _getDayName(int weekday) {
+    const names = {
+      1: 'Pzt',
+      2: 'Sal',
+      3: 'Çar',
+      4: 'Per',
+      5: 'Cum',
+      6: 'Cmt',
+      7: 'Paz',
+    };
+    return names[weekday] ?? '';
+  }
+
+  IconData _getWeatherIcon(int code) {
+    if (code == 0 || code == 1) return Icons.wb_sunny_rounded;
+    if (code == 2 || code == 3) return Icons.cloud_queue_rounded;
+    if (code == 45 || code == 48) return Icons.foggy;
+    if (code >= 51 && code <= 55) return Icons.grain_rounded;
+    if (code >= 61 && code <= 65) return Icons.water_drop_rounded;
+    if (code >= 71 && code <= 75) return Icons.ac_unit_rounded;
+    if (code >= 95 && code <= 99) return Icons.thunderstorm_rounded;
+    return Icons.cloud_rounded;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return AppScaffold(
-      backgroundColor: AppColors.discoverBackground,
-      padding: EdgeInsets.zero,
-      bottomNavigationBar: AppBottomNavigation(
-        selectedIndex: 0,
-        onDestinationSelected: _selectTemporaryDestination,
-      ),
+    return Scaffold(
+      backgroundColor: AppColors.background,
       body: SingleChildScrollView(
         key: const ValueKey('discover-scroll-view'),
         padding: const EdgeInsets.only(bottom: AppSpacing.xl),
@@ -123,22 +183,32 @@ class _DiscoverPageState extends State<DiscoverPage> {
                 children: [
                   const _SectionTitle('7 Günlük Hava Durumu'),
                   const SizedBox(height: AppSpacing.md),
-                  _WeatherStrip(days: _weatherDays),
+                  _buildWeatherSection(),
                   const SizedBox(height: AppSpacing.xl),
                   const _SectionTitle('Mevcut Konumunuz'),
                   const SizedBox(height: AppSpacing.md),
                   _LocationPreviewCard(
                     onMapPressed: () =>
-                        _showMessage('Tam harita ekranı yakında eklenecek.'),
+                        Navigator.of(context).pushNamed(AppRouter.map),
                   ),
                   const SizedBox(height: AppSpacing.xl),
                   const _SectionTitle('Kategoriye Göre Keşfet'),
                   const SizedBox(height: AppSpacing.md),
                   _CategoryGrid(
                     categories: _categories,
-                    onCategoryPressed: (category) => _showMessage(
-                      '${category.label} kategorisi yakında açılacak.',
-                    ),
+                    onCategoryPressed: (category) {
+                      if (category.label == 'Şehrin Işıkları') {
+                        Navigator.of(context).pushNamed(AppRouter.cityLights);
+                      } else if (category.label == 'Sanat ve Kültür') {
+                        Navigator.of(context).pushNamed(AppRouter.artCulture);
+                      } else if (category.label == 'Gastronomi') {
+                        Navigator.of(context).pushNamed(AppRouter.gastronomy);
+                      } else {
+                        _showMessage(
+                          '${category.label} kategorisi yakında açılacak.',
+                        );
+                      }
+                    },
                   ),
                   const SizedBox(height: AppSpacing.xl),
                   _NearbyHeader(
@@ -149,9 +219,19 @@ class _DiscoverPageState extends State<DiscoverPage> {
                   for (final place in _places) ...[
                     _NearbyPlaceCard(
                       place: place,
-                      onPressed: () => Navigator.of(
-                        context,
-                      ).pushNamed(AppRouter.placeDetail),
+                      onPressed: () {
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          backgroundColor: Colors.transparent,
+                          builder: (context) => NeighborhoodDetailBottomSheet(
+                            name: place.name,
+                            description: place.description,
+                            imageUrl: place.imageUrl,
+                            distance: place.distance,
+                          ),
+                        );
+                      },
                     ),
                     if (place != _places.last)
                       const SizedBox(height: AppSpacing.md),
@@ -194,22 +274,20 @@ class _DiscoverCategoryUiModel {
   final IconData icon;
 }
 
-enum _PlaceVisual { balat, nisantasi, moda }
-
 class _NearbyPlaceUiModel {
   const _NearbyPlaceUiModel({
     required this.name,
     required this.description,
     required this.distance,
     required this.transportIcon,
-    required this.visual,
+    required this.imageUrl,
   });
 
   final String name;
   final String description;
   final String distance;
   final IconData transportIcon;
-  final _PlaceVisual visual;
+  final String imageUrl;
 }
 
 class _DiscoverHeader extends StatelessWidget {
@@ -229,14 +307,16 @@ class _DiscoverHeader extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.surface.withValues(alpha: 0.88),
         border: const Border(
-          bottom: BorderSide(color: AppColors.discoverSecondary),
+          bottom: BorderSide(color: AppColors.primary),
         ),
       ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.lg,
-          vertical: AppSpacing.md,
-        ),
+      child: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.lg,
+            vertical: AppSpacing.md,
+          ),
         child: Row(
           children: [
             Expanded(
@@ -279,8 +359,8 @@ class _DiscoverHeader extends StatelessWidget {
                   ),
                   child: const CircleAvatar(
                     radius: 20,
-                    backgroundColor: AppColors.discoverPrimaryContainer,
-                    foregroundColor: AppColors.onDiscoverPrimaryContainer,
+                    backgroundColor: AppColors.primaryContainer,
+                    foregroundColor: AppColors.onPrimary,
                     child: Text(
                       'Ş',
                       style: TextStyle(fontWeight: FontWeight.w700),
@@ -291,6 +371,7 @@ class _DiscoverHeader extends StatelessWidget {
             ),
           ],
         ),
+      ),
       ),
     );
   }
@@ -350,7 +431,7 @@ class _WeatherDayCard extends StatelessWidget {
         color: day.isActive ? AppColors.primary : AppColors.surface,
         borderRadius: BorderRadius.circular(AppRadius.lg),
         border: Border.all(
-          color: day.isActive ? AppColors.primary : AppColors.discoverSecondary,
+          color: day.isActive ? AppColors.primary : AppColors.primary,
         ),
       ),
       child: Column(
@@ -419,7 +500,6 @@ class _LocationPreviewCardState extends State<_LocationPreviewCard>
     return AppCard(
       padding: EdgeInsets.zero,
       borderRadius: AppRadius.xl,
-      borderColor: AppColors.discoverSecondary,
       boxShadow: const [
         BoxShadow(
           color: AppColors.shadow,
@@ -434,7 +514,25 @@ class _LocationPreviewCardState extends State<_LocationPreviewCard>
           child: Stack(
             alignment: Alignment.center,
             children: [
-              const Positioned.fill(child: CustomPaint(painter: _MapPainter())),
+              Positioned.fill(
+                child: IgnorePointer(
+                  child: FlutterMap(
+                    options: const MapOptions(
+                      initialCenter: LatLng(40.990, 29.020),
+                      initialZoom: 14.0,
+                      interactionOptions: InteractionOptions(
+                        flags: InteractiveFlag.none,
+                      ),
+                    ),
+                    children: [
+                      TileLayer(
+                        urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                        userAgentPackageName: 'com.turota.mobile',
+                      ),
+                    ],
+                  ),
+                ),
+              ),
               ScaleTransition(
                 scale: _pulse,
                 child: Container(
@@ -468,56 +566,6 @@ class _LocationPreviewCardState extends State<_LocationPreviewCard>
   }
 }
 
-class _MapPainter extends CustomPainter {
-  const _MapPainter();
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    canvas.drawColor(AppColors.illustrationBackground, BlendMode.src);
-    final blockPaint = Paint()..color = AppColors.discoverPrimaryContainer;
-    final roadPaint = Paint()
-      ..color = AppColors.surface
-      ..strokeWidth = 14
-      ..strokeCap = StrokeCap.round;
-    final routePaint = Paint()
-      ..color = AppColors.discoverSecondary
-      ..strokeWidth = 4
-      ..strokeCap = StrokeCap.round;
-
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(18, 18, size.width * 0.28, 48),
-        const Radius.circular(10),
-      ),
-      blockPaint,
-    );
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(size.width * 0.66, 28, size.width * 0.24, 58),
-        const Radius.circular(10),
-      ),
-      blockPaint,
-    );
-    canvas.drawLine(
-      Offset(-10, size.height * 0.72),
-      Offset(size.width + 15, size.height * 0.28),
-      roadPaint,
-    );
-    canvas.drawLine(
-      Offset(size.width * 0.22, -10),
-      Offset(size.width * 0.76, size.height + 10),
-      roadPaint,
-    );
-    canvas.drawLine(
-      Offset(size.width * 0.08, size.height * 0.82),
-      Offset(size.width * 0.9, size.height * 0.34),
-      routePaint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
 
 class _CategoryGrid extends StatelessWidget {
   const _CategoryGrid({
@@ -559,7 +607,6 @@ class _CategoryCard extends StatelessWidget {
       height: 128,
       child: AppCard(
         padding: EdgeInsets.zero,
-        borderColor: AppColors.discoverSecondary,
         boxShadow: const [
           BoxShadow(
             color: AppColors.shadow,
@@ -577,8 +624,8 @@ class _CategoryCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CircleAvatar(
-                  backgroundColor: AppColors.discoverPrimaryContainer,
-                  foregroundColor: AppColors.onDiscoverPrimaryContainer,
+                  backgroundColor: AppColors.primaryContainer,
+                  foregroundColor: AppColors.onPrimary,
                   child: Icon(category.icon),
                 ),
                 const SizedBox(height: AppSpacing.sm),
@@ -638,7 +685,6 @@ class _NearbyPlaceCard extends StatelessWidget {
       height: 136,
       child: AppCard(
         padding: EdgeInsets.zero,
-        borderColor: AppColors.discoverSecondary,
         boxShadow: const [
           BoxShadow(
             color: AppColors.shadow,
@@ -652,7 +698,7 @@ class _NearbyPlaceCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppRadius.lg),
           child: Row(
             children: [
-              Expanded(flex: 2, child: _PlaceVisualArea(type: place.visual)),
+              Expanded(flex: 2, child: _PlaceVisualArea(imageUrl: place.imageUrl)),
               Expanded(
                 flex: 4,
                 child: Padding(
@@ -707,9 +753,9 @@ class _NearbyPlaceCard extends StatelessWidget {
 }
 
 class _PlaceVisualArea extends StatelessWidget {
-  const _PlaceVisualArea({required this.type});
+  const _PlaceVisualArea({required this.imageUrl});
 
-  final _PlaceVisual type;
+  final String imageUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -717,71 +763,17 @@ class _PlaceVisualArea extends StatelessWidget {
       borderRadius: const BorderRadius.horizontal(
         left: Radius.circular(AppRadius.lg),
       ),
-      child: switch (type) {
-        _PlaceVisual.balat => const _BalatVisual(),
-        _PlaceVisual.nisantasi => const _NisantasiVisual(),
-        _PlaceVisual.moda => const _ModaVisual(),
-      },
-    );
-  }
-}
-
-class _BalatVisual extends StatelessWidget {
-  const _BalatVisual();
-
-  @override
-  Widget build(BuildContext context) {
-    return ColoredBox(
-      color: const Color(0xFFFFE7D6),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: const [
-          Expanded(child: ColoredBox(color: Color(0xFFE98A7A))),
-          SizedBox(width: 3),
-          Expanded(child: ColoredBox(color: Color(0xFFF2C14E))),
-          SizedBox(width: 3),
-          Expanded(child: ColoredBox(color: Color(0xFF66B2B2))),
-        ],
-      ),
-    );
-  }
-}
-
-class _NisantasiVisual extends StatelessWidget {
-  const _NisantasiVisual();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: const Color(0xFFE8E1D9),
-      alignment: Alignment.center,
-      child: const Icon(
-        Icons.storefront_rounded,
-        size: 58,
-        color: AppColors.primaryContainer,
-      ),
-    );
-  }
-}
-
-class _ModaVisual extends StatelessWidget {
-  const _ModaVisual();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color(0xFFDFF6F8), Color(0xFF74C9D2)],
-        ),
-      ),
-      alignment: Alignment.center,
-      child: const Icon(
-        Icons.tram_rounded,
-        size: 54,
-        color: AppColors.primaryContainer,
+      child: Image.network(
+        imageUrl,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return Container(
+            color: AppColors.primaryContainer.withValues(alpha: 0.3),
+            child: const Center(
+              child: Icon(Icons.broken_image, color: AppColors.primary),
+            ),
+          );
+        },
       ),
     );
   }

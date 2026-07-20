@@ -3,7 +3,9 @@ import 'package:turota_mobile/app/router/app_router.dart';
 import 'package:turota_mobile/core/theme/app_colors.dart';
 import 'package:turota_mobile/core/theme/app_spacing.dart';
 import 'package:turota_mobile/features/profile/presentation/pages/profile_page.dart';
-
+import 'package:turota_mobile/features/discover/presentation/pages/discover_page.dart';
+import 'package:turota_mobile/features/saved/presentation/pages/saved_page.dart';
+import 'package:turota_mobile/features/assistant/presentation/pages/assistant_page.dart';
 /// Shell page that hosts the bottom navigation bar and the four main tabs.
 ///
 /// Tab order (matching the Stitch reference):
@@ -46,6 +48,9 @@ class _MainShellPageState extends State<MainShellPage> {
 
   Widget _buildBody() {
     return switch (_currentIndex) {
+      0 => const DiscoverPage(),
+      1 => const SavedPage(),
+      2 => const AssistantPage(),
       3 => const ProfilePage(),
       _ => _PlaceholderTab(label: _navItems[_currentIndex].label),
     };

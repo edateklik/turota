@@ -1,20 +1,22 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:turota_mobile/app/router/app_router.dart';
+import 'package:turota_mobile/core/providers/core_providers.dart';
 import 'package:turota_mobile/core/constants/app_constants.dart';
 import 'package:turota_mobile/core/theme/app_colors.dart';
 import 'package:turota_mobile/core/theme/app_spacing.dart';
 import 'package:turota_mobile/core/theme/app_typography.dart';
 
-class SplashPage extends StatefulWidget {
+class SplashPage extends ConsumerStatefulWidget {
   const SplashPage({super.key});
 
   @override
-  State<SplashPage> createState() => _SplashPageState();
+  ConsumerState<SplashPage> createState() => _SplashPageState();
 }
 
-class _SplashPageState extends State<SplashPage>
+class _SplashPageState extends ConsumerState<SplashPage>
     with SingleTickerProviderStateMixin {
   late final AnimationController _animationController;
   late final Animation<double> _fadeAnimation;
@@ -42,17 +44,27 @@ class _SplashPageState extends State<SplashPage>
     _animationController.forward();
     _navigationTimer = Timer(
       AppConstants.splashDisplayDuration,
-      _navigateToOnboarding,
+      _navigateToNextScreen,
     );
   }
 
-  void _navigateToOnboarding() {
+  Future<void> _navigateToNextScreen() async {
     if (!mounted || _hasNavigated) {
       return;
     }
 
     _hasNavigated = true;
-    Navigator.of(context).pushReplacementNamed(AppRouter.locationPermission);
+    
+    final tokenStorage = ref.read(tokenStorageProvider);
+    final token = await tokenStorage.getToken();
+    
+    if (!mounted) return;
+    
+    if (token != null && token.isNotEmpty) {
+      Navigator.of(context).pushReplacementNamed(AppRouter.home);
+    } else {
+      Navigator.of(context).pushReplacementNamed(AppRouter.login);
+    }
   }
 
   @override

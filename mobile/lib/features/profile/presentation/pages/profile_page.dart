@@ -55,7 +55,9 @@ class ProfilePage extends StatelessWidget {
                 _ProfileListItem(
                   icon: Icons.lock_outline,
                   label: 'Gizlilik ve Güvenlik',
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).pushNamed(AppRouter.privacySecurity);
+                  },
                 ),
               ],
             ),
@@ -67,17 +69,23 @@ class ProfilePage extends StatelessWidget {
                 _ProfileListItem(
                   icon: Icons.notifications_none,
                   label: 'Bildirimler',
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).pushNamed(AppRouter.notifications);
+                  },
                 ),
                 _ProfileListItem(
                   icon: Icons.location_on_outlined,
                   label: 'Konum İzni',
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).pushNamed(AppRouter.locationSettings);
+                  },
                 ),
                 _ProfileListItem(
                   icon: Icons.language,
                   label: 'Dil',
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).pushNamed(AppRouter.languageSelection);
+                  },
                 ),
               ],
             ),
@@ -89,12 +97,16 @@ class ProfilePage extends StatelessWidget {
                 _ProfileListItem(
                   icon: Icons.help_outline,
                   label: 'Yardım Merkezi',
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).pushNamed(AppRouter.helpCenter);
+                  },
                 ),
                 _ProfileListItem(
                   icon: Icons.info_outline,
                   label: 'TUROTA Hakkında',
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).pushNamed(AppRouter.about);
+                  },
                 ),
                 _ProfileListItem(
                   icon: Icons.logout,

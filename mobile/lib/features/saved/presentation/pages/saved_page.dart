@@ -3,10 +3,8 @@ import 'package:turota_mobile/app/router/app_router.dart';
 import 'package:turota_mobile/core/theme/app_colors.dart';
 import 'package:turota_mobile/core/theme/app_radius.dart';
 import 'package:turota_mobile/core/theme/app_spacing.dart';
-import 'package:turota_mobile/core/widgets/app_bottom_navigation.dart';
+import 'package:turota_mobile/core/widgets/app_button.dart';
 import 'package:turota_mobile/core/widgets/app_card.dart';
-import 'package:turota_mobile/core/widgets/app_scaffold.dart';
-import 'package:turota_mobile/features/saved/presentation/widgets/saved_plan_card.dart';
 
 class SavedPage extends StatefulWidget {
   const SavedPage({super.key});
@@ -53,37 +51,9 @@ class _SavedPageState extends State<SavedPage> {
     ),
   ];
 
-  static const _plans = [
-    _SavedPlanUiModel(
-      id: 'karakoy-art',
-      title: 'Karaköy Sanat Turu',
-      badge: 'Yapay Zeka Rotası',
-      routeInfo: '4 Durak • 3.2 km',
-      duration: '2.5 Saat',
-      visual: SavedPlanVisual.karakoy,
-    ),
-    _SavedPlanUiModel(
-      id: 'bosphorus-breakfast',
-      title: 'Boğaz Hattı Kahvaltısı',
-      badge: 'Gurme Rotası',
-      routeInfo: '3 Durak • 5.1 km',
-      duration: '3 Saat',
-      visual: SavedPlanVisual.bosphorus,
-    ),
-    _SavedPlanUiModel(
-      id: 'old-city',
-      title: 'Eski Şehir Gizemleri',
-      badge: 'Tarih Turu',
-      routeInfo: '6 Durak • 4.5 km',
-      duration: '4 Saat',
-      visual: SavedPlanVisual.oldCity,
-    ),
-  ];
-
   final Set<String> _bookmarkedPlaceIds = {
     for (final place in _places) place.id,
   };
-  final Set<String> _bookmarkedPlanIds = {for (final plan in _plans) plan.id};
   int _activeTab = 0;
 
   void _showMessage(String message) {
@@ -92,17 +62,7 @@ class _SavedPageState extends State<SavedPage> {
       ..showSnackBar(SnackBar(content: Text(message)));
   }
 
-  void _handleBottomNavigation(int index) {
-    if (index == 0) {
-      Navigator.of(context).pushReplacementNamed(AppRouter.discover);
-      return;
-    }
-    if (index == 2) {
-      Navigator.of(context).pushReplacementNamed(AppRouter.aiPlannerTimeline);
-    } else if (index == 3) {
-      _showMessage('Profil ekranı yakında eklenecek.');
-    }
-  }
+
 
   void _toggleBookmark(_SavedPlaceUiModel place) {
     final wasBookmarked = _bookmarkedPlaceIds.contains(place.id);
@@ -120,31 +80,10 @@ class _SavedPageState extends State<SavedPage> {
     );
   }
 
-  void _togglePlanBookmark(_SavedPlanUiModel plan) {
-    final wasBookmarked = _bookmarkedPlanIds.contains(plan.id);
-    setState(() {
-      if (wasBookmarked) {
-        _bookmarkedPlanIds.remove(plan.id);
-      } else {
-        _bookmarkedPlanIds.add(plan.id);
-      }
-    });
-    _showMessage(
-      wasBookmarked
-          ? '${plan.title} kaydedilenlerden çıkarıldı.'
-          : '${plan.title} kaydedilenlere eklendi.',
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    return AppScaffold(
-      backgroundColor: AppColors.savedBackground,
-      padding: EdgeInsets.zero,
-      bottomNavigationBar: AppBottomNavigation(
-        selectedIndex: 1,
-        onDestinationSelected: _handleBottomNavigation,
-      ),
+    return Scaffold(
+      backgroundColor: AppColors.background,
       body: Column(
         children: [
           _SavedHeader(
@@ -184,14 +123,11 @@ class _SavedPageState extends State<SavedPage> {
                       ),
                       onBookmarkPressed: _toggleBookmark,
                     )
-                  : _PlansTab(
+                  : _PlansEmptyState(
                       key: const ValueKey('saved-plans-tab'),
-                      plans: _plans,
-                      bookmarkedPlanIds: _bookmarkedPlanIds,
-                      onPlanPressed: (plan) => _showMessage(
-                        '${plan.title} plan detayı yakında eklenecek.',
-                      ),
-                      onBookmarkPressed: _togglePlanBookmark,
+                      onDiscoverPressed: () => Navigator.of(
+                        context,
+                      ).pushReplacementNamed(AppRouter.home),
                     ),
             ),
           ),
@@ -228,24 +164,6 @@ class _SavedPlaceUiModel {
   final String match;
   final String location;
   final _SavedPlaceVisual visual;
-}
-
-class _SavedPlanUiModel {
-  const _SavedPlanUiModel({
-    required this.id,
-    required this.title,
-    required this.badge,
-    required this.routeInfo,
-    required this.duration,
-    required this.visual,
-  });
-
-  final String id;
-  final String title;
-  final String badge;
-  final String routeInfo;
-  final String duration;
-  final SavedPlanVisual visual;
 }
 
 class _SavedHeader extends StatelessWidget {
@@ -307,7 +225,7 @@ class _SavedHeader extends StatelessWidget {
                   ),
                   child: const CircleAvatar(
                     radius: 18,
-                    backgroundColor: AppColors.savedAccentLight,
+                    backgroundColor: AppColors.surfaceLow,
                     foregroundColor: AppColors.primaryContainer,
                     child: Text(
                       'Ş',
@@ -388,7 +306,7 @@ class _SavedTab extends StatelessWidget {
             Text(
               label,
               style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                color: isActive ? AppColors.primary : AppColors.savedOutline,
+                color: isActive ? AppColors.primary : AppColors.outline,
               ),
             ),
             const SizedBox(height: AppSpacing.sm),
@@ -551,12 +469,12 @@ class _CollectionCard extends StatelessWidget {
               width: 148,
               height: 148,
               decoration: BoxDecoration(
-                color: isNew ? AppColors.savedAccentLight : AppColors.surface,
+                color: isNew ? AppColors.surfaceLow : AppColors.surface,
                 borderRadius: BorderRadius.circular(AppRadius.xl),
                 border: Border.all(
                   color: isNew
                       ? AppColors.primary
-                      : AppColors.savedOutlineVariant,
+                      : AppColors.outlineVariant,
                 ),
                 boxShadow: isNew
                     ? null
@@ -578,7 +496,7 @@ class _CollectionCard extends StatelessWidget {
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppColors.savedTextPrimary,
+                color: AppColors.textPrimary,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -722,7 +640,6 @@ class _SavedPlaceCard extends StatelessWidget {
     return AppCard(
       padding: EdgeInsets.zero,
       borderRadius: AppRadius.xl,
-      borderColor: AppColors.savedOutlineVariant,
       boxShadow: const [
         BoxShadow(
           color: AppColors.shadow,
@@ -817,7 +734,7 @@ class _SavedPlaceCard extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: Theme.of(context).textTheme.bodyMedium
-                              ?.copyWith(color: AppColors.savedTextSecondary),
+                              ?.copyWith(color: AppColors.textSecondary),
                         ),
                       ),
                     ],
@@ -926,70 +843,52 @@ class _VantageVisual extends StatelessWidget {
   }
 }
 
-class _PlansTab extends StatelessWidget {
-  const _PlansTab({
-    required this.plans,
-    required this.bookmarkedPlanIds,
-    required this.onPlanPressed,
-    required this.onBookmarkPressed,
-    super.key,
-  });
+class _PlansEmptyState extends StatelessWidget {
+  const _PlansEmptyState({required this.onDiscoverPressed, super.key});
 
-  final List<_SavedPlanUiModel> plans;
-  final Set<String> bookmarkedPlanIds;
-  final ValueChanged<_SavedPlanUiModel> onPlanPressed;
-  final ValueChanged<_SavedPlanUiModel> onBookmarkPressed;
+  final VoidCallback onDiscoverPressed;
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final horizontalPadding = constraints.maxWidth < 380
-            ? AppSpacing.md
-            : AppSpacing.lg;
-        final columnCount = constraints.maxWidth >= 720 ? 2 : 1;
-        final availableWidth = constraints.maxWidth - (horizontalPadding * 2);
-        final cardWidth =
-            (availableWidth - ((columnCount - 1) * AppSpacing.md)) /
-            columnCount;
-
-        return SingleChildScrollView(
-          key: const ValueKey('saved-plans-scroll'),
-          padding: EdgeInsets.fromLTRB(
-            horizontalPadding,
-            AppSpacing.lg,
-            horizontalPadding,
-            AppSpacing.xl,
-          ),
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 920),
-              child: Wrap(
-                spacing: AppSpacing.md,
-                runSpacing: AppSpacing.md,
-                children: [
-                  for (final plan in plans)
-                    SizedBox(
-                      width: cardWidth.clamp(0.0, 444.0).toDouble(),
-                      child: SavedPlanCard(
-                        key: ValueKey('saved-plan-${plan.id}'),
-                        id: plan.id,
-                        title: plan.title,
-                        badge: plan.badge,
-                        routeInfo: plan.routeInfo,
-                        duration: plan.duration,
-                        visual: plan.visual,
-                        isBookmarked: bookmarkedPlanIds.contains(plan.id),
-                        onPressed: () => onPlanPressed(plan),
-                        onBookmarkPressed: () => onBookmarkPressed(plan),
-                      ),
-                    ),
-                ],
-              ),
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 420),
+          child: AppCard(
+            borderRadius: AppRadius.xl,
+            child: Column(
+              children: [
+                const CircleAvatar(
+                  radius: 42,
+                  backgroundColor: AppColors.surfaceLow,
+                  foregroundColor: AppColors.primary,
+                  child: Icon(Icons.route_rounded, size: 46),
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                Text(
+                  'Henüz kayıtlı planın yok',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                Text(
+                  'Beğendiğin rotaları kaydettiğinde burada görebilirsin.',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                AppButton(
+                  key: const ValueKey('saved-discover-action'),
+                  label: 'Keşfetmeye Başla',
+                  onPressed: onDiscoverPressed,
+                  isFullWidth: true,
+                ),
+              ],
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }
