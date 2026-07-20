@@ -148,9 +148,9 @@ class _DiscoverPageState extends State<DiscoverPage> {
                   for (final place in _places) ...[
                     _NearbyPlaceCard(
                       place: place,
-                      onPressed: () => _showMessage(
-                        '${place.name} detay ekranı yakında eklenecek.',
-                      ),
+                      onPressed: () => Navigator.of(
+                        context,
+                      ).pushNamed(AppRouter.placeDetail),
                     ),
                     if (place != _places.last)
                       const SizedBox(height: AppSpacing.md),

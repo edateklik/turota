@@ -13,6 +13,7 @@ import 'package:turota_mobile/features/authentication/presentation/pages/registe
 import 'package:turota_mobile/features/authentication/presentation/providers/auth_providers.dart';
 import 'package:turota_mobile/features/discover/presentation/pages/discover_page.dart';
 import 'package:turota_mobile/features/onboarding/location/presentation/pages/location_permission_page.dart';
+import 'package:turota_mobile/features/places/presentation/pages/place_detail_page.dart';
 import 'package:turota_mobile/features/saved/presentation/pages/saved_page.dart';
 import 'package:turota_mobile/features/splash/presentation/pages/splash_page.dart';
 
@@ -125,6 +126,18 @@ void main() {
           theme: AppTheme.light,
           onGenerateRoute: AppRouter.onGenerateRoute,
           home: const SavedPage(),
+        ),
+      ),
+    );
+  }
+
+  Future<void> pumpPlaceDetailPage(WidgetTester tester) async {
+    await tester.pumpWidget(
+      withTestProviders(
+        MaterialApp(
+          theme: AppTheme.light,
+          onGenerateRoute: AppRouter.onGenerateRoute,
+          home: const PlaceDetailPage(),
         ),
       ),
     );
@@ -648,6 +661,116 @@ void main() {
       expect(find.byKey(ValueKey('place-$place')), findsOneWidget);
       expect(find.text(place), findsOneWidget);
     }
+  });
+
+  testWidgets('nearby place opens PlaceDetailPage', (tester) async {
+    await pumpDiscoverPage(tester);
+    final place = find.byKey(const ValueKey('place-Balat'));
+    await tester.ensureVisible(place);
+    await tester.tap(place);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(PlaceDetailPage), findsOneWidget);
+    expect(find.text('Monstera Coffee House'), findsOneWidget);
+  });
+
+  testWidgets('PlaceDetailPage renders its premium content', (tester) async {
+    await pumpPlaceDetailPage(tester);
+
+    expect(find.byType(PlaceDetailPage), findsOneWidget);
+    expect(find.text('Monstera Coffee House'), findsOneWidget);
+    expect(find.text('Botanik Kafe'), findsOneWidget);
+    expect(find.text('Sessiz'), findsOneWidget);
+    expect(find.text('₺₺'), findsOneWidget);
+  });
+
+  testWidgets('PlaceDetailPage shows AI match card', (tester) async {
+    await pumpPlaceDetailPage(tester);
+
+    expect(find.byKey(const ValueKey('ai-match-card')), findsOneWidget);
+    expect(find.text('⭐ %98 Eşleşme'), findsOneWidget);
+  });
+
+  testWidgets('PlaceDetailPage shows all place features', (tester) async {
+    await pumpPlaceDetailPage(tester);
+
+    for (final feature in ['Wi-Fi', 'Priz', 'Pour Over', 'Sessiz Alan']) {
+      expect(find.text(feature), findsOneWidget);
+    }
+  });
+
+  testWidgets('PlaceDetailPage shows sample reviews', (tester) async {
+    await pumpPlaceDetailPage(tester);
+
+    expect(find.text('Yorumlar'), findsOneWidget);
+    expect(find.text('Elif K.'), findsOneWidget);
+    expect(find.text('Mert A.'), findsOneWidget);
+  });
+
+  testWidgets('PlaceDetailPage shows opening hours', (tester) async {
+    await pumpPlaceDetailPage(tester);
+
+    expect(find.text('Çalışma Saatleri'), findsOneWidget);
+    expect(find.byKey(const ValueKey('opening-hours-card')), findsOneWidget);
+    expect(find.text('Pazartesi - Cuma'), findsOneWidget);
+  });
+
+  testWidgets('PlaceDetailPage bookmark toggles locally', (tester) async {
+    await pumpPlaceDetailPage(tester);
+    final bookmark = find.byKey(const ValueKey('place-detail-bookmark'));
+
+    IconButton button = tester.widget(bookmark);
+    expect((button.icon as Icon).icon, Icons.bookmark_rounded);
+
+    await tester.tap(bookmark);
+    await tester.pump();
+
+    button = tester.widget(bookmark);
+    expect((button.icon as Icon).icon, Icons.bookmark_border_rounded);
+    expect(
+      find.text('Monstera Coffee House kaydedilenlerden çıkarıldı.'),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('PlaceDetailPage share action shows feedback', (tester) async {
+    await pumpPlaceDetailPage(tester);
+    await tester.tap(find.byKey(const ValueKey('place-detail-share')));
+    await tester.pump();
+
+    expect(find.text('Paylaşım özelliği yakında eklenecek.'), findsOneWidget);
+  });
+
+  testWidgets('PlaceDetailPage directions action shows feedback', (
+    tester,
+  ) async {
+    await pumpPlaceDetailPage(tester);
+    final directions = find.byKey(const ValueKey('place-directions'));
+    await tester.ensureVisible(directions);
+    await tester.tap(directions);
+    await tester.pump();
+
+    expect(find.text('Harita entegrasyonu yakında eklenecek.'), findsOneWidget);
+  });
+
+  testWidgets('PlaceDetailPage does not overflow on a small phone', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(320, 568);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await pumpPlaceDetailPage(tester);
+    await tester.drag(
+      find.byKey(const ValueKey('place-detail-scroll')),
+      const Offset(0, -1000),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byType(PlaceDetailPage), findsOneWidget);
+    expect(find.byKey(const ValueKey('place-directions')), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('see-all places action shows temporary feedback', (tester) async {
