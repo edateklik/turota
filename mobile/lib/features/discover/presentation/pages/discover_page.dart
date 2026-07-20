@@ -8,6 +8,7 @@ import 'package:turota_mobile/core/theme/app_colors.dart';
 import 'package:turota_mobile/core/theme/app_radius.dart';
 import 'package:turota_mobile/core/theme/app_spacing.dart';
 import 'package:turota_mobile/core/widgets/app_card.dart';
+import 'package:turota_mobile/features/discover/presentation/widgets/neighborhood_detail_bottom_sheet.dart';
 
 class DiscoverPage extends ConsumerStatefulWidget {
   const DiscoverPage({super.key});
@@ -39,29 +40,26 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
     _NearbyPlaceUiModel(
       name: 'Balat',
       description:
-          'Tarihi dokusu ve renkli evleriyle ünlü, fotoğraf çekmek için '
-          'ideal bir semt.',
+          "İstanbul'un tarihi yarımadasında, Haliç'in güney kıyısında yer alan Balat, dar ve yokuşlu sokakları, cumbalı rengarenk tarihi evleri ve farklı kültürlerin bir arada yaşadığı kozmopolit yapısıyla büyüleyici bir semttir. Özellikle Fener Rum Ortodoks Patrikhanesi ve Kırmızı Mektep (Özel Fener Rum Lisesi) gibi mimari şaheserlere ev sahipliği yapar. Son yıllarda açılan üçüncü nesil kahveciler, antikacılar ve sanat atölyeleriyle hem nostaljiyi hem de modern hayatı bir arada sunar. Mahalle kültürünün hala yaşadığı sokaklarda kaybolmak ve bol bol fotoğraf çekmek için harika bir rotadır.",
       distance: '2.4 km uzaklıkta',
       transportIcon: Icons.directions_walk_rounded,
-      visual: _PlaceVisual.balat,
+      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Balat_houses.jpg/960px-Balat_houses.jpg',
     ),
     _NearbyPlaceUiModel(
       name: 'Nişantaşı',
       description:
-          "Lüks mağazalar, şık kafeler ve hareketli sokaklarıyla İstanbul'un "
-          'moda merkezi.',
+          "Avrupa Yakası'nın kalbinde yer alan Nişantaşı, lüks butikleri, dünyaca ünlü markaların mağazaları ve şık kafeleriyle İstanbul'un moda, sanat ve alışveriş merkezidir. Abdi İpekçi ve Teşvikiye Caddesi boyunca uzanan vitrinler, dünya başkentlerini aratmayan bir atmosfere sahiptir. Aynı zamanda tarihi Teşvikiye Camii ve neo-klasik mimarideki apartmanlarıyla estetik bir görsellik sunar. Sadece alışveriş değil, popüler restoranları, sanat galerileri ve hareketli gece hayatıyla da turistlerin gözde uğrak noktalarından biridir.",
       distance: '4.1 km uzaklıkta',
       transportIcon: Icons.directions_car_rounded,
-      visual: _PlaceVisual.nisantasi,
+      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Ni%C5%9Fanta%C5%9F%C4%B1_Abdi_%C4%B0pek%C3%A7i_Avenue.jpg/960px-Ni%C5%9Fanta%C5%9F%C4%B1_Abdi_%C4%B0pek%C3%A7i_Avenue.jpg',
     ),
     _NearbyPlaceUiModel(
       name: 'Moda, Kadıköy',
       description:
-          "Sahili, tarihi tramvayı ve üçüncü nesil kahvecileriyle Anadolu "
-          "Yakası'nın gözdesi.",
+          "Anadolu Yakası'nın en nezih ve popüler semtlerinden olan Moda, deniz kenarındaki harika konumu, tarihi tramvayı ve nostaljik atmosferiyle öne çıkar. Moda Sahili'nden Prens Adaları'na doğru batan güneşi izlemek, tarihi Moda İskelesi'nde veya ünlü çay bahçelerinde vakit geçirmek İstanbullular için vazgeçilmez bir klasiktir. Çikolatacıları, dondurmacıları, bağımsız tiyatro sahneleri ve her köşeden karşınıza çıkan kedileriyle sakin ama bir o kadar da yaşayan, samimi bir semttir.",
       distance: '8.5 km uzaklıkta',
       transportIcon: Icons.directions_transit_rounded,
-      visual: _PlaceVisual.moda,
+      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/e/eb/Moda_IMAGE.jpg',
     ),
   ];
 
@@ -211,9 +209,19 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
                   for (final place in _places) ...[
                     _NearbyPlaceCard(
                       place: place,
-                      onPressed: () => _showMessage(
-                        '${place.name} detay ekranı yakında eklenecek.',
-                      ),
+                      onPressed: () {
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          backgroundColor: Colors.transparent,
+                          builder: (context) => NeighborhoodDetailBottomSheet(
+                            name: place.name,
+                            description: place.description,
+                            imageUrl: place.imageUrl,
+                            distance: place.distance,
+                          ),
+                        );
+                      },
                     ),
                     if (place != _places.last)
                       const SizedBox(height: AppSpacing.md),
@@ -256,22 +264,20 @@ class _DiscoverCategoryUiModel {
   final IconData icon;
 }
 
-enum _PlaceVisual { balat, nisantasi, moda }
-
 class _NearbyPlaceUiModel {
   const _NearbyPlaceUiModel({
     required this.name,
     required this.description,
     required this.distance,
     required this.transportIcon,
-    required this.visual,
+    required this.imageUrl,
   });
 
   final String name;
   final String description;
   final String distance;
   final IconData transportIcon;
-  final _PlaceVisual visual;
+  final String imageUrl;
 }
 
 class _DiscoverHeader extends StatelessWidget {
@@ -682,7 +688,7 @@ class _NearbyPlaceCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppRadius.lg),
           child: Row(
             children: [
-              Expanded(flex: 2, child: _PlaceVisualArea(type: place.visual)),
+              Expanded(flex: 2, child: _PlaceVisualArea(imageUrl: place.imageUrl)),
               Expanded(
                 flex: 4,
                 child: Padding(
@@ -737,9 +743,9 @@ class _NearbyPlaceCard extends StatelessWidget {
 }
 
 class _PlaceVisualArea extends StatelessWidget {
-  const _PlaceVisualArea({required this.type});
+  const _PlaceVisualArea({required this.imageUrl});
 
-  final _PlaceVisual type;
+  final String imageUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -747,71 +753,17 @@ class _PlaceVisualArea extends StatelessWidget {
       borderRadius: const BorderRadius.horizontal(
         left: Radius.circular(AppRadius.lg),
       ),
-      child: switch (type) {
-        _PlaceVisual.balat => const _BalatVisual(),
-        _PlaceVisual.nisantasi => const _NisantasiVisual(),
-        _PlaceVisual.moda => const _ModaVisual(),
-      },
-    );
-  }
-}
-
-class _BalatVisual extends StatelessWidget {
-  const _BalatVisual();
-
-  @override
-  Widget build(BuildContext context) {
-    return ColoredBox(
-      color: const Color(0xFFFFE7D6),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: const [
-          Expanded(child: ColoredBox(color: Color(0xFFE98A7A))),
-          SizedBox(width: 3),
-          Expanded(child: ColoredBox(color: Color(0xFFF2C14E))),
-          SizedBox(width: 3),
-          Expanded(child: ColoredBox(color: Color(0xFF66B2B2))),
-        ],
-      ),
-    );
-  }
-}
-
-class _NisantasiVisual extends StatelessWidget {
-  const _NisantasiVisual();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: const Color(0xFFE8E1D9),
-      alignment: Alignment.center,
-      child: const Icon(
-        Icons.storefront_rounded,
-        size: 58,
-        color: AppColors.primaryContainer,
-      ),
-    );
-  }
-}
-
-class _ModaVisual extends StatelessWidget {
-  const _ModaVisual();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color(0xFFDFF6F8), Color(0xFF74C9D2)],
-        ),
-      ),
-      alignment: Alignment.center,
-      child: const Icon(
-        Icons.tram_rounded,
-        size: 54,
-        color: AppColors.primaryContainer,
+      child: Image.network(
+        imageUrl,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return Container(
+            color: AppColors.primaryContainer.withValues(alpha: 0.3),
+            child: const Center(
+              child: Icon(Icons.broken_image, color: AppColors.primary),
+            ),
+          );
+        },
       ),
     );
   }
