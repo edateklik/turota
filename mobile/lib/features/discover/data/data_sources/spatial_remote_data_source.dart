@@ -35,4 +35,17 @@ class SpatialRemoteDataSource {
       throw Exception('Failed to load places for neighborhood');
     }
   }
+
+  Future<List<SpatialPlaceDto>> getNearestPlaces(double latitude, double longitude, {int limit = 10}) async {
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/api/discovery/places/nearest?latitude=$latitude&longitude=$longitude&limit=$limit'),
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonList = json.decode(response.body);
+      return jsonList.map((json) => SpatialPlaceDto.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load nearest places');
+    }
+  }
 }

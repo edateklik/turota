@@ -3,20 +3,32 @@ import 'package:turota_mobile/core/theme/app_colors.dart';
 import 'package:turota_mobile/core/theme/app_spacing.dart';
 import 'package:turota_mobile/core/theme/app_radius.dart';
 
-class EditProfilePage extends StatefulWidget {
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:turota_mobile/features/authentication/presentation/providers/auth_providers.dart';
+
+class EditProfilePage extends ConsumerStatefulWidget {
   const EditProfilePage({super.key});
 
   @override
-  State<EditProfilePage> createState() => _EditProfilePageState();
+  ConsumerState<EditProfilePage> createState() => _EditProfilePageState();
 }
 
-class _EditProfilePageState extends State<EditProfilePage> {
+class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   final _formKey = GlobalKey<FormState>();
-  final _fullNameController = TextEditingController(text: 'Elena Rodriguez');
-  final _usernameController = TextEditingController(text: 'elenatravels');
-  final _cityController = TextEditingController(text: 'Barcelona, Spain');
+  late final TextEditingController _fullNameController;
+  late final TextEditingController _usernameController;
+  late final TextEditingController _cityController;
 
   bool _isSaving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initially empty, will be populated in build or listener if needed
+    _fullNameController = TextEditingController();
+    _usernameController = TextEditingController();
+    _cityController = TextEditingController();
+  }
 
   @override
   void dispose() {
@@ -51,6 +63,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    // Populate data once when loaded
+    final userState = ref.watch(currentUserProvider);
+    if (userState.value != null && _fullNameController.text.isEmpty) {
+      _fullNameController.text = '${userState.value!.firstName} ${userState.value!.lastName}';
+      _usernameController.text = userState.value!.email; // using email as username fallback
+    }
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -136,7 +155,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     // Email (read-only)
                     _buildLabel('E-posta Adresi'),
                     const SizedBox(height: 8),
-                    _buildReadOnlyEmail('elena.rodriguez@example.com'),
+                    _buildReadOnlyEmail(userState.value?.email ?? '...'),
                     const SizedBox(height: 6),
                     const Padding(
                       padding: EdgeInsets.only(left: 4),

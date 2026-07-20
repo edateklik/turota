@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import '../controllers/weather_controller.dart';
+import '../controllers/places_controller.dart';
 import 'package:turota_mobile/app/router/app_router.dart';
+import 'package:turota_mobile/features/authentication/presentation/providers/auth_providers.dart';
 import 'package:turota_mobile/core/theme/app_colors.dart';
 import 'package:turota_mobile/core/theme/app_radius.dart';
 import 'package:turota_mobile/core/theme/app_spacing.dart';
@@ -18,12 +20,7 @@ class DiscoverPage extends ConsumerStatefulWidget {
 }
 
 class _DiscoverPageState extends ConsumerState<DiscoverPage> {
-  // TODO: Replace the sample identity and date with authenticated user and
-  // localized current-date data.
-  static const _header = _DiscoverHeaderModel(
-    userName: 'Şevval',
-    dateLabel: '12 Ekim Cumartesi',
-  );
+  // We'll build the header dynamically in the build method.
 
 
 
@@ -33,33 +30,6 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
     _DiscoverCategoryUiModel(
       'Şehrin Işıkları',
       Icons.celebration_rounded,
-    ),
-  ];
-
-  static const _places = [
-    _NearbyPlaceUiModel(
-      name: 'Balat',
-      description:
-          "İstanbul'un tarihi yarımadasında, Haliç'in güney kıyısında yer alan Balat, dar ve yokuşlu sokakları, cumbalı rengarenk tarihi evleri ve farklı kültürlerin bir arada yaşadığı kozmopolit yapısıyla büyüleyici bir semttir. Özellikle Fener Rum Ortodoks Patrikhanesi ve Kırmızı Mektep (Özel Fener Rum Lisesi) gibi mimari şaheserlere ev sahipliği yapar. Son yıllarda açılan üçüncü nesil kahveciler, antikacılar ve sanat atölyeleriyle hem nostaljiyi hem de modern hayatı bir arada sunar. Mahalle kültürünün hala yaşadığı sokaklarda kaybolmak ve bol bol fotoğraf çekmek için harika bir rotadır.",
-      distance: '2.4 km uzaklıkta',
-      transportIcon: Icons.directions_walk_rounded,
-      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Balat_houses.jpg/960px-Balat_houses.jpg',
-    ),
-    _NearbyPlaceUiModel(
-      name: 'Nişantaşı',
-      description:
-          "Avrupa Yakası'nın kalbinde yer alan Nişantaşı, lüks butikleri, dünyaca ünlü markaların mağazaları ve şık kafeleriyle İstanbul'un moda, sanat ve alışveriş merkezidir. Abdi İpekçi ve Teşvikiye Caddesi boyunca uzanan vitrinler, dünya başkentlerini aratmayan bir atmosfere sahiptir. Aynı zamanda tarihi Teşvikiye Camii ve neo-klasik mimarideki apartmanlarıyla estetik bir görsellik sunar. Sadece alışveriş değil, popüler restoranları, sanat galerileri ve hareketli gece hayatıyla da turistlerin gözde uğrak noktalarından biridir.",
-      distance: '4.1 km uzaklıkta',
-      transportIcon: Icons.directions_car_rounded,
-      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Ni%C5%9Fanta%C5%9F%C4%B1_Abdi_%C4%B0pek%C3%A7i_Avenue.jpg/960px-Ni%C5%9Fanta%C5%9F%C4%B1_Abdi_%C4%B0pek%C3%A7i_Avenue.jpg',
-    ),
-    _NearbyPlaceUiModel(
-      name: 'Moda, Kadıköy',
-      description:
-          "Anadolu Yakası'nın en nezih ve popüler semtlerinden olan Moda, deniz kenarındaki harika konumu, tarihi tramvayı ve nostaljik atmosferiyle öne çıkar. Moda Sahili'nden Prens Adaları'na doğru batan güneşi izlemek, tarihi Moda İskelesi'nde veya ünlü çay bahçelerinde vakit geçirmek İstanbullular için vazgeçilmez bir klasiktir. Çikolatacıları, dondurmacıları, bağımsız tiyatro sahneleri ve her köşeden karşınıza çıkan kedileriyle sakin ama bir o kadar da yaşayan, samimi bir semttir.",
-      distance: '8.5 km uzaklıkta',
-      transportIcon: Icons.directions_transit_rounded,
-      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/e/eb/Moda_IMAGE.jpg',
     ),
   ];
 
@@ -133,6 +103,80 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
     );
   }
 
+  Widget _buildNearbySection() {
+    final placesState = ref.watch(nearestPlacesControllerProvider);
+
+    return placesState.when(
+      data: (places) {
+        if (places.isEmpty) {
+          return const Padding(
+            padding: EdgeInsets.all(AppSpacing.md),
+            child: Text('Yakınınızda mekan bulunamadı.'),
+          );
+        }
+
+        return Column(
+          children: [
+            for (final place in places) ...[
+              _NearbyPlaceCard(
+                place: _NearbyPlaceUiModel(
+                  name: place.name,
+                  description: place.address,
+                  distance: place.distanceMeters != null 
+                      ? '${(place.distanceMeters! / 1000).toStringAsFixed(1)} km uzaklıkta' 
+                      : 'Bilinmeyen uzaklık',
+                  transportIcon: Icons.location_on_rounded,
+                  imageUrl: 'https://via.placeholder.com/150', // Replace with real image if API supports
+                ),
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    builder: (context) => NeighborhoodDetailBottomSheet(
+                      name: place.name,
+                      description: place.address,
+                      imageUrl: 'https://via.placeholder.com/150',
+                      distance: place.distanceMeters != null 
+                          ? '${(place.distanceMeters! / 1000).toStringAsFixed(1)} km uzaklıkta' 
+                          : 'Bilinmeyen uzaklık',
+                    ),
+                  );
+                },
+              ),
+              if (place != places.last) const SizedBox(height: AppSpacing.md),
+            ],
+          ],
+        );
+      },
+      loading: () => const Center(
+        child: Padding(
+          padding: EdgeInsets.all(AppSpacing.xl),
+          child: CircularProgressIndicator(),
+        ),
+      ),
+      error: (error, stack) => Center(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.xl),
+          child: Column(
+            children: [
+              const Icon(Icons.error_outline, color: AppColors.error),
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                'Mekanlar yüklenemedi',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.error),
+              ),
+              TextButton(
+                onPressed: () => ref.refresh(nearestPlacesControllerProvider),
+                child: const Text('Tekrar Dene'),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   String _getDayName(int weekday) {
     const names = {
       1: 'Pzt',
@@ -159,6 +203,14 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
 
   @override
   Widget build(BuildContext context) {
+    final userState = ref.watch(currentUserProvider);
+    final userName = userState.value?.firstName ?? '...';
+    
+    final headerModel = _DiscoverHeaderModel(
+      userName: userName,
+      dateLabel: '12 Ekim Cumartesi',
+    );
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SingleChildScrollView(
@@ -168,7 +220,7 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _DiscoverHeader(
-              model: _header,
+              model: headerModel,
               onNotificationsPressed: () =>
                   _showMessage('Bildirimler yakında eklenecek.'),
               onProfilePressed: () => _selectTemporaryDestination(3),
@@ -216,26 +268,7 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
                         _showMessage('Tüm mekanlar ekranı yakında eklenecek.'),
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  for (final place in _places) ...[
-                    _NearbyPlaceCard(
-                      place: place,
-                      onPressed: () {
-                        showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          backgroundColor: Colors.transparent,
-                          builder: (context) => NeighborhoodDetailBottomSheet(
-                            name: place.name,
-                            description: place.description,
-                            imageUrl: place.imageUrl,
-                            distance: place.distance,
-                          ),
-                        );
-                      },
-                    ),
-                    if (place != _places.last)
-                      const SizedBox(height: AppSpacing.md),
-                  ],
+                  _buildNearbySection(),
                 ],
               ),
             ),

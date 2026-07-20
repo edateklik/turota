@@ -14,3 +14,8 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
   final tokenStorage = ref.watch(tokenStorageProvider);
   return AuthRepositoryImpl(dataSource, tokenStorage);
 });
+
+final currentUserProvider = FutureProvider((ref) async {
+  final repository = ref.watch(authRepositoryProvider);
+  return repository.getCurrentUser();
+});

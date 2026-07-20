@@ -145,6 +145,7 @@ class TimelineView extends StatelessWidget {
                                   ),
                                   const SizedBox(height: AppSpacing.sm),
                                   Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       const Icon(Icons.schedule, size: 18, color: AppColors.textSecondary),
                                       const SizedBox(width: 4),
@@ -155,13 +156,15 @@ class TimelineView extends StatelessWidget {
                                             ),
                                       ),
                                       const SizedBox(width: 16),
-                                      const Icon(Icons.directions_walk, size: 18, color: AppColors.textSecondary),
+                                      const Icon(Icons.info_outline, size: 18, color: AppColors.textSecondary),
                                       const SizedBox(width: 4),
-                                      Text(
-                                        stop.walkingTime,
-                                        style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                                              color: AppColors.textSecondary,
-                                            ),
+                                      Expanded(
+                                        child: Text(
+                                          stop.walkingTime,
+                                          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                                                color: AppColors.textSecondary,
+                                              ),
+                                        ),
                                       ),
                                     ],
                                   ),

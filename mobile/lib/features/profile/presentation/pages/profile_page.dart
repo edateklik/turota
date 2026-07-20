@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:turota_mobile/app/router/app_router.dart';
+import 'package:turota_mobile/features/authentication/presentation/providers/auth_providers.dart';
 import 'package:turota_mobile/core/constants/app_constants.dart';
 import 'package:turota_mobile/core/theme/app_colors.dart';
 import 'package:turota_mobile/core/theme/app_radius.dart';
@@ -7,11 +9,11 @@ import 'package:turota_mobile/core/theme/app_spacing.dart';
 import 'package:turota_mobile/core/theme/app_typography.dart';
 import 'package:turota_mobile/core/widgets/app_card.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends ConsumerWidget {
   const ProfilePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -112,7 +114,11 @@ class ProfilePage extends StatelessWidget {
                   icon: Icons.logout,
                   label: 'Çıkış Yap',
                   isDestructive: true,
-                  onTap: () {},
+                  onTap: () async {
+                    await ref.read(authRepositoryProvider).logout();
+                    if (!context.mounted) return;
+                    Navigator.of(context).pushReplacementNamed(AppRouter.splash);
+                  },
                 ),
               ],
             ),
@@ -123,11 +129,16 @@ class ProfilePage extends StatelessWidget {
   }
 }
 
-class _ProfileHeader extends StatelessWidget {
+class _ProfileHeader extends ConsumerWidget {
   const _ProfileHeader();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final userState = ref.watch(currentUserProvider);
+    final fullName = userState.value != null 
+        ? '${userState.value!.firstName} ${userState.value!.lastName}' 
+        : '...';
+
     return Column(
       children: [
         Stack(
@@ -177,7 +188,7 @@ class _ProfileHeader extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.md),
         Text(
-          'Sarah Johnson',
+          fullName,
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.w700,
             color: AppColors.textPrimary,

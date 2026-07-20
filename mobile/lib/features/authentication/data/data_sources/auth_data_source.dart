@@ -23,4 +23,9 @@ class AuthDataSource {
     );
     return AuthResponseDto.fromJson(response as Map<String, dynamic>);
   }
+
+  Future<UserResponseDto> getCurrentUser() async {
+    final response = await _apiClient.get('/api/identity/me');
+    return UserResponseDto.fromJson(response as Map<String, dynamic>);
+  }
 }
