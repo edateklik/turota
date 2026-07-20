@@ -1,50 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:turota_mobile/core/theme/app_colors.dart';
 import 'package:turota_mobile/core/theme/app_spacing.dart';
 import 'package:turota_mobile/features/assistant/domain/models/route_stop_ui_model.dart';
+import 'package:turota_mobile/features/assistant/presentation/controllers/recommendation_controller.dart';
 import 'package:turota_mobile/features/assistant/presentation/widgets/map_view_placeholder.dart';
 import 'package:turota_mobile/features/assistant/presentation/widgets/timeline_view.dart';
 
-class AssistantPage extends StatefulWidget {
+class AssistantPage extends ConsumerStatefulWidget {
   const AssistantPage({super.key});
 
   @override
-  State<AssistantPage> createState() => _AssistantPageState();
+  ConsumerState<AssistantPage> createState() => _AssistantPageState();
 }
 
-class _AssistantPageState extends State<AssistantPage> {
+class _AssistantPageState extends ConsumerState<AssistantPage> {
   bool _isTimelineView = true;
 
-  // Dummy Data
-  final List<RouteStopUiModel> _stops = [
-    const RouteStopUiModel(
-      time: '09:00',
-      imageUrl: 'https://images.unsplash.com/photo-1541167760496-1628856ab772?q=80&w=800&auto=format&fit=crop',
-      category: 'Gastronomi',
-      title: 'Komorebi Coffee Roasters',
-      duration: '45 dk',
-      walkingTime: '0 dk (Başlangıç)',
-    ),
-    const RouteStopUiModel(
-      time: '10:30',
-      imageUrl: 'https://picsum.photos/seed/gallery/800/600',
-      category: 'Kültür',
-      title: 'The Linear Gallery',
-      duration: '2 saat',
-      walkingTime: '12 dk yürüme',
-    ),
-    const RouteStopUiModel(
-      time: '13:15',
-      imageUrl: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=800&auto=format&fit=crop',
-      category: 'Gastronomi',
-      title: 'Flora Kitchen',
-      duration: '1.5 saat',
-      walkingTime: '8 dk yürüme',
-    ),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(recommendationControllerProvider.notifier).generateRecommendation();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(recommendationControllerProvider);
+    
+    List<RouteStopUiModel> stops = [];
+    if (state.response != null) {
+      stops = state.response!.timeline.map((t) {
+        return RouteStopUiModel(
+          time: t.startTime.substring(0, 5), // Assumes "HH:MM:SS" format
+          imageUrl: 'https://picsum.photos/seed/${t.placeId}/400/300',
+          category: 'Öneri Nedeni', 
+          title: t.placeName,
+          duration: '${t.durationMinutes} dk',
+          walkingTime: t.explanation, 
+        );
+      }).toList();
+    }
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -115,12 +113,27 @@ class _AssistantPageState extends State<AssistantPage> {
           // Main Content
           AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),
-            child: _isTimelineView
-                ? TimelineView(
-                    stops: _stops,
-                    onMapTap: () => setState(() => _isTimelineView = false),
+            child: state.isLoading 
+                ? const Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircularProgressIndicator(color: AppColors.primary),
+                        SizedBox(height: 16),
+                        Text('Yapay zeka size özel rotanızı hazırlıyor...'),
+                      ],
+                    ),
                   )
-                : const MapViewPlaceholder(),
+                : state.error != null
+                    ? Center(
+                        child: Text(state.error!, style: const TextStyle(color: Colors.red)),
+                      )
+                    : _isTimelineView
+                        ? TimelineView(
+                            stops: stops,
+                            onMapTap: () => setState(() => _isTimelineView = false),
+                          )
+                        : const MapViewPlaceholder(),
           ),
 
           // AI Integration Area (Fixed Bottom)
