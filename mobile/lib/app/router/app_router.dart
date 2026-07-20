@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:turota_mobile/features/ai_assistant/presentation/pages/ai_planner_map_page.dart';
+import 'package:turota_mobile/features/ai_assistant/presentation/pages/ai_planner_timeline_page.dart';
 import 'package:turota_mobile/features/authentication/presentation/pages/login_page.dart';
 import 'package:turota_mobile/features/authentication/presentation/pages/register_page.dart';
 import 'package:turota_mobile/features/discover/presentation/pages/discover_page.dart';
 import 'package:turota_mobile/features/home/presentation/pages/main_shell_page.dart';
 import 'package:turota_mobile/features/onboarding/location/presentation/pages/location_permission_page.dart';
+import 'package:turota_mobile/features/places/presentation/pages/place_detail_page.dart';
 import 'package:turota_mobile/features/profile/presentation/pages/edit_profile_page.dart';
 import 'package:turota_mobile/features/saved/presentation/pages/saved_page.dart';
 import 'package:turota_mobile/features/splash/presentation/pages/splash_page.dart';
@@ -17,6 +20,9 @@ abstract final class AppRouter {
   static const String saved = '/saved';
   static const String home = '/home';
   static const String editProfile = '/profile/edit';
+  static const String placeDetail = '/places/detail';
+  static const String aiPlannerTimeline = '/ai-assistant/timeline';
+  static const String aiPlannerMap = '/ai-assistant/map';
 
   static Route<void> onGenerateRoute(RouteSettings settings) {
     return switch (settings.name) {
@@ -50,6 +56,18 @@ abstract final class AppRouter {
       ),
       editProfile => MaterialPageRoute<void>(
         builder: (_) => const EditProfilePage(),
+        settings: settings,
+      ),
+      placeDetail => MaterialPageRoute<void>(
+        builder: (_) => const PlaceDetailPage(),
+        settings: settings,
+      ),
+      aiPlannerTimeline => MaterialPageRoute<void>(
+        builder: (_) => const AiPlannerTimelinePage(),
+        settings: settings,
+      ),
+      aiPlannerMap => MaterialPageRoute<void>(
+        builder: (_) => const AiPlannerMapPage(),
         settings: settings,
       ),
       _ => MaterialPageRoute<void>(

@@ -81,10 +81,11 @@ class _DiscoverPageState extends State<DiscoverPage> {
       Navigator.of(context).pushReplacementNamed(AppRouter.saved);
       return;
     }
-    const messages = {
-      2: 'AI asistan ekranı yakında eklenecek.',
-      3: 'Profil ekranı yakında eklenecek.',
-    };
+    if (index == 2) {
+      Navigator.of(context).pushReplacementNamed(AppRouter.aiPlannerTimeline);
+      return;
+    }
+    const messages = {3: 'Profil ekranı yakında eklenecek.'};
     final message = messages[index];
     if (message != null) {
       _showMessage(message);
@@ -148,9 +149,9 @@ class _DiscoverPageState extends State<DiscoverPage> {
                   for (final place in _places) ...[
                     _NearbyPlaceCard(
                       place: place,
-                      onPressed: () => _showMessage(
-                        '${place.name} detay ekranı yakında eklenecek.',
-                      ),
+                      onPressed: () => Navigator.of(
+                        context,
+                      ).pushNamed(AppRouter.placeDetail),
                     ),
                     if (place != _places.last)
                       const SizedBox(height: AppSpacing.md),

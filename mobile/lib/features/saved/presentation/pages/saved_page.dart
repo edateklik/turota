@@ -98,7 +98,7 @@ class _SavedPageState extends State<SavedPage> {
       return;
     }
     if (index == 2) {
-      _showMessage('AI asistan ekranı yakında eklenecek.');
+      Navigator.of(context).pushReplacementNamed(AppRouter.aiPlannerTimeline);
     } else if (index == 3) {
       _showMessage('Profil ekranı yakında eklenecek.');
     }
