@@ -44,7 +44,7 @@ class RecommendationController extends Notifier<RecommendationState> {
     try {
       final repository = ref.read(recommendationRepositoryProvider);
       final request = GenerateRecommendationRequestDto(
-        availableMinutes: 120, // default dummy
+        availableMinutes: 480, // 8 saatlik tam günlük bir rota için
       );
 
       final accepted = await repository.generateRecommendation(request);
