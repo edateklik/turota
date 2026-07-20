@@ -14,6 +14,7 @@ import 'package:turota_mobile/features/profile/presentation/pages/location_setti
 import 'package:turota_mobile/features/profile/presentation/pages/language_selection_page.dart';
 import 'package:turota_mobile/features/profile/presentation/pages/help_center_page.dart';
 import 'package:turota_mobile/features/profile/presentation/pages/about_page.dart';
+import 'package:turota_mobile/features/saved/presentation/pages/saved_page.dart';
 import 'package:turota_mobile/features/splash/presentation/pages/splash_page.dart';
 import 'package:turota_mobile/features/discover/presentation/pages/map_page.dart';
 
@@ -33,6 +34,9 @@ abstract final class AppRouter {
   static const String helpCenter = '/profile/helpCenter';
   static const String about = '/profile/about';
   static const String map = '/discover/map';
+  static const String placeDetail = '/places/detail';
+  static const String aiPlannerTimeline = '/ai-assistant/timeline';
+  static const String aiPlannerMap = '/ai-assistant/map';
 
   static Route<void> onGenerateRoute(RouteSettings settings) {
     return switch (settings.name) {
@@ -94,6 +98,18 @@ abstract final class AppRouter {
       ),
       map => MaterialPageRoute<void>(
         builder: (_) => const MapPage(),
+        settings: settings,
+      ),
+      placeDetail => MaterialPageRoute<void>(
+        builder: (_) => const PlaceDetailPage(),
+        settings: settings,
+      ),
+      aiPlannerTimeline => MaterialPageRoute<void>(
+        builder: (_) => const AiPlannerTimelinePage(),
+        settings: settings,
+      ),
+      aiPlannerMap => MaterialPageRoute<void>(
+        builder: (_) => const AiPlannerMapPage(),
         settings: settings,
       ),
       _ => MaterialPageRoute<void>(
