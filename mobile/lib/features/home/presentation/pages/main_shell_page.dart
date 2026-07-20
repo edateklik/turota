@@ -21,10 +21,26 @@ class _MainShellPageState extends State<MainShellPage> {
   int _currentIndex = 0;
 
   static const List<_NavItem> _navItems = [
-    _NavItem(icon: Icons.explore_outlined, activeIcon: Icons.explore, label: 'Keşfet'),
-    _NavItem(icon: Icons.bookmark_border, activeIcon: Icons.bookmark, label: 'Kaydedilenler'),
-    _NavItem(icon: Icons.smart_toy_outlined, activeIcon: Icons.smart_toy, label: 'AI Asistan'),
-    _NavItem(icon: Icons.person_outline, activeIcon: Icons.person, label: 'Profil'),
+    _NavItem(
+      icon: Icons.explore_outlined,
+      activeIcon: Icons.explore,
+      label: 'Keşfet',
+    ),
+    _NavItem(
+      icon: Icons.bookmark_border,
+      activeIcon: Icons.bookmark,
+      label: 'Kaydedilenler',
+    ),
+    _NavItem(
+      icon: Icons.smart_toy_outlined,
+      activeIcon: Icons.smart_toy,
+      label: 'AI Asistan',
+    ),
+    _NavItem(
+      icon: Icons.person_outline,
+      activeIcon: Icons.person,
+      label: 'Profil',
+    ),
   ];
 
   Widget _buildBody() {
@@ -46,9 +62,7 @@ class _MainShellPageState extends State<MainShellPage> {
           color: const Color(0xFFF0FDFA),
           borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           border: Border(
-            top: BorderSide(
-              color: AppColors.primary.withValues(alpha: 0.1),
-            ),
+            top: BorderSide(color: AppColors.primary.withValues(alpha: 0.1)),
           ),
           boxShadow: [
             BoxShadow(
@@ -167,10 +181,7 @@ class _PlaceholderTab extends StatelessWidget {
           const SizedBox(height: AppSpacing.sm),
           const Text(
             'Bu sayfa yakında eklenecek',
-            style: TextStyle(
-              fontSize: 14,
-              color: AppColors.textSecondary,
-            ),
+            style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
           ),
         ],
       ),

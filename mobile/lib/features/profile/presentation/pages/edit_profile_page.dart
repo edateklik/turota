@@ -191,10 +191,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: AppColors.surfaceLow,
-              border: Border.all(
-                color: AppColors.surface,
-                width: 4,
-              ),
+              border: Border.all(color: AppColors.surface, width: 4),
               boxShadow: const [
                 BoxShadow(
                   color: AppColors.shadow,
@@ -306,23 +303,20 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 ),
               )
             : prefixText != null
-                ? Padding(
-                    padding: const EdgeInsets.only(left: 16),
-                    child: Text(
-                      prefixText,
-                      style: const TextStyle(
-                        fontFamily: 'Inter',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        color: AppColors.outlineVariant,
-                      ),
-                    ),
-                  )
-                : null,
-        prefixIconConstraints: const BoxConstraints(
-          minWidth: 0,
-          minHeight: 0,
-        ),
+            ? Padding(
+                padding: const EdgeInsets.only(left: 16),
+                child: Text(
+                  prefixText,
+                  style: const TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.outlineVariant,
+                  ),
+                ),
+              )
+            : null,
+        prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppRadius.md),
           borderSide: BorderSide.none,
@@ -333,10 +327,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppRadius.md),
-          borderSide: const BorderSide(
-            color: AppColors.primary,
-            width: 1.5,
-          ),
+          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
         ),
       ),
     );
@@ -426,9 +417,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         onPressed: () => Navigator.of(context).pop(),
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.primary,
-          side: BorderSide(
-            color: AppColors.primary.withValues(alpha: 0.2),
-          ),
+          side: BorderSide(color: AppColors.primary.withValues(alpha: 0.2)),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadius.md),
           ),

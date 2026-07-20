@@ -8,7 +8,7 @@ import 'package:turota_mobile/core/storage/token_storage.dart';
 
 class ApiClient {
   ApiClient(this._tokenStorage, {http.Client? httpClient})
-      : _httpClient = httpClient ?? http.Client();
+    : _httpClient = httpClient ?? http.Client();
 
   final TokenStorage _tokenStorage;
   final http.Client _httpClient;
@@ -50,7 +50,8 @@ class ApiClient {
     throw ApiException(
       statusCode: response.statusCode,
       errorCode: 'HTTP_${response.statusCode}',
-      message: 'Sunucu ile iletişimde bir hata oluştu (${response.statusCode}).',
+      message:
+          'Sunucu ile iletişimde bir hata oluştu (${response.statusCode}).',
       traceId: '',
     );
   }
@@ -60,9 +61,9 @@ class ApiClient {
       final uri = Uri.parse('${ApiConfig.baseUrl}$path');
       final headers = await _getHeaders();
 
-      final response = await _httpClient.get(uri, headers: headers).timeout(
-            const Duration(seconds: 15),
-          );
+      final response = await _httpClient
+          .get(uri, headers: headers)
+          .timeout(const Duration(seconds: 15));
 
       return _processResponse(response);
     } on SocketException {

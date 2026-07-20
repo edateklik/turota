@@ -9,6 +9,7 @@ class AppCard extends StatelessWidget {
     this.padding = const EdgeInsets.all(AppSpacing.lg),
     this.borderRadius = AppRadius.lg,
     this.boxShadow = const [],
+    this.borderColor = AppColors.border,
     super.key,
   });
 
@@ -16,13 +17,14 @@ class AppCard extends StatelessWidget {
   final EdgeInsetsGeometry padding;
   final double borderRadius;
   final List<BoxShadow> boxShadow;
+  final Color borderColor;
 
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
         color: AppColors.surface,
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: borderColor),
         borderRadius: BorderRadius.circular(borderRadius),
         boxShadow: boxShadow,
       ),
