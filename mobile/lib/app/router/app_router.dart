@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:turota_mobile/features/ai_assistant/presentation/pages/ai_planner_map_page.dart';
 import 'package:turota_mobile/features/ai_assistant/presentation/pages/ai_planner_timeline_page.dart';
 import 'package:turota_mobile/features/authentication/presentation/pages/login_page.dart';
 import 'package:turota_mobile/features/authentication/presentation/pages/register_page.dart';
@@ -21,6 +22,7 @@ abstract final class AppRouter {
   static const String editProfile = '/profile/edit';
   static const String placeDetail = '/places/detail';
   static const String aiPlannerTimeline = '/ai-assistant/timeline';
+  static const String aiPlannerMap = '/ai-assistant/map';
 
   static Route<void> onGenerateRoute(RouteSettings settings) {
     return switch (settings.name) {
@@ -62,6 +64,10 @@ abstract final class AppRouter {
       ),
       aiPlannerTimeline => MaterialPageRoute<void>(
         builder: (_) => const AiPlannerTimelinePage(),
+        settings: settings,
+      ),
+      aiPlannerMap => MaterialPageRoute<void>(
+        builder: (_) => const AiPlannerMapPage(),
         settings: settings,
       ),
       _ => MaterialPageRoute<void>(

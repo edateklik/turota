@@ -6,6 +6,7 @@ import 'package:turota_mobile/app/router/app_router.dart';
 import 'package:turota_mobile/core/constants/app_constants.dart';
 import 'package:turota_mobile/core/theme/app_colors.dart';
 import 'package:turota_mobile/core/theme/app_theme.dart';
+import 'package:turota_mobile/features/ai_assistant/presentation/pages/ai_planner_map_page.dart';
 import 'package:turota_mobile/features/ai_assistant/presentation/pages/ai_planner_timeline_page.dart';
 import 'package:turota_mobile/features/authentication/domain/models/auth_user.dart';
 import 'package:turota_mobile/features/authentication/domain/repositories/auth_repository.dart';
@@ -151,6 +152,18 @@ void main() {
           theme: AppTheme.light,
           onGenerateRoute: AppRouter.onGenerateRoute,
           home: const AiPlannerTimelinePage(),
+        ),
+      ),
+    );
+  }
+
+  Future<void> pumpAiPlannerMapPage(WidgetTester tester) async {
+    await tester.pumpWidget(
+      withTestProviders(
+        MaterialApp(
+          theme: AppTheme.light,
+          onGenerateRoute: AppRouter.onGenerateRoute,
+          home: const AiPlannerMapPage(),
         ),
       ),
     );
@@ -914,16 +927,16 @@ void main() {
     expect(textField.controller?.text, isEmpty);
   });
 
-  testWidgets('map segment shows temporary map state', (tester) async {
+  testWidgets('map segment opens the AI planner map', (tester) async {
     await pumpAiPlannerTimelinePage(tester);
     await tester.tap(find.byKey(const ValueKey('map-segment')));
     await tester.pumpAndSettle();
 
-    expect(find.byKey(const ValueKey('ai-map-placeholder')), findsOneWidget);
-    expect(find.text('Harita görünümü yakında eklenecek.'), findsWidgets);
+    expect(find.byType(AiPlannerMapPage), findsOneWidget);
+    expect(find.byKey(const ValueKey('Harita-selected')), findsOneWidget);
   });
 
-  testWidgets('timeline stop location opens temporary map state', (
+  testWidgets('timeline stop location opens the AI planner map', (
     tester,
   ) async {
     await pumpAiPlannerTimelinePage(tester);
@@ -932,7 +945,79 @@ void main() {
     await tester.tap(location);
     await tester.pumpAndSettle();
 
-    expect(find.byKey(const ValueKey('ai-map-placeholder')), findsOneWidget);
+    expect(find.byType(AiPlannerMapPage), findsOneWidget);
+  });
+
+  testWidgets('AI planner map renders route pins and next stop sheet', (
+    tester,
+  ) async {
+    await pumpAiPlannerMapPage(tester);
+
+    expect(find.byType(AiPlannerMapPage), findsOneWidget);
+    expect(find.byKey(const ValueKey('Harita-selected')), findsOneWidget);
+    for (var index = 1; index <= 3; index++) {
+      expect(find.byKey(ValueKey('route-pin-$index')), findsOneWidget);
+    }
+    expect(find.text('Komorebi Coffee'), findsOneWidget);
+    expect(find.byKey(const ValueKey('route-bottom-sheet')), findsOneWidget);
+    expect(find.text('Komorebi Coffee Roasters'), findsOneWidget);
+    expect(find.text('12 dk yürüme  •  0.8 km'), findsOneWidget);
+    final navigation = tester.widget<NavigationBar>(
+      find.byKey(const ValueKey('app-bottom-navigation')),
+    );
+    expect(navigation.selectedIndex, 2);
+  });
+
+  testWidgets('AI map controls show temporary integration feedback', (
+    tester,
+  ) async {
+    await pumpAiPlannerMapPage(tester);
+
+    await tester.tap(find.byKey(const ValueKey('map-my-location')));
+    await tester.pump();
+    expect(find.text('Harita entegrasyonu yakında eklenecek.'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('map-fit-route')));
+    await tester.pump();
+    expect(find.text('Harita entegrasyonu yakında eklenecek.'), findsOneWidget);
+  });
+
+  testWidgets('AI map start route shows temporary navigation feedback', (
+    tester,
+  ) async {
+    await pumpAiPlannerMapPage(tester);
+    await tester.tap(find.byKey(const ValueKey('start-route-button')));
+    await tester.pump();
+
+    expect(find.text('Navigasyon yakında eklenecek.'), findsOneWidget);
+  });
+
+  testWidgets('AI map timeline segment returns to timeline page', (
+    tester,
+  ) async {
+    await pumpAiPlannerMapPage(tester);
+    await tester.tap(find.byKey(const ValueKey('timeline-segment')));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(AiPlannerTimelinePage), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('Zaman Çizelgesi-selected')),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('AI planner map does not overflow on a small phone', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(320, 568);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await pumpAiPlannerMapPage(tester);
+
+    expect(find.byType(AiPlannerMapPage), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('AI timeline does not overflow on a small phone', (tester) async {

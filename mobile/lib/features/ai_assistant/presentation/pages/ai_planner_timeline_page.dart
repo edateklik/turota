@@ -54,7 +54,6 @@ class _AiPlannerTimelinePageState extends State<AiPlannerTimelinePage> {
   ];
 
   final _promptController = TextEditingController();
-  int _selectedView = 0;
 
   @override
   void dispose() {
@@ -69,9 +68,8 @@ class _AiPlannerTimelinePageState extends State<AiPlannerTimelinePage> {
   }
 
   void _selectView(int index) {
-    setState(() => _selectedView = index);
     if (index == 1) {
-      _showMessage('Harita görünümü yakında eklenecek.');
+      Navigator.of(context).pushNamed(AppRouter.aiPlannerMap);
     }
   }
 
@@ -115,25 +113,19 @@ class _AiPlannerTimelinePageState extends State<AiPlannerTimelinePage> {
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 900),
               child: TimelineSegmentedControl(
-                selectedIndex: _selectedView,
+                selectedIndex: 0,
                 onSelected: _selectView,
               ),
             ),
           ),
           const SizedBox(height: AppSpacing.sm),
           Expanded(
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 250),
-              child: _selectedView == 0
-                  ? _TimelineView(
-                      key: const ValueKey('timeline-view'),
-                      stops: _stops,
-                      onDetailsPressed: (stop) => _showMessage(
-                        '${stop.title} detayları yakında eklenecek.',
-                      ),
-                      onLocationPressed: (stop) => _selectView(1),
-                    )
-                  : const _MapPlaceholder(key: ValueKey('ai-map-placeholder')),
+            child: _TimelineView(
+              key: const ValueKey('timeline-view'),
+              stops: _stops,
+              onDetailsPressed: (stop) =>
+                  _showMessage('${stop.title} detayları yakında eklenecek.'),
+              onLocationPressed: (stop) => _selectView(1),
             ),
           ),
           AiQuickActions(
@@ -315,36 +307,6 @@ class _TimelineEntry extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class _MapPlaceholder extends StatelessWidget {
-  const _MapPlaceholder({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.lg),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const CircleAvatar(
-              radius: 44,
-              backgroundColor: AppColors.savedAccentLight,
-              foregroundColor: AppColors.primary,
-              child: Icon(Icons.map_outlined, size: 48),
-            ),
-            const SizedBox(height: AppSpacing.md),
-            Text(
-              'Harita görünümü yakında eklenecek.',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
