@@ -12,6 +12,9 @@ import 'package:turota_mobile/features/profile/presentation/pages/help_center_pa
 import 'package:turota_mobile/features/profile/presentation/pages/about_page.dart';
 import 'package:turota_mobile/features/splash/presentation/pages/splash_page.dart';
 import 'package:turota_mobile/features/discover/presentation/pages/map_page.dart';
+import 'package:turota_mobile/features/discover/presentation/pages/city_lights_page.dart';
+import 'package:turota_mobile/features/discover/presentation/pages/art_culture_page.dart';
+import 'package:turota_mobile/features/discover/presentation/pages/gastronomy_page.dart';
 
 abstract final class AppRouter {
   static const String splash = '/';
@@ -27,6 +30,9 @@ abstract final class AppRouter {
   static const String helpCenter = '/profile/helpCenter';
   static const String about = '/profile/about';
   static const String map = '/discover/map';
+  static const String cityLights = '/discover/cityLights';
+  static const String artCulture = '/discover/artCulture';
+  static const String gastronomy = '/discover/gastronomy';
 
   static Route<void> onGenerateRoute(RouteSettings settings) {
     return switch (settings.name) {
@@ -80,6 +86,18 @@ abstract final class AppRouter {
       ),
       map => MaterialPageRoute<void>(
         builder: (_) => const MapPage(),
+        settings: settings,
+      ),
+      cityLights => MaterialPageRoute<void>(
+        builder: (_) => const CityLightsPage(),
+        settings: settings,
+      ),
+      artCulture => MaterialPageRoute<void>(
+        builder: (_) => const ArtCulturePage(),
+        settings: settings,
+      ),
+      gastronomy => MaterialPageRoute<void>(
+        builder: (_) => const GastronomyPage(),
         settings: settings,
       ),
       _ => MaterialPageRoute<void>(
