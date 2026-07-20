@@ -850,27 +850,69 @@ void main() {
     );
   });
 
-  testWidgets('Planlar tab shows its empty state', (tester) async {
+  testWidgets('Planlar tab renders all saved plan cards', (tester) async {
     await pumpSavedPage(tester);
     await tester.tap(find.byKey(const ValueKey('saved-tab-Planlar')));
     await tester.pumpAndSettle();
 
     expect(find.byKey(const ValueKey('saved-plans-tab')), findsOneWidget);
-    expect(find.text('Henüz kayıtlı planın yok'), findsOneWidget);
+    expect(find.text('Karaköy Sanat Turu'), findsOneWidget);
+    expect(find.text('Boğaz Hattı Kahvaltısı'), findsOneWidget);
+    expect(find.text('Eski Şehir Gizemleri'), findsOneWidget);
+    expect(find.text('Yapay Zeka Rotası'), findsOneWidget);
+    expect(find.text('Gurme Rotası'), findsOneWidget);
+    expect(find.text('Tarih Turu'), findsOneWidget);
+  });
+
+  testWidgets('saved plan bookmark toggles and shows feedback', (tester) async {
+    await pumpSavedPage(tester);
+    await tester.tap(find.byKey(const ValueKey('saved-tab-Planlar')));
+    await tester.pumpAndSettle();
+
+    final bookmark = find.byKey(
+      const ValueKey('saved-plan-bookmark-karakoy-art'),
+    );
+    await tester.ensureVisible(bookmark);
+
+    IconButton button = tester.widget(bookmark);
+    expect((button.icon as Icon).icon, Icons.bookmark_rounded);
+
+    await tester.tap(bookmark);
+    await tester.pump();
+
+    button = tester.widget(bookmark);
+    expect((button.icon as Icon).icon, Icons.bookmark_border_rounded);
     expect(
-      find.text('Beğendiğin rotaları kaydettiğinde burada görebilirsin.'),
+      find.text('Karaköy Sanat Turu kaydedilenlerden çıkarıldı.'),
+      findsOneWidget,
+    );
+    expect(
+      find.text('Karaköy Sanat Turu plan detayı yakında eklenecek.'),
+      findsNothing,
+    );
+
+    await tester.tap(bookmark);
+    await tester.pump();
+    expect(
+      find.text('Karaköy Sanat Turu kaydedilenlere eklendi.'),
       findsOneWidget,
     );
   });
 
-  testWidgets('saved plans discover action opens DiscoverPage', (tester) async {
+  testWidgets('saved plan card shows detail feedback', (tester) async {
     await pumpSavedPage(tester);
     await tester.tap(find.byKey(const ValueKey('saved-tab-Planlar')));
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('saved-discover-action')));
-    await tester.pumpAndSettle();
 
-    expect(find.byType(DiscoverPage), findsOneWidget);
+    final plan = find.byKey(const ValueKey('saved-plan-bosphorus-breakfast'));
+    await tester.ensureVisible(plan);
+    await tester.tap(plan);
+    await tester.pump();
+
+    expect(
+      find.text('Boğaz Hattı Kahvaltısı plan detayı yakında eklenecek.'),
+      findsOneWidget,
+    );
   });
 
   testWidgets('switching back to Mekanlar restores saved places', (
@@ -954,6 +996,26 @@ void main() {
     await pumpSavedPage(tester);
 
     expect(find.byType(SavedPage), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('saved plans do not overflow on a small phone', (tester) async {
+    tester.view.physicalSize = const Size(320, 568);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await pumpSavedPage(tester);
+    await tester.tap(find.byKey(const ValueKey('saved-tab-Planlar')));
+    await tester.pumpAndSettle();
+    await tester.drag(
+      find.byKey(const ValueKey('saved-plans-scroll')),
+      const Offset(0, -420),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('saved-plans-tab')), findsOneWidget);
+    expect(find.text('Eski Şehir Gizemleri'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
