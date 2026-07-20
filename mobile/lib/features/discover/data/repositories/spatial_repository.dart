@@ -15,4 +15,8 @@ class SpatialRepository {
   Future<List<SpatialPlaceDto>> getPlacesInNeighborhood(String neighborhoodId) async {
     return await _remoteDataSource.getPlacesInNeighborhood(neighborhoodId);
   }
+
+  Future<List<SpatialPlaceDto>> getNearestPlaces(double latitude, double longitude, {int limit = 10}) async {
+    return await _remoteDataSource.getNearestPlaces(latitude, longitude, limit: limit);
+  }
 }
