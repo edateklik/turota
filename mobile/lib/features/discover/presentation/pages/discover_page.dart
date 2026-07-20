@@ -31,7 +31,7 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
     _DiscoverCategoryUiModel('Gastronomi', Icons.restaurant_rounded),
     _DiscoverCategoryUiModel('Sanat ve Kültür', Icons.museum_rounded),
     _DiscoverCategoryUiModel(
-      'Gece Hayatı ve Etkinlik',
+      'Şehrin Işıkları',
       Icons.celebration_rounded,
     ),
   ];
@@ -196,9 +196,19 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
                   const SizedBox(height: AppSpacing.md),
                   _CategoryGrid(
                     categories: _categories,
-                    onCategoryPressed: (category) => _showMessage(
-                      '${category.label} kategorisi yakında açılacak.',
-                    ),
+                    onCategoryPressed: (category) {
+                      if (category.label == 'Şehrin Işıkları') {
+                        Navigator.of(context).pushNamed(AppRouter.cityLights);
+                      } else if (category.label == 'Sanat ve Kültür') {
+                        Navigator.of(context).pushNamed(AppRouter.artCulture);
+                      } else if (category.label == 'Gastronomi') {
+                        Navigator.of(context).pushNamed(AppRouter.gastronomy);
+                      } else {
+                        _showMessage(
+                          '${category.label} kategorisi yakında açılacak.',
+                        );
+                      }
+                    },
                   ),
                   const SizedBox(height: AppSpacing.xl),
                   _NearbyHeader(
