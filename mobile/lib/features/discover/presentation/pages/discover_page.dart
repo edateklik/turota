@@ -5,6 +5,7 @@ import 'package:latlong2/latlong.dart';
 import '../controllers/weather_controller.dart';
 import '../controllers/places_controller.dart';
 import 'package:turota_mobile/app/router/app_router.dart';
+import 'package:turota_mobile/features/authentication/presentation/providers/auth_providers.dart';
 import 'package:turota_mobile/core/theme/app_colors.dart';
 import 'package:turota_mobile/core/theme/app_radius.dart';
 import 'package:turota_mobile/core/theme/app_spacing.dart';
@@ -19,12 +20,7 @@ class DiscoverPage extends ConsumerStatefulWidget {
 }
 
 class _DiscoverPageState extends ConsumerState<DiscoverPage> {
-  // TODO: Replace the sample identity and date with authenticated user and
-  // localized current-date data.
-  static const _header = _DiscoverHeaderModel(
-    userName: 'Şevval',
-    dateLabel: '12 Ekim Cumartesi',
-  );
+  // We'll build the header dynamically in the build method.
 
 
 
@@ -207,6 +203,14 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
 
   @override
   Widget build(BuildContext context) {
+    final userState = ref.watch(currentUserProvider);
+    final userName = userState.value?.firstName ?? '...';
+    
+    final headerModel = _DiscoverHeaderModel(
+      userName: userName,
+      dateLabel: '12 Ekim Cumartesi',
+    );
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SingleChildScrollView(
@@ -216,7 +220,7 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _DiscoverHeader(
-              model: _header,
+              model: headerModel,
               onNotificationsPressed: () =>
                   _showMessage('Bildirimler yakında eklenecek.'),
               onProfilePressed: () => _selectTemporaryDestination(3),
