@@ -12,7 +12,10 @@ class AuthRepositoryImpl implements AuthRepository {
   final TokenStorage _tokenStorage;
 
   @override
-  Future<AuthUser> login({required String email, required String password}) async {
+  Future<AuthUser> login({
+    required String email,
+    required String password,
+  }) async {
     final dto = LoginRequestDto(email: email, password: password);
     final response = await _dataSource.login(dto);
 

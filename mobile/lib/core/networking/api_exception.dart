@@ -10,7 +10,10 @@ class ApiException implements Exception {
     return ApiException(
       statusCode: statusCode,
       errorCode: json['errorCode'] as String? ?? 'UNKNOWN_ERROR',
-      message: json['detail'] as String? ?? json['title'] as String? ?? 'Bilinmeyen bir hata oluştu.',
+      message:
+          json['detail'] as String? ??
+          json['title'] as String? ??
+          'Bilinmeyen bir hata oluştu.',
       traceId: json['traceId'] as String? ?? '',
     );
   }
@@ -20,10 +23,14 @@ class ApiException implements Exception {
   final String message;
   final String traceId;
 
-  bool get isConflict => statusCode == 409 || errorCode == 'EMAIL_ALREADY_EXISTS';
-  bool get isUnauthorized => statusCode == 401 || errorCode == 'INVALID_CREDENTIALS';
-  bool get isValidationError => statusCode == 400 || errorCode == 'VALIDATION_ERROR';
+  bool get isConflict =>
+      statusCode == 409 || errorCode == 'EMAIL_ALREADY_EXISTS';
+  bool get isUnauthorized =>
+      statusCode == 401 || errorCode == 'INVALID_CREDENTIALS';
+  bool get isValidationError =>
+      statusCode == 400 || errorCode == 'VALIDATION_ERROR';
 
   @override
-  String toString() => 'ApiException(statusCode: $statusCode, errorCode: $errorCode, message: $message)';
+  String toString() =>
+      'ApiException(statusCode: $statusCode, errorCode: $errorCode, message: $message)';
 }

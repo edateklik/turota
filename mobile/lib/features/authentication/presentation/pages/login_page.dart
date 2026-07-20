@@ -72,20 +72,29 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
       if (!mounted) return;
       _hasNavigated = true;
-      Navigator.of(context).pushReplacementNamed(AppRouter.home);
+      Navigator.of(context).pushReplacementNamed(AppRouter.discover);
     } on ApiException catch (e) {
-      if (e.isUnauthorized) {
-        _showMessage('E-posta adresi veya parola hatalı.');
-      } else {
-        _showMessage(e.message);
-      }
-    } catch (e) {
+      _showMessage(_loginErrorMessage(e));
+    } catch (_) {
       _showMessage('Giriş yaparken beklenmeyen bir hata oluştu.');
     } finally {
       if (mounted && !_hasNavigated) {
         setState(() => _isSubmitting = false);
       }
     }
+  }
+
+  String _loginErrorMessage(ApiException exception) {
+    if (exception.isUnauthorized) {
+      return 'E-posta adresi veya şifre hatalı.';
+    }
+    if (exception.errorCode == 'NETWORK_ERROR') {
+      return 'İnternet bağlantınızı kontrol edip tekrar deneyin.';
+    }
+    if (exception.statusCode >= 500) {
+      return 'Şu anda giriş yapılamıyor. Lütfen daha sonra tekrar deneyin.';
+    }
+    return 'Giriş yapılamadı. Bilgilerinizi kontrol edip tekrar deneyin.';
   }
 
   String? _validateEmail(String? value) {

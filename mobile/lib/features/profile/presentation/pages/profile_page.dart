@@ -221,7 +221,10 @@ class _ProfileSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.lg,
+              vertical: AppSpacing.md,
+            ),
             child: Text(
               title,
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
@@ -255,12 +258,17 @@ class _ProfileListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = isDestructive ? AppColors.primary : AppColors.textPrimary;
-    final iconColor = isDestructive ? AppColors.primary : AppColors.primaryContainer;
+    final iconColor = isDestructive
+        ? AppColors.primary
+        : AppColors.primaryContainer;
 
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: 20),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.lg,
+          vertical: 20,
+        ),
         child: Row(
           children: [
             Icon(icon, color: iconColor, size: 24),
@@ -268,11 +276,17 @@ class _ProfileListItem extends StatelessWidget {
             Expanded(
               child: Text(
                 label,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: color),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyLarge?.copyWith(color: color),
               ),
             ),
             if (!isDestructive)
-              const Icon(Icons.chevron_right, color: AppColors.outline, size: 24),
+              const Icon(
+                Icons.chevron_right,
+                color: AppColors.outline,
+                size: 24,
+              ),
           ],
         ),
       ),
