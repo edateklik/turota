@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:turota_mobile/app/router/app_router.dart';
 import 'package:turota_mobile/core/theme/app_colors.dart';
 import 'package:turota_mobile/core/theme/app_spacing.dart';
 import 'package:turota_mobile/features/profile/presentation/pages/profile_page.dart';
@@ -88,7 +89,15 @@ class _MainShellPageState extends State<MainShellPage> {
                   icon: isActive ? item.activeIcon : item.icon,
                   label: item.label,
                   isActive: isActive,
-                  onTap: () => setState(() => _currentIndex = index),
+                  onTap: () {
+                    if (index == 2) {
+                      Navigator.of(
+                        context,
+                      ).pushNamed(AppRouter.aiPlannerTimeline);
+                      return;
+                    }
+                    setState(() => _currentIndex = index);
+                  },
                 );
               }),
             ),

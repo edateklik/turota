@@ -80,7 +80,7 @@ class _PlaceDetailPageState extends State<PlaceDetailPage> {
     } else if (index == 1) {
       Navigator.of(context).pushReplacementNamed(AppRouter.saved);
     } else if (index == 2) {
-      _showMessage('AI asistan ekranı yakında eklenecek.');
+      Navigator.of(context).pushReplacementNamed(AppRouter.aiPlannerTimeline);
     } else if (index == 3) {
       _showMessage('Profil ekranı yakında eklenecek.');
     }

@@ -6,6 +6,7 @@ import 'package:turota_mobile/app/router/app_router.dart';
 import 'package:turota_mobile/core/constants/app_constants.dart';
 import 'package:turota_mobile/core/theme/app_colors.dart';
 import 'package:turota_mobile/core/theme/app_theme.dart';
+import 'package:turota_mobile/features/ai_assistant/presentation/pages/ai_planner_timeline_page.dart';
 import 'package:turota_mobile/features/authentication/domain/models/auth_user.dart';
 import 'package:turota_mobile/features/authentication/domain/repositories/auth_repository.dart';
 import 'package:turota_mobile/features/authentication/presentation/pages/login_page.dart';
@@ -138,6 +139,18 @@ void main() {
           theme: AppTheme.light,
           onGenerateRoute: AppRouter.onGenerateRoute,
           home: const PlaceDetailPage(),
+        ),
+      ),
+    );
+  }
+
+  Future<void> pumpAiPlannerTimelinePage(WidgetTester tester) async {
+    await tester.pumpWidget(
+      withTestProviders(
+        MaterialApp(
+          theme: AppTheme.light,
+          onGenerateRoute: AppRouter.onGenerateRoute,
+          home: const AiPlannerTimelinePage(),
         ),
       ),
     );
@@ -806,15 +819,137 @@ void main() {
   ) async {
     await pumpDiscoverPage(tester);
 
-    const expectations = {
-      'AI Asistan': 'AI asistan ekranı yakında eklenecek.',
-      'Profil': 'Profil ekranı yakında eklenecek.',
-    };
+    const expectations = {'Profil': 'Profil ekranı yakında eklenecek.'};
     for (final entry in expectations.entries) {
       await tester.tap(find.text(entry.key));
       await tester.pump();
       expect(find.text(entry.value), findsOneWidget);
     }
+  });
+
+  testWidgets('DiscoverPage AI destination opens timeline', (tester) async {
+    await pumpDiscoverPage(tester);
+    await tester.tap(find.text('AI Asistan'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(AiPlannerTimelinePage), findsOneWidget);
+  });
+
+  testWidgets('AI timeline renders with timeline selected', (tester) async {
+    await pumpAiPlannerTimelinePage(tester);
+
+    expect(find.byType(AiPlannerTimelinePage), findsOneWidget);
+    final navigation = tester.widget<NavigationBar>(
+      find.byKey(const ValueKey('app-bottom-navigation')),
+    );
+    expect(navigation.selectedIndex, 2);
+    expect(
+      find.byKey(const ValueKey('Zaman Çizelgesi-selected')),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('AI timeline renders all three route stops', (tester) async {
+    await pumpAiPlannerTimelinePage(tester);
+
+    for (final place in [
+      'Komorebi Coffee Roasters',
+      'The Linear Gallery',
+      'Flora Kitchen',
+    ]) {
+      expect(find.text(place), findsOneWidget);
+    }
+    for (final time in ['09:00', '10:30', '13:15']) {
+      expect(find.text(time), findsOneWidget);
+    }
+  });
+
+  testWidgets('AI quick actions render and show feedback', (tester) async {
+    await pumpAiPlannerTimelinePage(tester);
+
+    for (final action in [
+      'Bu kafe ile değiştir',
+      'Rotayı kısalt',
+      'Müze ekle',
+    ]) {
+      expect(find.text(action), findsOneWidget);
+    }
+    await tester.drag(
+      find.byKey(const ValueKey('ai-quick-actions')),
+      const Offset(-320, 0),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Daha uygun fiyatlı restoran bul'), findsOneWidget);
+
+    await tester.drag(
+      find.byKey(const ValueKey('ai-quick-actions')),
+      const Offset(320, 0),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Bu kafe ile değiştir'));
+    await tester.pump();
+    expect(
+      find.text("'Bu kafe ile değiştir' isteği AI Asistan’a iletildi."),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('empty AI prompt is not submitted', (tester) async {
+    await pumpAiPlannerTimelinePage(tester);
+    await tester.tap(find.byKey(const ValueKey('ai-prompt-send')));
+    await tester.pump();
+
+    expect(find.text('İsteğiniz AI Asistan’a iletildi.'), findsNothing);
+  });
+
+  testWidgets('filled AI prompt is submitted and cleared', (tester) async {
+    await pumpAiPlannerTimelinePage(tester);
+    final field = find.byKey(const ValueKey('ai-prompt-field'));
+    await tester.enterText(field, 'Rotaya park ekle');
+    await tester.tap(find.byKey(const ValueKey('ai-prompt-send')));
+    await tester.pump();
+
+    expect(find.text('İsteğiniz AI Asistan’a iletildi.'), findsOneWidget);
+    final textField = tester.widget<TextField>(field);
+    expect(textField.controller?.text, isEmpty);
+  });
+
+  testWidgets('map segment shows temporary map state', (tester) async {
+    await pumpAiPlannerTimelinePage(tester);
+    await tester.tap(find.byKey(const ValueKey('map-segment')));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('ai-map-placeholder')), findsOneWidget);
+    expect(find.text('Harita görünümü yakında eklenecek.'), findsWidgets);
+  });
+
+  testWidgets('timeline stop location opens temporary map state', (
+    tester,
+  ) async {
+    await pumpAiPlannerTimelinePage(tester);
+    final location = find.byTooltip('Komorebi Coffee Roasters konumunu göster');
+    await tester.ensureVisible(location);
+    await tester.tap(location);
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('ai-map-placeholder')), findsOneWidget);
+  });
+
+  testWidgets('AI timeline does not overflow on a small phone', (tester) async {
+    tester.view.physicalSize = const Size(320, 568);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await pumpAiPlannerTimelinePage(tester);
+    await tester.drag(
+      find.byKey(const ValueKey('ai-timeline-scroll')),
+      const Offset(0, -500),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byType(AiPlannerTimelinePage), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('DiscoverPage does not overflow on a small phone', (
@@ -1094,20 +1229,23 @@ void main() {
     expect(find.byType(DiscoverPage), findsOneWidget);
   });
 
-  testWidgets('SavedPage AI and profile destinations show feedback', (
-    tester,
-  ) async {
+  testWidgets('SavedPage profile destination shows feedback', (tester) async {
     await pumpSavedPage(tester);
 
-    const expectations = {
-      'AI Asistan': 'AI asistan ekranı yakında eklenecek.',
-      'Profil': 'Profil ekranı yakında eklenecek.',
-    };
+    const expectations = {'Profil': 'Profil ekranı yakında eklenecek.'};
     for (final entry in expectations.entries) {
       await tester.tap(find.text(entry.key));
       await tester.pump();
       expect(find.text(entry.value), findsOneWidget);
     }
+  });
+
+  testWidgets('SavedPage AI destination opens timeline', (tester) async {
+    await pumpSavedPage(tester);
+    await tester.tap(find.text('AI Asistan'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(AiPlannerTimelinePage), findsOneWidget);
   });
 
   testWidgets('SavedPage does not overflow on a small phone', (tester) async {
