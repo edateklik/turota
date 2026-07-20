@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+import '../controllers/weather_controller.dart';
 import 'package:turota_mobile/app/router/app_router.dart';
 import 'package:turota_mobile/core/theme/app_colors.dart';
 import 'package:turota_mobile/core/theme/app_radius.dart';
 import 'package:turota_mobile/core/theme/app_spacing.dart';
 import 'package:turota_mobile/core/widgets/app_card.dart';
 
-class DiscoverPage extends StatefulWidget {
+class DiscoverPage extends ConsumerStatefulWidget {
   const DiscoverPage({super.key});
 
   @override
-  State<DiscoverPage> createState() => _DiscoverPageState();
+  ConsumerState<DiscoverPage> createState() => _DiscoverPageState();
 }
 
-class _DiscoverPageState extends State<DiscoverPage> {
+class _DiscoverPageState extends ConsumerState<DiscoverPage> {
   // TODO: Replace the sample identity and date with authenticated user and
   // localized current-date data.
   static const _header = _DiscoverHeaderModel(
@@ -20,14 +24,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
     dateLabel: '12 Ekim Cumartesi',
   );
 
-  // TODO: Replace this sample forecast with weather API data.
-  static const _weatherDays = [
-    _WeatherDayUiModel('Bugün', '24°', Icons.wb_sunny_rounded, true),
-    _WeatherDayUiModel('Paz', '22°', Icons.cloud_queue_rounded, false),
-    _WeatherDayUiModel('Pzt', '19°', Icons.cloud_rounded, false),
-    _WeatherDayUiModel('Sal', '17°', Icons.grain_rounded, false),
-    _WeatherDayUiModel('Çar', '20°', Icons.cloud_queue_rounded, false),
-  ];
+
 
   static const _categories = [
     _DiscoverCategoryUiModel('Gastronomi', Icons.restaurant_rounded),
@@ -89,6 +86,79 @@ class _DiscoverPageState extends State<DiscoverPage> {
     }
   }
 
+  Widget _buildWeatherSection() {
+    final weatherState = ref.watch(weatherControllerProvider);
+
+    return weatherState.when(
+      data: (forecast) {
+        final days = forecast.dailyForecasts.asMap().entries.map((entry) {
+          final index = entry.key;
+          final dto = entry.value;
+          final isToday = index == 0;
+          final dayName = isToday ? 'Bugün' : _getDayName(dto.date.weekday);
+
+          return _WeatherDayUiModel(
+            dayName,
+            '${dto.maxTemperature.round()}°',
+            _getWeatherIcon(dto.weatherCode),
+            isToday,
+          );
+        }).toList();
+
+        return _WeatherStrip(days: days);
+      },
+      loading: () => const Center(
+        child: Padding(
+          padding: EdgeInsets.all(AppSpacing.xl),
+          child: CircularProgressIndicator(),
+        ),
+      ),
+      error: (error, stack) => Center(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.xl),
+          child: Column(
+            children: [
+              const Icon(Icons.error_outline, color: AppColors.error),
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                'Hava durumu yüklenemedi',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.error),
+              ),
+              TextButton(
+                onPressed: () => ref.refresh(weatherControllerProvider),
+                child: const Text('Tekrar Dene'),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _getDayName(int weekday) {
+    const names = {
+      1: 'Pzt',
+      2: 'Sal',
+      3: 'Çar',
+      4: 'Per',
+      5: 'Cum',
+      6: 'Cmt',
+      7: 'Paz',
+    };
+    return names[weekday] ?? '';
+  }
+
+  IconData _getWeatherIcon(int code) {
+    if (code == 0 || code == 1) return Icons.wb_sunny_rounded;
+    if (code == 2 || code == 3) return Icons.cloud_queue_rounded;
+    if (code == 45 || code == 48) return Icons.foggy;
+    if (code >= 51 && code <= 55) return Icons.grain_rounded;
+    if (code >= 61 && code <= 65) return Icons.water_drop_rounded;
+    if (code >= 71 && code <= 75) return Icons.ac_unit_rounded;
+    if (code >= 95 && code <= 99) return Icons.thunderstorm_rounded;
+    return Icons.cloud_rounded;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -115,13 +185,13 @@ class _DiscoverPageState extends State<DiscoverPage> {
                 children: [
                   const _SectionTitle('7 Günlük Hava Durumu'),
                   const SizedBox(height: AppSpacing.md),
-                  _WeatherStrip(days: _weatherDays),
+                  _buildWeatherSection(),
                   const SizedBox(height: AppSpacing.xl),
                   const _SectionTitle('Mevcut Konumunuz'),
                   const SizedBox(height: AppSpacing.md),
                   _LocationPreviewCard(
                     onMapPressed: () =>
-                        _showMessage('Tam harita ekranı yakında eklenecek.'),
+                        Navigator.of(context).pushNamed(AppRouter.map),
                   ),
                   const SizedBox(height: AppSpacing.xl),
                   const _SectionTitle('Kategoriye Göre Keşfet'),
@@ -428,7 +498,25 @@ class _LocationPreviewCardState extends State<_LocationPreviewCard>
           child: Stack(
             alignment: Alignment.center,
             children: [
-              const Positioned.fill(child: CustomPaint(painter: _MapPainter())),
+              Positioned.fill(
+                child: IgnorePointer(
+                  child: FlutterMap(
+                    options: const MapOptions(
+                      initialCenter: LatLng(40.990, 29.020),
+                      initialZoom: 14.0,
+                      interactionOptions: InteractionOptions(
+                        flags: InteractiveFlag.none,
+                      ),
+                    ),
+                    children: [
+                      TileLayer(
+                        urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                        userAgentPackageName: 'com.turota.mobile',
+                      ),
+                    ],
+                  ),
+                ),
+              ),
               ScaleTransition(
                 scale: _pulse,
                 child: Container(
@@ -462,56 +550,6 @@ class _LocationPreviewCardState extends State<_LocationPreviewCard>
   }
 }
 
-class _MapPainter extends CustomPainter {
-  const _MapPainter();
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    canvas.drawColor(AppColors.illustrationBackground, BlendMode.src);
-    final blockPaint = Paint()..color = AppColors.primaryContainer;
-    final roadPaint = Paint()
-      ..color = AppColors.surface
-      ..strokeWidth = 14
-      ..strokeCap = StrokeCap.round;
-    final routePaint = Paint()
-      ..color = AppColors.primary
-      ..strokeWidth = 4
-      ..strokeCap = StrokeCap.round;
-
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(18, 18, size.width * 0.28, 48),
-        const Radius.circular(10),
-      ),
-      blockPaint,
-    );
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(size.width * 0.66, 28, size.width * 0.24, 58),
-        const Radius.circular(10),
-      ),
-      blockPaint,
-    );
-    canvas.drawLine(
-      Offset(-10, size.height * 0.72),
-      Offset(size.width + 15, size.height * 0.28),
-      roadPaint,
-    );
-    canvas.drawLine(
-      Offset(size.width * 0.22, -10),
-      Offset(size.width * 0.76, size.height + 10),
-      roadPaint,
-    );
-    canvas.drawLine(
-      Offset(size.width * 0.08, size.height * 0.82),
-      Offset(size.width * 0.9, size.height * 0.34),
-      routePaint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
 
 class _CategoryGrid extends StatelessWidget {
   const _CategoryGrid({

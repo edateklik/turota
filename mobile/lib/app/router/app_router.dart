@@ -11,6 +11,7 @@ import 'package:turota_mobile/features/profile/presentation/pages/language_selec
 import 'package:turota_mobile/features/profile/presentation/pages/help_center_page.dart';
 import 'package:turota_mobile/features/profile/presentation/pages/about_page.dart';
 import 'package:turota_mobile/features/splash/presentation/pages/splash_page.dart';
+import 'package:turota_mobile/features/discover/presentation/pages/map_page.dart';
 
 abstract final class AppRouter {
   static const String splash = '/';
@@ -25,6 +26,7 @@ abstract final class AppRouter {
   static const String languageSelection = '/profile/language';
   static const String helpCenter = '/profile/helpCenter';
   static const String about = '/profile/about';
+  static const String map = '/discover/map';
 
   static Route<void> onGenerateRoute(RouteSettings settings) {
     return switch (settings.name) {
@@ -74,6 +76,10 @@ abstract final class AppRouter {
       ),
       about => MaterialPageRoute<void>(
         builder: (_) => const AboutPage(),
+        settings: settings,
+      ),
+      map => MaterialPageRoute<void>(
+        builder: (_) => const MapPage(),
         settings: settings,
       ),
       _ => MaterialPageRoute<void>(

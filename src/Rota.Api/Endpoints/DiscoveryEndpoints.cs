@@ -48,6 +48,12 @@ public static class DiscoveryEndpoints
             IPlaceDiscoveryService service,
             CancellationToken cancellationToken) =>
             service.GetNearbyNeighborhoodsAsync(longitude, latitude, limit ?? 5, cancellationToken));
+        group.MapGet("/weather", (
+            double? latitude,
+            double? longitude,
+            Rota.Modules.Discovery.Application.Features.Weather.IWeatherService service,
+            CancellationToken cancellationToken) =>
+            service.GetSevenDayForecastAsync(latitude ?? 41.0082, longitude ?? 28.9784, cancellationToken));
     }
 
     private static void MapAdminEndpoints(IEndpointRouteBuilder endpoints)

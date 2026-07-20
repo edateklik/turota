@@ -9,6 +9,8 @@ using Rota.Modules.Discovery.Application.Spatial;
 using Rota.Modules.Discovery.Infrastructure.Admin;
 using Rota.Modules.Discovery.Infrastructure.Features;
 using Rota.Modules.Discovery.Infrastructure.Spatial;
+using Rota.Modules.Discovery.Application.Features.Weather;
+using Rota.Modules.Discovery.Infrastructure.Features.Weather;
 
 namespace Rota.Modules.Discovery.Infrastructure;
 
@@ -40,6 +42,7 @@ public static class DependencyInjection
         services.AddScoped<ICategoryAdminService, CategoryAdminService>();
         services.AddScoped<ITagAdminService, TagAdminService>();
         services.AddScoped<IPlaceFeatureVectorService, PlaceFeatureVectorService>();
+        services.AddHttpClient<IWeatherService, OpenMeteoWeatherService>();
 
         return services;
     }
