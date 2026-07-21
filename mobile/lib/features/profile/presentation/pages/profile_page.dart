@@ -141,50 +141,28 @@ class _ProfileHeader extends ConsumerWidget {
 
     return Column(
       children: [
-        Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.white, width: 4),
-                boxShadow: const [
-                  BoxShadow(
-                    color: AppColors.shadow,
-                    blurRadius: 20,
-                    offset: Offset(0, 4),
-                  ),
-                ],
-                image: const DecorationImage(
-                  image: NetworkImage(
-                    'https://lh3.googleusercontent.com/aida-public/AB6AXuCvMxp3Sg5AoGJi3_BNFH9s4Q-BldYT17zYVyRa0ygClofFPArLFLd5cQoXSy_XMtwrmVbCFdpKMoBZobrFBQ7gKvrtzUaBsGyD29sCI5-1_8rakCaI_m_8S7EEZdQ8l0WvW6J9GWzQ4Kpr736M981Bg3oeCOGGgxKU4vJVRO3TMgwxfQeCBERiOaY3QDJ8JLAbRa6SiICtAz74QM1xlcwnUcDF3SNNS8dgb5qM9Feag0DRzoe-FtmL',
-                  ),
-                  fit: BoxFit.cover,
-                ),
+        Container(
+          width: 100,
+          height: 100,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: AppColors.surfaceLow,
+            border: Border.all(color: AppColors.surface, width: 4),
+            boxShadow: const [
+              BoxShadow(
+                color: AppColors.shadow,
+                blurRadius: 20,
+                offset: Offset(0, 4),
               ),
+            ],
+          ),
+          child: const ClipOval(
+            child: Icon(
+              Icons.person,
+              size: 50,
+              color: AppColors.outlineVariant,
             ),
-            Positioned(
-              bottom: 0,
-              right: 0,
-              child: Container(
-                padding: const EdgeInsets.all(4),
-                decoration: const BoxDecoration(
-                  color: AppColors.primary,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.shadow,
-                      blurRadius: 4,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: const Icon(Icons.edit, size: 16, color: Colors.white),
-              ),
-            ),
-          ],
+          ),
         ),
         const SizedBox(height: AppSpacing.md),
         Text(
