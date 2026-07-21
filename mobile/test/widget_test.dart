@@ -55,6 +55,17 @@ class _FakeAuthRepository implements AuthRepository {
       role: 'User',
     );
   }
+
+  @override
+  Future<AuthUser> getCurrentUser() async {
+    return AuthUser(
+      id: 'test-user',
+      email: 'test@example.com',
+      firstName: 'Test',
+      lastName: 'User',
+      role: 'User',
+    );
+  }
 }
 
 void main() {
