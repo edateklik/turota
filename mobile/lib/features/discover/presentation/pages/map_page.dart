@@ -67,18 +67,13 @@ class _MapPageState extends ConsumerState<MapPage> {
 
           return FlutterMap(
             mapController: _mapController,
-            options: MapOptions(
-              initialCenter: center,
-              initialZoom: 14.0,
-            ),
+            options: MapOptions(initialCenter: center, initialZoom: 14.0),
             children: [
               TileLayer(
                 urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                 userAgentPackageName: 'com.turota.mobile',
               ),
-              MarkerLayer(
-                markers: markers,
-              ),
+              MarkerLayer(markers: markers),
             ],
           );
         },
@@ -93,7 +88,7 @@ class _MapPageState extends ConsumerState<MapPage> {
               TextButton(
                 onPressed: () => ref.refresh(mapControllerProvider),
                 child: const Text('Tekrar Dene'),
-              )
+              ),
             ],
           ),
         ),

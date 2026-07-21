@@ -62,9 +62,10 @@ public sealed record TimelineRecommendationResponse(
 public sealed record TasteProfileSnapshot(
     IReadOnlyList<Guid> PreferredCategoryIds,
     IReadOnlyList<Guid> PreferredTagIds,
-    IReadOnlyList<string> DietaryPreferences,
+    string DietaryPreference,
     string BudgetLevel,
-    string TravelPace);
+    string TravelPace,
+    string DistancePreference);
 
 public sealed record GeoPointInput(double Longitude, double Latitude);
 

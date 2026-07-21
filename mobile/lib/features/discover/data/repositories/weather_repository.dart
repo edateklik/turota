@@ -5,7 +5,7 @@ class WeatherRepository {
   final WeatherRemoteDataSource _remoteDataSource;
 
   WeatherRepository({WeatherRemoteDataSource? remoteDataSource})
-      : _remoteDataSource = remoteDataSource ?? WeatherRemoteDataSource();
+    : _remoteDataSource = remoteDataSource ?? WeatherRemoteDataSource();
 
   Future<WeatherForecastDto> getForecast() async {
     return await _remoteDataSource.getWeather();

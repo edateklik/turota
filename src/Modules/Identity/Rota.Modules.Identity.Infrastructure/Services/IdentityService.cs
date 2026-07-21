@@ -86,9 +86,14 @@ public sealed class IdentityService(
             ?? throw new KeyNotFoundException("Zevk profili bulunamadı.");
         var categoryIds = DistinctIds(request.PreferredCategoryIds, 50, nameof(request.PreferredCategoryIds));
         var tagIds = DistinctIds(request.PreferredTagIds, 50, nameof(request.PreferredTagIds));
-        var dietaryPreferences = request.DietaryPreferences.Select(x => Required(x, 60, nameof(request.DietaryPreferences)))
-            .Distinct(StringComparer.OrdinalIgnoreCase).Take(20).ToArray();
-        profile.Update(categoryIds, tagIds, dietaryPreferences, request.BudgetLevel, request.TravelPace, timeProvider.GetUtcNow());
+        profile.Update(
+            categoryIds,
+            tagIds,
+            request.DietaryPreference,
+            request.BudgetLevel,
+            request.TravelPace,
+            request.DistancePreference,
+            timeProvider.GetUtcNow());
         await dbContext.SaveChangesAsync(cancellationToken);
         return Map(profile);
     }
@@ -97,9 +102,10 @@ public sealed class IdentityService(
         profile.UserId,
         profile.PreferredCategoryIds,
         profile.PreferredTagIds,
-        profile.DietaryPreferences,
+        profile.DietaryPreference,
         profile.BudgetLevel,
         profile.TravelPace,
+        profile.DistancePreference,
         profile.UpdatedAt);
 
     private static Guid[] DistinctIds(IReadOnlyList<Guid> values, int maximum, string name)

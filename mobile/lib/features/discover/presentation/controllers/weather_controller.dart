@@ -6,7 +6,8 @@ final weatherRepositoryProvider = Provider<WeatherRepository>((ref) {
   return WeatherRepository();
 });
 
-final weatherControllerProvider = FutureProvider.autoDispose<WeatherForecastDto>((ref) async {
-  final repository = ref.watch(weatherRepositoryProvider);
-  return await repository.getForecast();
-});
+final weatherControllerProvider =
+    FutureProvider.autoDispose<WeatherForecastDto>((ref) async {
+      final repository = ref.watch(weatherRepositoryProvider);
+      return await repository.getForecast();
+    });

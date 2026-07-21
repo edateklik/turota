@@ -62,8 +62,6 @@ class _SavedPageState extends State<SavedPage> {
       ..showSnackBar(SnackBar(content: Text(message)));
   }
 
-
-
   void _toggleBookmark(_SavedPlaceUiModel place) {
     final wasBookmarked = _bookmarkedPlaceIds.contains(place.id);
     setState(() {
@@ -472,9 +470,7 @@ class _CollectionCard extends StatelessWidget {
                 color: isNew ? AppColors.surfaceLow : AppColors.surface,
                 borderRadius: BorderRadius.circular(AppRadius.xl),
                 border: Border.all(
-                  color: isNew
-                      ? AppColors.primary
-                      : AppColors.outlineVariant,
+                  color: isNew ? AppColors.primary : AppColors.outlineVariant,
                 ),
                 boxShadow: isNew
                     ? null

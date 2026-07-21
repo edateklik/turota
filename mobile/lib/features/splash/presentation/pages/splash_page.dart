@@ -54,12 +54,12 @@ class _SplashPageState extends ConsumerState<SplashPage>
     }
 
     _hasNavigated = true;
-    
+
     final tokenStorage = ref.read(tokenStorageProvider);
     final token = await tokenStorage.getToken();
-    
+
     if (!mounted) return;
-    
+
     if (token != null && token.isNotEmpty) {
       Navigator.of(context).pushReplacementNamed(AppRouter.home);
     } else {

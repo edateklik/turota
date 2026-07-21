@@ -62,8 +62,13 @@ class HelpCenterPage extends StatelessWidget {
                   TextField(
                     decoration: InputDecoration(
                       hintText: 'Makale ara...',
-                      hintStyle: const TextStyle(color: AppColors.outlineVariant),
-                      prefixIcon: const Icon(Icons.search, color: AppColors.outline),
+                      hintStyle: const TextStyle(
+                        color: AppColors.outlineVariant,
+                      ),
+                      prefixIcon: const Icon(
+                        Icons.search,
+                        color: AppColors.outline,
+                      ),
                       filled: true,
                       fillColor: AppColors.surfaceLow,
                       contentPadding: const EdgeInsets.symmetric(
@@ -76,7 +81,10 @@ class HelpCenterPage extends StatelessWidget {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(32),
-                        borderSide: const BorderSide(color: AppColors.primary, width: 2),
+                        borderSide: const BorderSide(
+                          color: AppColors.primary,
+                          width: 2,
+                        ),
                       ),
                     ),
                   ),
@@ -132,7 +140,9 @@ class _HelpCategoryItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final primaryColor = isError ? AppColors.error : AppColors.primary;
-    final bgColor = isError ? AppColors.error.withValues(alpha: 0.1) : AppColors.primary.withValues(alpha: 0.1);
+    final bgColor = isError
+        ? AppColors.error.withValues(alpha: 0.1)
+        : AppColors.primary.withValues(alpha: 0.1);
 
     return InkWell(
       onTap: onTap,
@@ -166,9 +176,9 @@ class _HelpCategoryItem extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: AppColors.outline,
-                    ),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.labelSmall?.copyWith(color: AppColors.outline),
                   ),
                 ],
               ),

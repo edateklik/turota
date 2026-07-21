@@ -18,7 +18,7 @@ namespace Rota.Modules.Identity.Infrastructure.Persistence.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("identity")
-                .HasAnnotation("ProductVersion", "8.0.8")
+                .HasAnnotation("ProductVersion", "8.0.12")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -35,10 +35,22 @@ namespace Rota.Modules.Identity.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(20)")
                         .HasColumnName("budget_level");
 
+                    b.Property<string>("DietaryPreference")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("dietary_preference");
+
                     b.Property<string[]>("DietaryPreferences")
                         .IsRequired()
                         .HasColumnType("text[]")
                         .HasColumnName("dietary_preferences");
+
+                    b.Property<string>("DistancePreference")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("distance_preference");
 
                     b.Property<Guid[]>("PreferredCategoryIds")
                         .IsRequired()

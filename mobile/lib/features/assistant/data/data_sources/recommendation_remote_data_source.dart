@@ -6,16 +6,24 @@ class RecommendationRemoteDataSource {
 
   final ApiClient _apiClient;
 
-  Future<RecommendationAcceptedResponseDto> generateRecommendation(GenerateRecommendationRequestDto request) async {
+  Future<RecommendationAcceptedResponseDto> generateRecommendation(
+    GenerateRecommendationRequestDto request,
+  ) async {
     final response = await _apiClient.post(
       '/api/recommendations/generate',
       body: request.toJson(),
     );
-    return RecommendationAcceptedResponseDto.fromJson(response as Map<String, dynamic>);
+    return RecommendationAcceptedResponseDto.fromJson(
+      response as Map<String, dynamic>,
+    );
   }
 
-  Future<RecommendationRunResponseDto> getRecommendationStatus(String runId) async {
+  Future<RecommendationRunResponseDto> getRecommendationStatus(
+    String runId,
+  ) async {
     final response = await _apiClient.get('/api/recommendations/$runId');
-    return RecommendationRunResponseDto.fromJson(response as Map<String, dynamic>);
+    return RecommendationRunResponseDto.fromJson(
+      response as Map<String, dynamic>,
+    );
   }
 }

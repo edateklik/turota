@@ -52,7 +52,9 @@ class GastronomyPage extends StatelessWidget {
                 shape: BoxShape.circle,
                 border: Border.all(color: _cOutline.withValues(alpha: 0.3)),
                 image: const DecorationImage(
-                  image: NetworkImage('https://picsum.photos/seed/useravatar/100/100'),
+                  image: NetworkImage(
+                    'https://picsum.photos/seed/useravatar/100/100',
+                  ),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -61,10 +63,7 @@ class GastronomyPage extends StatelessWidget {
         ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(
-            color: _cOutline.withValues(alpha: 0.3),
-            height: 1,
-          ),
+          child: Container(color: _cOutline.withValues(alpha: 0.3), height: 1),
         ),
       ),
       body: SingleChildScrollView(
@@ -81,21 +80,21 @@ class GastronomyPage extends StatelessWidget {
                   Text(
                     'Gastronomi',
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontFamily: 'Public Sans',
-                          fontWeight: FontWeight.w800,
-                          color: _cGray900,
-                          letterSpacing: -0.5,
-                        ),
+                      fontFamily: 'Public Sans',
+                      fontWeight: FontWeight.w800,
+                      color: _cGray900,
+                      letterSpacing: -0.5,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'İstanbul\'un en iyi lezzet duraklarını keşfet.',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontFamily: 'Public Sans',
-                          color: _cGray500,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16,
-                        ),
+                      fontFamily: 'Public Sans',
+                      color: _cGray500,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 16,
+                    ),
                   ),
                 ],
               ),
@@ -126,7 +125,10 @@ class GastronomyPage extends StatelessWidget {
                     ),
                     prefixIcon: const Icon(Icons.search, color: _cGray400),
                     border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 16,
+                    ),
                   ),
                 ),
               ),
@@ -175,10 +177,10 @@ class GastronomyPage extends StatelessWidget {
                   Text(
                     'Editörün Seçimi',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontFamily: 'Public Sans',
-                          fontWeight: FontWeight.bold,
-                          color: _cGray900,
-                        ),
+                      fontFamily: 'Public Sans',
+                      fontWeight: FontWeight.bold,
+                      color: _cGray900,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   Container(
@@ -215,25 +217,39 @@ class GastronomyPage extends StatelessWidget {
                                   color: Colors.white.withValues(alpha: 0.8),
                                   shape: BoxShape.circle,
                                 ),
-                                child: const Icon(Icons.favorite_border, color: _cGray700, size: 20),
+                                child: const Icon(
+                                  Icons.favorite_border,
+                                  color: _cGray700,
+                                  size: 20,
+                                ),
                               ),
                             ),
                             Positioned(
                               bottom: 16,
                               left: 16,
                               child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6,
+                                ),
                                 decoration: BoxDecoration(
                                   color: Colors.white.withValues(alpha: 0.9),
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                                 child: Row(
                                   children: [
-                                    const Icon(Icons.star, color: Colors.amber, size: 16),
+                                    const Icon(
+                                      Icons.star,
+                                      color: Colors.amber,
+                                      size: 16,
+                                    ),
                                     const SizedBox(width: 4),
                                     Text(
                                       '4.9',
-                                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelMedium
+                                          ?.copyWith(
                                             fontWeight: FontWeight.bold,
                                             color: _cGray900,
                                           ),
@@ -251,7 +267,8 @@ class GastronomyPage extends StatelessWidget {
                             children: [
                               Text(
                                 'Neolokal',
-                                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                style: Theme.of(context).textTheme.headlineSmall
+                                    ?.copyWith(
                                       fontFamily: 'Public Sans',
                                       fontWeight: FontWeight.bold,
                                       color: _cGray900,
@@ -284,12 +301,21 @@ class GastronomyPage extends StatelessWidget {
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: _cGray900,
                                         foregroundColor: Colors.white,
-                                        padding: const EdgeInsets.symmetric(vertical: 14),
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 14,
+                                        ),
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(12),
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
                                         ),
                                       ),
-                                      child: const Text('Detaylar', style: TextStyle(fontWeight: FontWeight.w600)),
+                                      child: const Text(
+                                        'Detaylar',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                   const SizedBox(width: 12),
@@ -300,17 +326,27 @@ class GastronomyPage extends StatelessWidget {
                                         backgroundColor: _cGray100,
                                         foregroundColor: _cGray900,
                                         elevation: 0,
-                                        padding: const EdgeInsets.symmetric(vertical: 14),
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 14,
+                                        ),
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(12),
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
                                         ),
                                       ),
                                       child: const Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: [
                                           Icon(Icons.map, size: 20),
                                           SizedBox(width: 8),
-                                          Text('Haritada Gör', style: TextStyle(fontWeight: FontWeight.w600)),
+                                          Text(
+                                            'Haritada Gör',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
                                         ],
                                       ),
                                     ),
@@ -368,11 +404,16 @@ class GastronomyPage extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            const Icon(Icons.auto_awesome, color: _cPrimaryFixedDim, size: 20),
+                            const Icon(
+                              Icons.auto_awesome,
+                              color: _cPrimaryFixedDim,
+                              size: 20,
+                            ),
                             const SizedBox(width: 8),
                             Text(
                               'TUROTA AI Asistan',
-                              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                              style: Theme.of(context).textTheme.labelMedium
+                                  ?.copyWith(
                                     color: _cPrimaryFixedDim,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -382,7 +423,8 @@ class GastronomyPage extends StatelessWidget {
                         const SizedBox(height: 16),
                         Text(
                           'Bugün hava serin. Sana kapalı ve sakin kahve mekanlarını öneriyoruz.',
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(
                                 color: _cGray800,
                                 fontWeight: FontWeight.bold,
                                 height: 1.4,
@@ -394,7 +436,10 @@ class GastronomyPage extends StatelessWidget {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
                             foregroundColor: _cPrimary,
-                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 12,
+                            ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(24),
                             ),
@@ -402,7 +447,10 @@ class GastronomyPage extends StatelessWidget {
                           child: const Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text('AI Rotası Oluştur', style: TextStyle(fontWeight: FontWeight.bold)),
+                              Text(
+                                'AI Rotası Oluştur',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
                               SizedBox(width: 8),
                               Icon(Icons.arrow_forward, size: 18),
                             ],
@@ -425,21 +473,26 @@ class GastronomyPage extends StatelessWidget {
                   Text(
                     'Trend Mekanlar',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontFamily: 'Public Sans',
-                          fontWeight: FontWeight.bold,
-                          color: _cGray900,
-                        ),
+                      fontFamily: 'Public Sans',
+                      fontWeight: FontWeight.bold,
+                      color: _cGray900,
+                    ),
                   ),
                   Row(
                     children: [
                       Text(
                         'Tümü',
-                        style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        style: Theme.of(context).textTheme.labelMedium
+                            ?.copyWith(
                               color: _cPrimary,
                               fontWeight: FontWeight.w600,
                             ),
                       ),
-                      const Icon(Icons.chevron_right, color: _cPrimary, size: 16),
+                      const Icon(
+                        Icons.chevron_right,
+                        color: _cPrimary,
+                        size: 16,
+                      ),
                     ],
                   ),
                 ],
@@ -480,10 +533,10 @@ class GastronomyPage extends StatelessWidget {
                   Text(
                     'Sana Yakın',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontFamily: 'Public Sans',
-                          fontWeight: FontWeight.bold,
-                          color: _cGray900,
-                        ),
+                      fontFamily: 'Public Sans',
+                      fontWeight: FontWeight.bold,
+                      color: _cGray900,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   _NearbyListItem(
@@ -550,8 +603,20 @@ class _MoodChip extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: isSelected ? Colors.transparent : _cGray100),
         boxShadow: isSelected
-            ? [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 6, offset: const Offset(0, 2))]
-            : [BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 2, offset: const Offset(0, 1))],
+            ? [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.1),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ]
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.02),
+                  blurRadius: 2,
+                  offset: const Offset(0, 1),
+                ),
+              ],
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -561,9 +626,9 @@ class _MoodChip extends StatelessWidget {
           Text(
             label,
             style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                  color: isSelected ? Colors.white : _cGray700,
-                  fontWeight: FontWeight.w500,
-                ),
+              color: isSelected ? Colors.white : _cGray700,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ],
       ),
@@ -572,10 +637,7 @@ class _MoodChip extends StatelessWidget {
 }
 
 class _FilterChip extends StatelessWidget {
-  const _FilterChip({
-    required this.label,
-    required this.icon,
-  });
+  const _FilterChip({required this.label, required this.icon});
 
   final String label;
   final String icon;
@@ -597,9 +659,9 @@ class _FilterChip extends StatelessWidget {
           Text(
             label,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: _cGray500,
-                  fontWeight: FontWeight.w500,
-                ),
+              color: _cGray500,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ],
       ),
@@ -653,7 +715,10 @@ class _TrendCard extends StatelessWidget {
                 top: 12,
                 right: 12,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.9),
                     borderRadius: BorderRadius.circular(8),
@@ -664,7 +729,10 @@ class _TrendCard extends StatelessWidget {
                       const SizedBox(width: 4),
                       Text(
                         rating,
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
                       ),
                     ],
                   ),
@@ -679,7 +747,11 @@ class _TrendCard extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(fontWeight: FontWeight.bold, color: _cGray900, fontSize: 14),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: _cGray900,
+                    fontSize: 14,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -697,7 +769,11 @@ class _TrendCard extends StatelessWidget {
                     const SizedBox(width: 4),
                     Text(
                       distance,
-                      style: const TextStyle(color: _cGray400, fontSize: 12, fontWeight: FontWeight.w500),
+                      style: const TextStyle(
+                        color: _cGray400,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ],
                 ),
@@ -765,7 +841,11 @@ class _NearbyListItem extends StatelessWidget {
                     Expanded(
                       child: Text(
                         title,
-                        style: const TextStyle(fontWeight: FontWeight.bold, color: _cGray900, fontSize: 14),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: _cGray900,
+                          fontSize: 14,
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -777,7 +857,11 @@ class _NearbyListItem extends StatelessWidget {
                         const SizedBox(width: 2),
                         Text(
                           rating,
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: _cGray900),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                            color: _cGray900,
+                          ),
                         ),
                       ],
                     ),
@@ -795,11 +879,19 @@ class _NearbyListItem extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        const Icon(Icons.directions_walk, size: 14, color: _cGray400),
+                        const Icon(
+                          Icons.directions_walk,
+                          size: 14,
+                          color: _cGray400,
+                        ),
                         const SizedBox(width: 4),
                         Text(
                           distance,
-                          style: const TextStyle(color: _cGray400, fontSize: 12, fontWeight: FontWeight.w500),
+                          style: const TextStyle(
+                            color: _cGray400,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ],
                     ),

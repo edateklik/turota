@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Rota.Modules.Identity.Domain.Entities;
 
 namespace Rota.Modules.Administration.Application.Contracts;
 
@@ -41,14 +42,15 @@ public sealed class RecommendationSimulationRequest : IValidatableObject
     [MaxLength(30)]
     public IReadOnlyList<Guid> PreferredTagIds { get; init; } = [];
 
-    [MaxLength(20)]
-    public IReadOnlyList<string> DietaryPreferences { get; init; } = [];
+    public DietaryPreference DietaryPreference { get; init; } = DietaryPreference.NoPreference;
 
     [Required, StringLength(40)]
     public string BudgetLevel { get; init; } = "Moderate";
 
     [Required, StringLength(40)]
     public string TravelPace { get; init; } = "Balanced";
+
+    public DistancePreference DistancePreference { get; init; } = DistancePreference.Flexible;
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
@@ -58,8 +60,6 @@ public sealed class RecommendationSimulationRequest : IValidatableObject
                 [nameof(StartLongitude), nameof(StartLatitude)]);
         if (PreferredCategoryIds.Any(id => id == Guid.Empty) || PreferredTagIds.Any(id => id == Guid.Empty))
             yield return new ValidationResult("Tercih kimlikleri boş olamaz.");
-        if (DietaryPreferences.Any(item => string.IsNullOrWhiteSpace(item) || item.Length > 80))
-            yield return new ValidationResult("Beslenme tercihleri boş olamaz ve 80 karakteri aşamaz.");
     }
 }
 

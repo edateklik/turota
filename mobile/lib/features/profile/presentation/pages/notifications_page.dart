@@ -53,7 +53,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
               ),
             ),
             const SizedBox(height: AppSpacing.xl),
-            
+
             AppCard(
               padding: const EdgeInsets.all(AppSpacing.lg),
               borderRadius: AppRadius.xl,
@@ -84,13 +84,14 @@ class _NotificationsPageState extends State<NotificationsPage> {
                     ],
                   ),
                   const SizedBox(height: AppSpacing.lg),
-                  
+
                   _NotificationSwitch(
                     title: 'Kaydedilen Yer Güncellemeleri',
                     description:
                         'Kaydettiğiniz yerlerin çalışma saatleri, fiyatları değiştiğinde veya yeni uzman rehberleri eklendiğinde haberdar olun.',
                     value: _savedPlacesUpdates,
-                    onChanged: (val) => setState(() => _savedPlacesUpdates = val),
+                    onChanged: (val) =>
+                        setState(() => _savedPlacesUpdates = val),
                   ),
                   const Padding(
                     padding: EdgeInsets.symmetric(vertical: AppSpacing.md),

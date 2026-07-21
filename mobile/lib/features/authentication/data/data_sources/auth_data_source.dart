@@ -28,4 +28,17 @@ class AuthDataSource {
     final response = await _apiClient.get('/api/identity/me');
     return UserResponseDto.fromJson(response as Map<String, dynamic>);
   }
+
+  Future<Map<String, dynamic>> getTasteProfile() async {
+    final response = await _apiClient.get('/api/identity/me/taste-profile');
+    return response as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> updateTasteProfile(Map<String, dynamic> request) async {
+    final response = await _apiClient.put(
+      '/api/identity/me/taste-profile',
+      body: request,
+    );
+    return response as Map<String, dynamic>;
+  }
 }

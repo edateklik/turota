@@ -6,11 +6,15 @@ class RecommendationRepository {
 
   final RecommendationRemoteDataSource _dataSource;
 
-  Future<RecommendationAcceptedResponseDto> generateRecommendation(GenerateRecommendationRequestDto request) async {
+  Future<RecommendationAcceptedResponseDto> generateRecommendation(
+    GenerateRecommendationRequestDto request,
+  ) async {
     return await _dataSource.generateRecommendation(request);
   }
 
-  Future<RecommendationRunResponseDto> getRecommendationStatus(String runId) async {
+  Future<RecommendationRunResponseDto> getRecommendationStatus(
+    String runId,
+  ) async {
     return await _dataSource.getRecommendationStatus(runId);
   }
 }

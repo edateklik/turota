@@ -8,11 +8,7 @@ class RecommendationState {
   final String? error;
   final RecommendationResponseDto? response;
 
-  RecommendationState({
-    this.isLoading = false,
-    this.error,
-    this.response,
-  });
+  RecommendationState({this.isLoading = false, this.error, this.response});
 
   RecommendationState copyWith({
     bool? isLoading,
@@ -48,10 +44,9 @@ class RecommendationController extends Notifier<RecommendationState> {
       );
 
       final accepted = await repository.generateRecommendation(request);
-      
+
       // Start polling
       _startPolling(accepted.runId);
-
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
     }
@@ -66,10 +61,16 @@ class RecommendationController extends Notifier<RecommendationState> {
 
         if (runResponse.status == 'Completed' && runResponse.result != null) {
           timer.cancel();
-          state = state.copyWith(isLoading: false, response: runResponse.result);
+          state = state.copyWith(
+            isLoading: false,
+            response: runResponse.result,
+          );
         } else if (runResponse.status == 'Failed') {
           timer.cancel();
-          state = state.copyWith(isLoading: false, error: 'Yapay zeka rotayı oluştururken bir hata oluştu.');
+          state = state.copyWith(
+            isLoading: false,
+            error: 'Yapay zeka rotayı oluştururken bir hata oluştu.',
+          );
         }
       } catch (e) {
         timer.cancel();
@@ -79,6 +80,7 @@ class RecommendationController extends Notifier<RecommendationState> {
   }
 }
 
-final recommendationControllerProvider = NotifierProvider<RecommendationController, RecommendationState>(() {
-  return RecommendationController();
-});
+final recommendationControllerProvider =
+    NotifierProvider<RecommendationController, RecommendationState>(() {
+      return RecommendationController();
+    });

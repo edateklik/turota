@@ -21,24 +21,26 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(recommendationControllerProvider.notifier).generateRecommendation();
+      ref
+          .read(recommendationControllerProvider.notifier)
+          .generateRecommendation();
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(recommendationControllerProvider);
-    
+
     List<RouteStopUiModel> stops = [];
     if (state.response != null) {
       stops = state.response!.timeline.map((t) {
         return RouteStopUiModel(
           time: t.startTime.substring(0, 5), // Assumes "HH:MM:SS" format
           imageUrl: 'https://picsum.photos/seed/${t.placeId}/400/300',
-          category: 'Öneri Nedeni', 
+          category: 'Öneri Nedeni',
           title: t.placeName,
           duration: '${t.durationMinutes} dk',
-          walkingTime: t.explanation, 
+          walkingTime: t.explanation,
         );
       }).toList();
     }
@@ -49,7 +51,10 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
         backgroundColor: AppColors.surface.withValues(alpha: 0.8),
         flexibleSpace: ClipRect(
           child: BackdropFilter(
-            filter: const ColorFilter.mode(Colors.transparent, BlendMode.srcOver),
+            filter: const ColorFilter.mode(
+              Colors.transparent,
+              BlendMode.srcOver,
+            ),
             // Note: Since backdrop filter is heavy, a simple surface color is used.
           ),
         ),
@@ -77,7 +82,10 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(60),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl, vertical: AppSpacing.sm),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.xl,
+              vertical: AppSpacing.sm,
+            ),
             child: Container(
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
@@ -113,7 +121,7 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
           // Main Content
           AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),
-            child: state.isLoading 
+            child: state.isLoading
                 ? const Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -125,15 +133,18 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
                     ),
                   )
                 : state.error != null
-                    ? Center(
-                        child: Text(state.error!, style: const TextStyle(color: Colors.red)),
-                      )
-                    : _isTimelineView
-                        ? TimelineView(
-                            stops: stops,
-                            onMapTap: () => setState(() => _isTimelineView = false),
-                          )
-                        : const MapViewPlaceholder(),
+                ? Center(
+                    child: Text(
+                      state.error!,
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  )
+                : _isTimelineView
+                ? TimelineView(
+                    stops: stops,
+                    onMapTap: () => setState(() => _isTimelineView = false),
+                  )
+                : const MapViewPlaceholder(),
           ),
 
           // AI Integration Area (Fixed Bottom)
@@ -142,7 +153,12 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
             right: 0,
             bottom: 0, // Above bottom nav
             child: Container(
-              padding: const EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.lg, AppSpacing.md, AppSpacing.lg),
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.md,
+                AppSpacing.lg,
+                AppSpacing.md,
+                AppSpacing.lg,
+              ),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.bottomCenter,
@@ -167,21 +183,27 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
                         _ActionChip(
                           icon: Icons.coffee,
                           label: 'Bu kafe ile değiştir',
-                          backgroundColor: const Color(0xFFFFDCC2), // tertiary-fixed
+                          backgroundColor: const Color(
+                            0xFFFFDCC2,
+                          ), // tertiary-fixed
                           textColor: const Color(0xFF2E1500),
                         ),
                         const SizedBox(width: 8),
                         _ActionChip(
                           icon: Icons.route,
                           label: 'Rotayı kısalt',
-                          backgroundColor: const Color(0xFF90E4EC), // secondary-container
+                          backgroundColor: const Color(
+                            0xFF90E4EC,
+                          ), // secondary-container
                           textColor: const Color(0xFF002023),
                         ),
                         const SizedBox(width: 8),
                         _ActionChip(
                           icon: Icons.museum,
                           label: 'Müze ekle',
-                          backgroundColor: const Color(0xFFC7E6EB), // surface-container-highest
+                          backgroundColor: const Color(
+                            0xFFC7E6EB,
+                          ), // surface-container-highest
                           textColor: AppColors.textPrimary,
                         ),
                         const SizedBox(width: 8),
@@ -200,7 +222,9 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.9),
                       borderRadius: BorderRadius.circular(30),
-                      border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.3)),
+                      border: Border.all(
+                        color: AppColors.outlineVariant.withValues(alpha: 0.3),
+                      ),
                       boxShadow: [
                         BoxShadow(
                           color: AppColors.primary.withValues(alpha: 0.1),
@@ -209,7 +233,10 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
                         ),
                       ],
                     ),
-                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 4,
+                      vertical: 4,
+                    ),
                     child: Row(
                       children: [
                         Container(
@@ -221,7 +248,11 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
                             shape: BoxShape.circle,
                           ),
                           child: const Center(
-                            child: Icon(Icons.auto_awesome, color: Colors.white, size: 20),
+                            child: Icon(
+                              Icons.auto_awesome,
+                              color: Colors.white,
+                              size: 20,
+                            ),
                           ),
                         ),
                         const SizedBox(width: AppSpacing.md),
@@ -230,7 +261,9 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
                             decoration: InputDecoration(
                               hintText: 'Rotanı düzenlemek için yaz...',
                               hintStyle: TextStyle(
-                                color: AppColors.textSecondary.withValues(alpha: 0.6),
+                                color: AppColors.textSecondary.withValues(
+                                  alpha: 0.6,
+                                ),
                                 fontSize: 16,
                               ),
                               border: InputBorder.none,
@@ -248,7 +281,11 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
                             shape: BoxShape.circle,
                           ),
                           child: IconButton(
-                            icon: const Icon(Icons.send, color: Colors.white, size: 18),
+                            icon: const Icon(
+                              Icons.send,
+                              color: Colors.white,
+                              size: 18,
+                            ),
                             onPressed: () {},
                             padding: EdgeInsets.zero,
                           ),
@@ -287,7 +324,9 @@ class _SegmentButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF90E4EC) : Colors.transparent, // secondary-container
+          color: isSelected
+              ? const Color(0xFF90E4EC)
+              : Colors.transparent, // secondary-container
           borderRadius: BorderRadius.circular(20),
           boxShadow: isSelected
               ? [
@@ -295,7 +334,7 @@ class _SegmentButton extends StatelessWidget {
                     color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
-                  )
+                  ),
                 ]
               : null,
         ),
@@ -305,15 +344,19 @@ class _SegmentButton extends StatelessWidget {
             Icon(
               icon,
               size: 20,
-              color: isSelected ? const Color(0xFF002023) : AppColors.textSecondary,
+              color: isSelected
+                  ? const Color(0xFF002023)
+                  : AppColors.textSecondary,
             ),
             const SizedBox(width: 8),
             Text(
               title,
               style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                    color: isSelected ? const Color(0xFF002023) : AppColors.textSecondary,
-                  ),
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                color: isSelected
+                    ? const Color(0xFF002023)
+                    : AppColors.textSecondary,
+              ),
             ),
           ],
         ),
@@ -359,9 +402,9 @@ class _ActionChip extends StatelessWidget {
           Text(
             label,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: textColor,
-                  fontWeight: FontWeight.w600,
-                ),
+              color: textColor,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ],
       ),

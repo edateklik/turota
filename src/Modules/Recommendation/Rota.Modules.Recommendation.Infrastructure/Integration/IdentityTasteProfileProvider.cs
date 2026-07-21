@@ -11,8 +11,9 @@ public sealed class IdentityTasteProfileProvider(IIdentityService identityServic
         return new(
             profile.PreferredCategoryIds,
             profile.PreferredTagIds,
-            profile.DietaryPreferences,
+            profile.DietaryPreference.ToString(),
             profile.BudgetLevel.ToString(),
-            profile.TravelPace.ToString());
+            profile.TravelPace.ToString(),
+            profile.DistancePreference.ToString());
     }
 }

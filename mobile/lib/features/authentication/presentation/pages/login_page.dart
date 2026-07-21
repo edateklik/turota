@@ -72,7 +72,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
       if (!mounted) return;
       _hasNavigated = true;
-      Navigator.of(context).pushReplacementNamed(AppRouter.discover);
+      Navigator.of(context).pushReplacementNamed(AppRouter.home);
     } on ApiException catch (e) {
       _showMessage(_loginErrorMessage(e));
     } catch (_) {

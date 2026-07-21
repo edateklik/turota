@@ -5,6 +5,7 @@ import 'package:turota_mobile/features/profile/presentation/pages/profile_page.d
 import 'package:turota_mobile/features/discover/presentation/pages/discover_page.dart';
 import 'package:turota_mobile/features/saved/presentation/pages/saved_page.dart';
 import 'package:turota_mobile/features/assistant/presentation/pages/assistant_page.dart';
+
 /// Shell page that hosts the bottom navigation bar and the four main tabs.
 ///
 /// Tab order (matching the Stitch reference):

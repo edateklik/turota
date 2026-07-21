@@ -86,7 +86,9 @@ class ProfilePage extends ConsumerWidget {
                   icon: Icons.language,
                   label: 'Dil',
                   onTap: () {
-                    Navigator.of(context).pushNamed(AppRouter.languageSelection);
+                    Navigator.of(
+                      context,
+                    ).pushNamed(AppRouter.languageSelection);
                   },
                 ),
               ],
@@ -117,7 +119,9 @@ class ProfilePage extends ConsumerWidget {
                   onTap: () async {
                     await ref.read(authRepositoryProvider).logout();
                     if (!context.mounted) return;
-                    Navigator.of(context).pushReplacementNamed(AppRouter.splash);
+                    Navigator.of(
+                      context,
+                    ).pushReplacementNamed(AppRouter.splash);
                   },
                 ),
               ],
@@ -135,8 +139,8 @@ class _ProfileHeader extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final userState = ref.watch(currentUserProvider);
-    final fullName = userState.value != null 
-        ? '${userState.value!.firstName} ${userState.value!.lastName}' 
+    final fullName = userState.value != null
+        ? '${userState.value!.firstName} ${userState.value!.lastName}'
         : '...';
 
     return Column(
@@ -172,6 +176,16 @@ class _ProfileHeader extends ConsumerWidget {
             color: AppColors.textPrimary,
           ),
         ),
+        if (userState.value != null && userState.value!.email.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(top: 4.0),
+            child: Text(
+              userState.value!.email,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ),
       ],
     );
   }

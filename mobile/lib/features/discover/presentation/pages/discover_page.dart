@@ -22,15 +22,10 @@ class DiscoverPage extends ConsumerStatefulWidget {
 class _DiscoverPageState extends ConsumerState<DiscoverPage> {
   // We'll build the header dynamically in the build method.
 
-
-
   static const _categories = [
     _DiscoverCategoryUiModel('Gastronomi', Icons.restaurant_rounded),
     _DiscoverCategoryUiModel('Sanat ve Kültür', Icons.museum_rounded),
-    _DiscoverCategoryUiModel(
-      'Şehrin Işıkları',
-      Icons.celebration_rounded,
-    ),
+    _DiscoverCategoryUiModel('Şehrin Işıkları', Icons.celebration_rounded),
   ];
 
   void _showMessage(String message) {
@@ -90,12 +85,14 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
               const SizedBox(height: AppSpacing.sm),
               Text(
                 'Hava durumu yüklenemedi',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.error),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(color: AppColors.error),
               ),
               TextButton(
                 onPressed: () => ref.refresh(weatherControllerProvider),
                 child: const Text('Tekrar Dene'),
-              )
+              ),
             ],
           ),
         ),
@@ -122,11 +119,12 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
                 place: _NearbyPlaceUiModel(
                   name: place.name,
                   description: place.address,
-                  distance: place.distanceMeters != null 
-                      ? '${(place.distanceMeters! / 1000).toStringAsFixed(1)} km uzaklıkta' 
+                  distance: place.distanceMeters != null
+                      ? '${(place.distanceMeters! / 1000).toStringAsFixed(1)} km uzaklıkta'
                       : 'Bilinmeyen uzaklık',
                   transportIcon: Icons.location_on_rounded,
-                  imageUrl: 'https://via.placeholder.com/150', // Replace with real image if API supports
+                  imageUrl:
+                      'https://via.placeholder.com/150', // Replace with real image if API supports
                 ),
                 onPressed: () {
                   showModalBottomSheet(
@@ -137,8 +135,8 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
                       name: place.name,
                       description: place.address,
                       imageUrl: 'https://via.placeholder.com/150',
-                      distance: place.distanceMeters != null 
-                          ? '${(place.distanceMeters! / 1000).toStringAsFixed(1)} km uzaklıkta' 
+                      distance: place.distanceMeters != null
+                          ? '${(place.distanceMeters! / 1000).toStringAsFixed(1)} km uzaklıkta'
                           : 'Bilinmeyen uzaklık',
                     ),
                   );
@@ -164,12 +162,14 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
               const SizedBox(height: AppSpacing.sm),
               Text(
                 'Mekanlar yüklenemedi',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.error),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(color: AppColors.error),
               ),
               TextButton(
                 onPressed: () => ref.refresh(nearestPlacesControllerProvider),
                 child: const Text('Tekrar Dene'),
-              )
+              ),
             ],
           ),
         ),
@@ -205,7 +205,7 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
   Widget build(BuildContext context) {
     final userState = ref.watch(currentUserProvider);
     final userName = userState.value?.firstName ?? '...';
-    
+
     final headerModel = _DiscoverHeaderModel(
       userName: userName,
       dateLabel: '12 Ekim Cumartesi',
@@ -339,9 +339,7 @@ class _DiscoverHeader extends StatelessWidget {
     return DecoratedBox(
       decoration: BoxDecoration(
         color: AppColors.surface.withValues(alpha: 0.88),
-        border: const Border(
-          bottom: BorderSide(color: AppColors.primary),
-        ),
+        border: const Border(bottom: BorderSide(color: AppColors.primary)),
       ),
       child: SafeArea(
         bottom: false,
@@ -350,61 +348,61 @@ class _DiscoverHeader extends StatelessWidget {
             horizontal: AppSpacing.lg,
             vertical: AppSpacing.md,
           ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Günaydın, ${model.userName}',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: AppSpacing.xs),
-                  Text(
-                    model.dateLabel,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ],
-              ),
-            ),
-            IconButton(
-              key: const ValueKey('discover-notifications'),
-              onPressed: onNotificationsPressed,
-              tooltip: 'Bildirimler',
-              icon: const Icon(Icons.notifications_none_rounded),
-            ),
-            const SizedBox(width: AppSpacing.sm),
-            Semantics(
-              button: true,
-              label: 'Profil',
-              child: InkWell(
-                key: const ValueKey('discover-profile-avatar'),
-                onTap: onProfilePressed,
-                customBorder: const CircleBorder(),
-                child: Container(
-                  padding: const EdgeInsets.all(2),
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.fromBorderSide(
-                      BorderSide(color: AppColors.primary, width: 2),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Günaydın, ${model.userName}',
+                      style: Theme.of(context).textTheme.titleLarge,
                     ),
-                  ),
-                  child: const CircleAvatar(
-                    radius: 20,
-                    backgroundColor: AppColors.primaryContainer,
-                    foregroundColor: AppColors.onPrimary,
-                    child: Text(
-                      'Ş',
-                      style: TextStyle(fontWeight: FontWeight.w700),
+                    const SizedBox(height: AppSpacing.xs),
+                    Text(
+                      model.dateLabel,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ],
+                ),
+              ),
+              IconButton(
+                key: const ValueKey('discover-notifications'),
+                onPressed: onNotificationsPressed,
+                tooltip: 'Bildirimler',
+                icon: const Icon(Icons.notifications_none_rounded),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Semantics(
+                button: true,
+                label: 'Profil',
+                child: InkWell(
+                  key: const ValueKey('discover-profile-avatar'),
+                  onTap: onProfilePressed,
+                  customBorder: const CircleBorder(),
+                  child: Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.fromBorderSide(
+                        BorderSide(color: AppColors.primary, width: 2),
+                      ),
+                    ),
+                    child: const CircleAvatar(
+                      radius: 20,
+                      backgroundColor: AppColors.primaryContainer,
+                      foregroundColor: AppColors.onPrimary,
+                      child: Text(
+                        'Ş',
+                        style: TextStyle(fontWeight: FontWeight.w700),
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
       ),
     );
   }
@@ -559,7 +557,8 @@ class _LocationPreviewCardState extends State<_LocationPreviewCard>
                     ),
                     children: [
                       TileLayer(
-                        urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                        urlTemplate:
+                            'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                         userAgentPackageName: 'com.turota.mobile',
                       ),
                     ],
@@ -598,7 +597,6 @@ class _LocationPreviewCardState extends State<_LocationPreviewCard>
     );
   }
 }
-
 
 class _CategoryGrid extends StatelessWidget {
   const _CategoryGrid({
@@ -731,7 +729,10 @@ class _NearbyPlaceCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppRadius.lg),
           child: Row(
             children: [
-              Expanded(flex: 2, child: _PlaceVisualArea(imageUrl: place.imageUrl)),
+              Expanded(
+                flex: 2,
+                child: _PlaceVisualArea(imageUrl: place.imageUrl),
+              ),
               Expanded(
                 flex: 4,
                 child: Padding(

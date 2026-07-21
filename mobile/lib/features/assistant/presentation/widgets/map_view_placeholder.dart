@@ -51,7 +51,11 @@ class MapViewPlaceholder extends StatelessWidget {
                     shape: BoxShape.circle,
                   ),
                   child: const Center(
-                    child: Icon(Icons.turn_right, color: Colors.white, size: 32),
+                    child: Icon(
+                      Icons.turn_right,
+                      color: Colors.white,
+                      size: 32,
+                    ),
                   ),
                 ),
                 const SizedBox(width: AppSpacing.md),
@@ -63,13 +67,14 @@ class MapViewPlaceholder extends StatelessWidget {
                       Text(
                         '250m SONRA',
                         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                              color: Colors.white.withValues(alpha: 0.7),
-                              letterSpacing: 1.2,
-                            ),
+                          color: Colors.white.withValues(alpha: 0.7),
+                          letterSpacing: 1.2,
+                        ),
                       ),
                       Text(
                         'İstiklal Cd. yönünde Kuzeye ilerleyin',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(
                               color: Colors.white,
                               fontWeight: FontWeight.w600,
                             ),
@@ -91,7 +96,9 @@ class MapViewPlaceholder extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.95),
               borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.3)),
+              border: Border.all(
+                color: AppColors.outlineVariant.withValues(alpha: 0.3),
+              ),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.05),
@@ -111,16 +118,16 @@ class MapViewPlaceholder extends StatelessWidget {
                       children: [
                         Text(
                           '8 dk içinde varış',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(
                                 color: AppColors.primary,
                                 fontWeight: FontWeight.w600,
                               ),
                         ),
                         Text(
                           '650 metre • Yürüme',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: AppColors.textSecondary,
-                              ),
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(color: AppColors.textSecondary),
                         ),
                       ],
                     ),
@@ -132,7 +139,10 @@ class MapViewPlaceholder extends StatelessWidget {
                         shape: BoxShape.circle,
                       ),
                       child: const Center(
-                        child: Icon(Icons.my_location, color: AppColors.primary),
+                        child: Icon(
+                          Icons.my_location,
+                          color: AppColors.primary,
+                        ),
                       ),
                     ),
                   ],
@@ -166,7 +176,9 @@ class MapViewPlaceholder extends StatelessWidget {
                         onPressed: () {},
                         style: OutlinedButton.styleFrom(
                           foregroundColor: AppColors.textPrimary,
-                          side: BorderSide(color: AppColors.outline.withValues(alpha: 0.3)),
+                          side: BorderSide(
+                            color: AppColors.outline.withValues(alpha: 0.3),
+                          ),
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),

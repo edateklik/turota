@@ -56,17 +56,17 @@ class _LocationSettingsPageState extends State<LocationSettingsPage> {
                     children: [
                       Text(
                         'Mevcut Şehir',
-                        style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                          color: AppColors.outline,
-                        ),
+                        style: Theme.of(context).textTheme.labelMedium
+                            ?.copyWith(color: AppColors.outline),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         'İstanbul, TR',
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
-                        ),
+                        style: Theme.of(context).textTheme.headlineSmall
+                            ?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.textPrimary,
+                            ),
                       ),
                     ],
                   ),
@@ -76,7 +76,10 @@ class _LocationSettingsPageState extends State<LocationSettingsPage> {
                       color: AppColors.primary.withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.location_on, color: AppColors.primary),
+                    child: const Icon(
+                      Icons.location_on,
+                      color: AppColors.primary,
+                    ),
                   ),
                 ],
               ),
@@ -99,18 +102,20 @@ class _LocationSettingsPageState extends State<LocationSettingsPage> {
                           children: [
                             Text(
                               'Konum İzinleri',
-                              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.textPrimary,
-                              ),
+                              style: Theme.of(context).textTheme.bodyLarge
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.textPrimary,
+                                  ),
                             ),
                             const SizedBox(height: 8),
                             Text(
                               'Size özel yerel gizli cevherler ve seyahat rehberleri sunabilmesi için TUROTA\'nın cihazınızın konumuna erişmesine izin verin.',
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: AppColors.outline,
-                                height: 1.5,
-                              ),
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(
+                                    color: AppColors.outline,
+                                    height: 1.5,
+                                  ),
                             ),
                           ],
                         ),
@@ -118,7 +123,8 @@ class _LocationSettingsPageState extends State<LocationSettingsPage> {
                       const SizedBox(width: AppSpacing.md),
                       Switch(
                         value: _locationPermission,
-                        onChanged: (val) => setState(() => _locationPermission = val),
+                        onChanged: (val) =>
+                            setState(() => _locationPermission = val),
                         activeThumbColor: Colors.white,
                         activeTrackColor: AppColors.primary,
                         inactiveThumbColor: Colors.white,

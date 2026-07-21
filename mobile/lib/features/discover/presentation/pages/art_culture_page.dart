@@ -9,7 +9,6 @@ const Color _cPrimary = Color(0xFF0D8C8C);
 const Color _cOnPrimary = Color(0xFFFFFFFF);
 const Color _cPrimaryContainer = Color(0xFFA0F2F2);
 
-
 class ArtCulturePage extends StatelessWidget {
   const ArtCulturePage({super.key});
 
@@ -54,19 +53,19 @@ class ArtCulturePage extends StatelessWidget {
                   Text(
                     'Sanat ve Kültür',
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontFamily: 'Public Sans',
-                          fontWeight: FontWeight.w800,
-                          color: _cOnBackground,
-                        ),
+                      fontFamily: 'Public Sans',
+                      fontWeight: FontWeight.w800,
+                      color: _cOnBackground,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     'Şehrin kültürel zenginliklerini keşfet.',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontFamily: 'Public Sans',
-                          color: _cOnSurfaceVariant,
-                          fontSize: 16,
-                        ),
+                      fontFamily: 'Public Sans',
+                      color: _cOnSurfaceVariant,
+                      fontSize: 16,
+                    ),
                   ),
                 ],
               ),
@@ -108,9 +107,15 @@ class ArtCulturePage extends StatelessWidget {
                           fontFamily: 'Public Sans',
                           fontSize: 14,
                         ),
-                        prefixIcon: const Icon(Icons.search, color: _cOnSurfaceVariant),
+                        prefixIcon: const Icon(
+                          Icons.search,
+                          color: _cOnSurfaceVariant,
+                        ),
                         border: InputBorder.none,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
                       ),
                     ),
                   ),
@@ -123,7 +128,10 @@ class ArtCulturePage extends StatelessWidget {
                         _FilterChip(label: 'Yakınımda'),
                         _FilterChip(label: 'Ücretsiz'),
                         _FilterChip(label: 'Bugün Açık'),
-                        _FilterChip(label: 'Favoriler', icon: Icons.bookmark_border),
+                        _FilterChip(
+                          label: 'Favoriler',
+                          icon: Icons.bookmark_border,
+                        ),
                       ],
                     ),
                   ),
@@ -141,10 +149,10 @@ class ArtCulturePage extends StatelessWidget {
                   Text(
                     'Bu Hafta Öne Çıkan',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontFamily: 'Public Sans',
-                          fontWeight: FontWeight.bold,
-                          color: _cOnBackground,
-                        ),
+                      fontFamily: 'Public Sans',
+                      fontWeight: FontWeight.bold,
+                      color: _cOnBackground,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   Container(
@@ -184,18 +192,26 @@ class ArtCulturePage extends StatelessWidget {
                           top: 16,
                           right: 16,
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
                             decoration: BoxDecoration(
                               color: _cBackground.withValues(alpha: 0.9),
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Row(
                               children: [
-                                const Icon(Icons.star, color: Colors.amber, size: 16),
+                                const Icon(
+                                  Icons.star,
+                                  color: Colors.amber,
+                                  size: 16,
+                                ),
                                 const SizedBox(width: 4),
                                 Text(
                                   '4.9',
-                                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                                  style: Theme.of(context).textTheme.labelMedium
+                                      ?.copyWith(
                                         fontWeight: FontWeight.bold,
                                         color: _cOnBackground,
                                       ),
@@ -213,7 +229,8 @@ class ArtCulturePage extends StatelessWidget {
                             children: [
                               Text(
                                 '🏛 ÖZEL SERGİ',
-                                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                style: Theme.of(context).textTheme.labelSmall
+                                    ?.copyWith(
                                       color: _cPrimaryContainer,
                                       fontWeight: FontWeight.bold,
                                       letterSpacing: 1,
@@ -222,7 +239,8 @@ class ArtCulturePage extends StatelessWidget {
                               const SizedBox(height: 4),
                               Text(
                                 'İstanbul Arkeoloji Müzeleri',
-                                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                style: Theme.of(context).textTheme.headlineSmall
+                                    ?.copyWith(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -230,15 +248,42 @@ class ArtCulturePage extends StatelessWidget {
                               const SizedBox(height: 8),
                               Row(
                                 children: [
-                                  const Icon(Icons.schedule, color: Colors.white, size: 16),
+                                  const Icon(
+                                    Icons.schedule,
+                                    color: Colors.white,
+                                    size: 16,
+                                  ),
                                   const SizedBox(width: 4),
-                                  const Text('09:00 - 18:00', style: TextStyle(color: Colors.white, fontSize: 13)),
+                                  const Text(
+                                    '09:00 - 18:00',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 13,
+                                    ),
+                                  ),
                                   const SizedBox(width: 12),
-                                  Container(width: 4, height: 4, decoration: const BoxDecoration(color: Colors.white54, shape: BoxShape.circle)),
+                                  Container(
+                                    width: 4,
+                                    height: 4,
+                                    decoration: const BoxDecoration(
+                                      color: Colors.white54,
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
                                   const SizedBox(width: 12),
-                                  const Icon(Icons.location_on, color: Colors.white, size: 16),
+                                  const Icon(
+                                    Icons.location_on,
+                                    color: Colors.white,
+                                    size: 16,
+                                  ),
                                   const SizedBox(width: 4),
-                                  const Text('Fatih, 2.4 km', style: TextStyle(color: Colors.white, fontSize: 13)),
+                                  const Text(
+                                    'Fatih, 2.4 km',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 13,
+                                    ),
+                                  ),
                                 ],
                               ),
                               const SizedBox(height: 16),
@@ -250,12 +295,21 @@ class ArtCulturePage extends StatelessWidget {
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: _cPrimary,
                                         foregroundColor: _cOnPrimary,
-                                        padding: const EdgeInsets.symmetric(vertical: 14),
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 14,
+                                        ),
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(12),
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
                                         ),
                                       ),
-                                      child: const Text('Detaylar', style: TextStyle(fontWeight: FontWeight.w600)),
+                                      child: const Text(
+                                        'Detaylar',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                   const SizedBox(width: 12),
@@ -263,12 +317,21 @@ class ArtCulturePage extends StatelessWidget {
                                     width: 48,
                                     height: 48,
                                     decoration: BoxDecoration(
-                                      color: Colors.white.withValues(alpha: 0.2),
-                                      border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
+                                      color: Colors.white.withValues(
+                                        alpha: 0.2,
+                                      ),
+                                      border: Border.all(
+                                        color: Colors.white.withValues(
+                                          alpha: 0.3,
+                                        ),
+                                      ),
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     child: IconButton(
-                                      icon: const Icon(Icons.map, color: Colors.white),
+                                      icon: const Icon(
+                                        Icons.map,
+                                        color: Colors.white,
+                                      ),
                                       onPressed: () {},
                                     ),
                                   ),
@@ -296,14 +359,15 @@ class ArtCulturePage extends StatelessWidget {
                       Text(
                         'Yakınındaki Kültür Noktaları',
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              fontFamily: 'Public Sans',
-                              fontWeight: FontWeight.bold,
-                              color: _cOnBackground,
-                            ),
+                          fontFamily: 'Public Sans',
+                          fontWeight: FontWeight.bold,
+                          color: _cOnBackground,
+                        ),
                       ),
                       Text(
                         'Tümünü Gör',
-                        style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        style: Theme.of(context).textTheme.labelMedium
+                            ?.copyWith(
                               color: _cPrimary,
                               fontWeight: FontWeight.w600,
                             ),
@@ -385,12 +449,17 @@ class ArtCulturePage extends StatelessWidget {
                                 color: Colors.white.withValues(alpha: 0.2),
                                 shape: BoxShape.circle,
                               ),
-                              child: const Icon(Icons.auto_awesome, color: Colors.white, size: 20),
+                              child: const Icon(
+                                Icons.auto_awesome,
+                                color: Colors.white,
+                                size: 20,
+                              ),
                             ),
                             const SizedBox(width: 8),
                             Text(
                               'AKILLI ROTA ÖNERİSİ',
-                              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                              style: Theme.of(context).textTheme.labelMedium
+                                  ?.copyWith(
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,
                                     letterSpacing: 1.2,
@@ -401,16 +470,31 @@ class ArtCulturePage extends StatelessWidget {
                         const SizedBox(height: 16),
                         RichText(
                           text: TextSpan(
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(
                                   color: Colors.white.withValues(alpha: 0.95),
                                   fontFamily: 'Public Sans',
                                   height: 1.4,
                                 ),
                             children: const [
-                              TextSpan(text: 'İlgi alanlarına göre bugün sana '),
-                              TextSpan(text: 'Pera Müzesi', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+                              TextSpan(
+                                text: 'İlgi alanlarına göre bugün sana ',
+                              ),
+                              TextSpan(
+                                text: 'Pera Müzesi',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
                               TextSpan(text: ' ve '),
-                              TextSpan(text: 'Galataport Modern Sanat', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+                              TextSpan(
+                                text: 'Galataport Modern Sanat',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
                               TextSpan(text: ' rotasını öneriyoruz.'),
                             ],
                           ),
@@ -429,7 +513,10 @@ class ArtCulturePage extends StatelessWidget {
                           child: const Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text('AI Kültür Rotası Oluştur', style: TextStyle(fontWeight: FontWeight.bold)),
+                              Text(
+                                'AI Kültür Rotası Oluştur',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
                               SizedBox(width: 8),
                               Icon(Icons.arrow_forward, size: 20),
                             ],
@@ -467,15 +554,19 @@ class _MoodChip extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       decoration: BoxDecoration(
         gradient: isSelected
-            ? const LinearGradient(
-                colors: [_cPrimary, Color(0xFF13B2B2)],
-              )
+            ? const LinearGradient(colors: [_cPrimary, Color(0xFF13B2B2)])
             : null,
         color: isSelected ? null : _cSurfaceVariant,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: Colors.transparent),
         boxShadow: isSelected
-            ? [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 6, offset: const Offset(0, 2))]
+            ? [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.1),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ]
             : null,
       ),
       child: Row(
@@ -486,9 +577,9 @@ class _MoodChip extends StatelessWidget {
           Text(
             label,
             style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                  color: isSelected ? _cOnPrimary : _cOnSurfaceVariant,
-                  fontWeight: FontWeight.w500,
-                ),
+              color: isSelected ? _cOnPrimary : _cOnSurfaceVariant,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ],
       ),
@@ -497,10 +588,7 @@ class _MoodChip extends StatelessWidget {
 }
 
 class _FilterChip extends StatelessWidget {
-  const _FilterChip({
-    required this.label,
-    this.icon,
-  });
+  const _FilterChip({required this.label, this.icon});
 
   final String label;
   final IconData? icon;
@@ -525,9 +613,9 @@ class _FilterChip extends StatelessWidget {
           Text(
             label,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: _cOnSurfaceVariant,
-                  fontWeight: FontWeight.w500,
-                ),
+              color: _cOnSurfaceVariant,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ],
       ),
@@ -559,10 +647,7 @@ class _BentoCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: _cSurfaceVariant),
         boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 4,
-          ),
+          BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 4),
         ],
       ),
       child: Column(
@@ -588,7 +673,11 @@ class _BentoCard extends StatelessWidget {
                     color: _cBackground.withValues(alpha: 0.8),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.bookmark_border, size: 16, color: _cOnSurfaceVariant),
+                  child: const Icon(
+                    Icons.bookmark_border,
+                    size: 16,
+                    color: _cOnSurfaceVariant,
+                  ),
                 ),
               ),
             ],
@@ -597,9 +686,9 @@ class _BentoCard extends StatelessWidget {
           Text(
             title,
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: _cOnBackground,
-                ),
+              fontWeight: FontWeight.bold,
+              color: _cOnBackground,
+            ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -607,9 +696,9 @@ class _BentoCard extends StatelessWidget {
           Text(
             subtitle,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: _cOnSurfaceVariant,
-                  fontSize: 11,
-                ),
+              color: _cOnSurfaceVariant,
+              fontSize: 11,
+            ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -625,7 +714,11 @@ class _BentoCard extends StatelessWidget {
                 ),
                 child: Text(
                   distance,
-                  style: const TextStyle(color: _cPrimary, fontSize: 10, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    color: _cPrimary,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
               Row(
@@ -634,7 +727,11 @@ class _BentoCard extends StatelessWidget {
                   const SizedBox(width: 2),
                   Text(
                     rating,
-                    style: const TextStyle(color: Colors.amber, fontSize: 10, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      color: Colors.amber,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),

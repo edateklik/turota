@@ -37,7 +37,7 @@ class PrivacySecurityPage extends StatelessWidget {
           children: [
             _buildInfoPanel(context),
             const SizedBox(height: AppSpacing.xl),
-            
+
             const _SectionHeader(title: 'HESAP GÜVENLİĞİ'),
             AppCard(
               padding: EdgeInsets.zero,
@@ -50,7 +50,11 @@ class PrivacySecurityPage extends StatelessWidget {
                     subtitle: '3 ay önce değiştirildi',
                     onTap: () {},
                   ),
-                  const Divider(height: 1, indent: 64, color: AppColors.surfaceVariant),
+                  const Divider(
+                    height: 1,
+                    indent: 64,
+                    color: AppColors.surfaceVariant,
+                  ),
                   _SettingsItem(
                     icon: Icons.security_update_good_outlined,
                     title: 'İki Faktörlü Doğrulama',
@@ -74,7 +78,11 @@ class PrivacySecurityPage extends StatelessWidget {
                     title: 'Gizlilik Politikası',
                     onTap: () {},
                   ),
-                  const Divider(height: 1, indent: 64, color: AppColors.surfaceVariant),
+                  const Divider(
+                    height: 1,
+                    indent: 64,
+                    color: AppColors.surfaceVariant,
+                  ),
                   _SettingsItem(
                     icon: Icons.gavel_outlined,
                     title: 'Şartlar ve Koşullar',
@@ -90,7 +98,9 @@ class PrivacySecurityPage extends StatelessWidget {
               decoration: BoxDecoration(
                 color: AppColors.error.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(AppRadius.xl),
-                border: Border.all(color: AppColors.error.withValues(alpha: 0.2)),
+                border: Border.all(
+                  color: AppColors.error.withValues(alpha: 0.2),
+                ),
               ),
               child: Material(
                 color: Colors.transparent,
@@ -108,7 +118,10 @@ class PrivacySecurityPage extends StatelessWidget {
                             color: AppColors.error.withValues(alpha: 0.1),
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(Icons.delete_forever, color: AppColors.error),
+                          child: const Icon(
+                            Icons.delete_forever,
+                            color: AppColors.error,
+                          ),
                         ),
                         const SizedBox(width: AppSpacing.md),
                         Expanded(
@@ -117,21 +130,28 @@ class PrivacySecurityPage extends StatelessWidget {
                             children: [
                               Text(
                                 'Hesabı Sil',
-                                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                  color: AppColors.error,
-                                  fontWeight: FontWeight.w700,
-                                ),
+                                style: Theme.of(context).textTheme.bodyLarge
+                                    ?.copyWith(
+                                      color: AppColors.error,
+                                      fontWeight: FontWeight.w700,
+                                    ),
                               ),
                               Text(
                                 'Bu işlem kalıcıdır ve geri alınamaz',
-                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color: AppColors.error.withValues(alpha: 0.7),
-                                ),
+                                style: Theme.of(context).textTheme.bodySmall
+                                    ?.copyWith(
+                                      color: AppColors.error.withValues(
+                                        alpha: 0.7,
+                                      ),
+                                    ),
                               ),
                             ],
                           ),
                         ),
-                        Icon(Icons.chevron_right, color: AppColors.error.withValues(alpha: 0.4)),
+                        Icon(
+                          Icons.chevron_right,
+                          color: AppColors.error.withValues(alpha: 0.4),
+                        ),
                       ],
                     ),
                   ),
@@ -181,7 +201,11 @@ class PrivacySecurityPage extends StatelessWidget {
           const SizedBox(height: AppSpacing.md),
           Row(
             children: [
-              const Icon(Icons.verified_user, color: AppColors.primary, size: 20),
+              const Icon(
+                Icons.verified_user,
+                color: AppColors.primary,
+                size: 20,
+              ),
               const SizedBox(width: AppSpacing.xs),
               Text(
                 'Uçtan uca şifreleme aktif',
@@ -242,7 +266,10 @@ class _SettingsItem extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.md),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.md,
+        ),
         child: Row(
           children: [
             Container(
@@ -272,7 +299,9 @@ class _SettingsItem extends StatelessWidget {
                       subtitle!,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: subtitleColor ?? AppColors.outline,
-                        fontWeight: subtitleColor != null ? FontWeight.w500 : FontWeight.w400,
+                        fontWeight: subtitleColor != null
+                            ? FontWeight.w500
+                            : FontWeight.w400,
                       ),
                     ),
                   ],

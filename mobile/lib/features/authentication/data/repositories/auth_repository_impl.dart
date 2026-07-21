@@ -4,6 +4,8 @@ import 'package:turota_mobile/features/authentication/data/dto/login_request_dto
 import 'package:turota_mobile/features/authentication/data/dto/register_request_dto.dart';
 import 'package:turota_mobile/features/authentication/domain/models/auth_user.dart';
 import 'package:turota_mobile/features/authentication/domain/repositories/auth_repository.dart';
+import 'package:turota_mobile/features/onboarding/taste_profile/data/dto/taste_profile_dto.dart';
+import 'package:turota_mobile/features/onboarding/taste_profile/data/dto/update_taste_profile_request_dto.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   const AuthRepositoryImpl(this._dataSource, this._tokenStorage);
@@ -56,5 +58,17 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<AuthUser> getCurrentUser() async {
     final responseDto = await _dataSource.getCurrentUser();
     return responseDto.toDomain();
+  }
+
+  @override
+  Future<TasteProfileDto> getTasteProfile() async {
+    final response = await _dataSource.getTasteProfile();
+    return TasteProfileDto.fromJson(response);
+  }
+
+  @override
+  Future<TasteProfileDto> updateTasteProfile(UpdateTasteProfileRequestDto request) async {
+    final response = await _dataSource.updateTasteProfile(request.toJson());
+    return TasteProfileDto.fromJson(response);
   }
 }

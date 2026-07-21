@@ -4,11 +4,7 @@ import 'package:turota_mobile/core/theme/app_spacing.dart';
 import 'package:turota_mobile/features/assistant/domain/models/route_stop_ui_model.dart';
 
 class TimelineView extends StatelessWidget {
-  const TimelineView({
-    super.key,
-    required this.stops,
-    required this.onMapTap,
-  });
+  const TimelineView({super.key, required this.stops, required this.onMapTap});
 
   final List<RouteStopUiModel> stops;
   final VoidCallback onMapTap;
@@ -43,7 +39,9 @@ class TimelineView extends StatelessWidget {
                         bottom: 0,
                         child: Container(
                           width: 2,
-                          color: AppColors.primaryContainer.withValues(alpha: 0.3),
+                          color: AppColors.primaryContainer.withValues(
+                            alpha: 0.3,
+                          ),
                         ),
                       ),
                     Container(
@@ -78,16 +76,19 @@ class TimelineView extends StatelessWidget {
                     children: [
                       Text(
                         stop.time,
-                        style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                              color: AppColors.textSecondary,
-                            ),
+                        style: Theme.of(context).textTheme.labelMedium
+                            ?.copyWith(color: AppColors.textSecondary),
                       ),
                       const SizedBox(height: AppSpacing.sm),
                       Container(
                         decoration: BoxDecoration(
                           color: AppColors.surface,
                           borderRadius: BorderRadius.circular(24),
-                          border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.3)),
+                          border: Border.all(
+                            color: AppColors.outlineVariant.withValues(
+                              alpha: 0.3,
+                            ),
+                          ),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withValues(alpha: 0.05),
@@ -115,14 +116,22 @@ class TimelineView extends StatelessWidget {
                                     top: 16,
                                     left: 16,
                                     child: Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 6,
+                                      ),
                                       decoration: BoxDecoration(
-                                        color: const Color(0xFF90E4EC).withValues(alpha: 0.9),
+                                        color: const Color(
+                                          0xFF90E4EC,
+                                        ).withValues(alpha: 0.9),
                                         borderRadius: BorderRadius.circular(20),
                                       ),
                                       child: Text(
                                         stop.category,
-                                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelSmall
+                                            ?.copyWith(
                                               color: const Color(0xFF002023),
                                             ),
                                       ),
@@ -139,29 +148,45 @@ class TimelineView extends StatelessWidget {
                                 children: [
                                   Text(
                                     stop.title,
-                                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                          fontWeight: FontWeight.w600,
-                                        ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleLarge
+                                        ?.copyWith(fontWeight: FontWeight.w600),
                                   ),
                                   const SizedBox(height: AppSpacing.sm),
                                   Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      const Icon(Icons.schedule, size: 18, color: AppColors.textSecondary),
+                                      const Icon(
+                                        Icons.schedule,
+                                        size: 18,
+                                        color: AppColors.textSecondary,
+                                      ),
                                       const SizedBox(width: 4),
                                       Text(
                                         stop.duration,
-                                        style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelMedium
+                                            ?.copyWith(
                                               color: AppColors.textSecondary,
                                             ),
                                       ),
                                       const SizedBox(width: 16),
-                                      const Icon(Icons.info_outline, size: 18, color: AppColors.textSecondary),
+                                      const Icon(
+                                        Icons.info_outline,
+                                        size: 18,
+                                        color: AppColors.textSecondary,
+                                      ),
                                       const SizedBox(width: 4),
                                       Expanded(
                                         child: Text(
                                           stop.walkingTime,
-                                          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .labelMedium
+                                              ?.copyWith(
                                                 color: AppColors.textSecondary,
                                               ),
                                         ),
@@ -176,10 +201,14 @@ class TimelineView extends StatelessWidget {
                                           onPressed: () {},
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor: AppColors.primary,
-                                            foregroundColor: AppColors.onPrimary,
-                                            padding: const EdgeInsets.symmetric(vertical: 12),
+                                            foregroundColor:
+                                                AppColors.onPrimary,
+                                            padding: const EdgeInsets.symmetric(
+                                              vertical: 12,
+                                            ),
                                             shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(12),
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
                                             ),
                                             elevation: 0,
                                           ),
@@ -189,8 +218,14 @@ class TimelineView extends StatelessWidget {
                                       const SizedBox(width: AppSpacing.sm),
                                       Container(
                                         decoration: BoxDecoration(
-                                          border: Border.all(color: AppColors.outline.withValues(alpha: 0.3)),
-                                          borderRadius: BorderRadius.circular(12),
+                                          border: Border.all(
+                                            color: AppColors.outline.withValues(
+                                              alpha: 0.3,
+                                            ),
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
                                         ),
                                         child: IconButton(
                                           onPressed: onMapTap,

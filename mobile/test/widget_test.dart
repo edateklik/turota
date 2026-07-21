@@ -17,6 +17,8 @@ import 'package:turota_mobile/features/discover/presentation/pages/discover_page
 import 'package:turota_mobile/features/onboarding/location/presentation/pages/location_permission_page.dart';
 import 'package:turota_mobile/features/places/presentation/pages/place_detail_page.dart';
 import 'package:turota_mobile/features/saved/presentation/pages/saved_page.dart';
+import 'package:turota_mobile/features/onboarding/taste_profile/data/dto/taste_profile_dto.dart';
+import 'package:turota_mobile/features/onboarding/taste_profile/data/dto/update_taste_profile_request_dto.dart';
 import 'package:turota_mobile/features/splash/presentation/pages/splash_page.dart';
 
 class _FakeAuthRepository implements AuthRepository {
@@ -64,6 +66,30 @@ class _FakeAuthRepository implements AuthRepository {
       firstName: 'Test',
       lastName: 'User',
       role: 'User',
+    );
+  }
+
+  @override
+  Future<TasteProfileDto> getTasteProfile() async {
+    return const TasteProfileDto(
+      preferredCategoryIds: [],
+      preferredTagIds: [],
+      dietaryPreference: 'NoPreference',
+      budgetLevel: 'Moderate',
+      travelPace: 'Balanced',
+      distancePreference: 'Flexible',
+    );
+  }
+
+  @override
+  Future<TasteProfileDto> updateTasteProfile(UpdateTasteProfileRequestDto request) async {
+    return const TasteProfileDto(
+      preferredCategoryIds: [],
+      preferredTagIds: [],
+      dietaryPreference: 'NoPreference',
+      budgetLevel: 'Moderate',
+      travelPace: 'Balanced',
+      distancePreference: 'Flexible',
     );
   }
 }

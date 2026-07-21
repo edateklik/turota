@@ -66,8 +66,10 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     // Populate data once when loaded
     final userState = ref.watch(currentUserProvider);
     if (userState.value != null && _fullNameController.text.isEmpty) {
-      _fullNameController.text = '${userState.value!.firstName} ${userState.value!.lastName}';
-      _usernameController.text = userState.value!.email; // using email as username fallback
+      _fullNameController.text =
+          '${userState.value!.firstName} ${userState.value!.lastName}';
+      _usernameController.text =
+          userState.value!.email; // using email as username fallback
     }
 
     return Scaffold(
@@ -180,6 +182,97 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                       prefixIcon: Icons.location_on_outlined,
                     ),
                     const SizedBox(height: 40),
+
+                    // ─── Taste Profile Edit ───────────────────────────
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: AppColors.surfaceLow,
+                        borderRadius: BorderRadius.circular(AppRadius.lg),
+                        border: Border.all(
+                          color: AppColors.outlineVariant.withOpacity(0.3),
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primaryContainer.withOpacity(
+                                    0.5,
+                                  ),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.auto_awesome,
+                                  color: AppColors.primary,
+                                  size: 20,
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              const Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Tat Profili',
+                                      style: TextStyle(
+                                        fontFamily: 'Inter',
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColors.textPrimary,
+                                      ),
+                                    ),
+                                    SizedBox(height: 4),
+                                    Text(
+                                      'Yapay zeka önerilerini iyileştir.',
+                                      style: TextStyle(
+                                        fontFamily: 'Inter',
+                                        fontSize: 13,
+                                        color: AppColors.textSecondary,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          SizedBox(
+                            width: double.infinity,
+                            height: 48,
+                            child: OutlinedButton(
+                              onPressed: () {
+                                Navigator.of(
+                                  context,
+                                ).pushNamed('/profile/edit-taste');
+                              },
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: AppColors.primary,
+                                side: const BorderSide(
+                                  color: AppColors.primary,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                    AppRadius.md,
+                                  ),
+                                ),
+                                textStyle: const TextStyle(
+                                  fontFamily: 'Inter',
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              child: const Text('Tat Profilimi Düzenle'),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 48),
 
                     // ─── Action Buttons ───────────────────────────
                     _buildSaveButton(),

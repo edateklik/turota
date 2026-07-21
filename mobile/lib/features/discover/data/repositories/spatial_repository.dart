@@ -6,17 +6,35 @@ class SpatialRepository {
   final SpatialRemoteDataSource _remoteDataSource;
 
   SpatialRepository({SpatialRemoteDataSource? remoteDataSource})
-      : _remoteDataSource = remoteDataSource ?? SpatialRemoteDataSource();
+    : _remoteDataSource = remoteDataSource ?? SpatialRemoteDataSource();
 
-  Future<List<SpatialNeighborhoodDto>> getNearbyNeighborhoods(double latitude, double longitude, {int limit = 5}) async {
-    return await _remoteDataSource.getNearbyNeighborhoods(latitude, longitude, limit: limit);
+  Future<List<SpatialNeighborhoodDto>> getNearbyNeighborhoods(
+    double latitude,
+    double longitude, {
+    int limit = 5,
+  }) async {
+    return await _remoteDataSource.getNearbyNeighborhoods(
+      latitude,
+      longitude,
+      limit: limit,
+    );
   }
 
-  Future<List<SpatialPlaceDto>> getPlacesInNeighborhood(String neighborhoodId) async {
+  Future<List<SpatialPlaceDto>> getPlacesInNeighborhood(
+    String neighborhoodId,
+  ) async {
     return await _remoteDataSource.getPlacesInNeighborhood(neighborhoodId);
   }
 
-  Future<List<SpatialPlaceDto>> getNearestPlaces(double latitude, double longitude, {int limit = 10}) async {
-    return await _remoteDataSource.getNearestPlaces(latitude, longitude, limit: limit);
+  Future<List<SpatialPlaceDto>> getNearestPlaces(
+    double latitude,
+    double longitude, {
+    int limit = 10,
+  }) async {
+    return await _remoteDataSource.getNearestPlaces(
+      latitude,
+      longitude,
+      limit: limit,
+    );
   }
 }

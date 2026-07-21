@@ -134,21 +134,24 @@ class AboutPage extends StatelessWidget {
                         children: [
                           Text(
                             'Lisanslar',
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.primary,
-                            ),
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.primary,
+                                ),
                           ),
                           Text(
                             'Yasal çerçeve ve kullanıcı hakları',
-                            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                              color: AppColors.outlineVariant,
-                            ),
+                            style: Theme.of(context).textTheme.labelSmall
+                                ?.copyWith(color: AppColors.outlineVariant),
                           ),
                         ],
                       ),
                     ),
-                    const Icon(Icons.chevron_right, color: AppColors.outlineVariant),
+                    const Icon(
+                      Icons.chevron_right,
+                      color: AppColors.outlineVariant,
+                    ),
                   ],
                 ),
               ),

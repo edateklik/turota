@@ -3,4 +3,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);1591</NoWarn>
   </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../Identity/Rota.Modules.Identity.Domain/Rota.Modules.Identity.Domain.csproj" />
+  </ItemGroup>
 </Project>

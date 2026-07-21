@@ -8,6 +8,7 @@ import 'package:turota_mobile/features/home/presentation/pages/main_shell_page.d
 import 'package:turota_mobile/features/onboarding/location/presentation/pages/location_permission_page.dart';
 import 'package:turota_mobile/features/places/presentation/pages/place_detail_page.dart';
 import 'package:turota_mobile/features/profile/presentation/pages/edit_profile_page.dart';
+import 'package:turota_mobile/features/profile/presentation/pages/edit_taste_profile_page.dart';
 import 'package:turota_mobile/features/profile/presentation/pages/notifications_page.dart';
 import 'package:turota_mobile/features/profile/presentation/pages/privacy_security_page.dart';
 import 'package:turota_mobile/features/profile/presentation/pages/location_settings_page.dart';
@@ -20,7 +21,14 @@ import 'package:turota_mobile/features/discover/presentation/pages/map_page.dart
 import 'package:turota_mobile/features/discover/presentation/pages/city_lights_page.dart';
 import 'package:turota_mobile/features/discover/presentation/pages/art_culture_page.dart';
 import 'package:turota_mobile/features/discover/presentation/pages/gastronomy_page.dart';
+import 'package:turota_mobile/features/onboarding/taste_profile/presentation/pages/category_preference_page.dart';
+import 'package:turota_mobile/features/onboarding/taste_profile/presentation/pages/tag_preference_page.dart';
+import 'package:turota_mobile/features/onboarding/taste_profile/presentation/pages/dietary_preference_page.dart';
+import 'package:turota_mobile/features/onboarding/taste_profile/presentation/pages/budget_preference_page.dart';
+import 'package:turota_mobile/features/onboarding/taste_profile/presentation/pages/distance_preference_page.dart';
+import 'package:turota_mobile/features/onboarding/taste_profile/presentation/pages/taste_profile_result_page.dart';
 
+// TODO: import other taste profile pages when created
 abstract final class AppRouter {
   static const String splash = '/';
   static const String locationPermission = '/onboarding/location';
@@ -30,6 +38,7 @@ abstract final class AppRouter {
   static const String saved = '/saved';
   static const String home = '/home';
   static const String editProfile = '/profile/edit';
+  static const String editTasteProfile = '/profile/edit-taste';
   static const String privacySecurity = '/profile/privacy';
   static const String notifications = '/profile/notifications';
   static const String locationSettings = '/profile/locationSettings';
@@ -43,7 +52,13 @@ abstract final class AppRouter {
   static const String cityLights = '/discover/cityLights';
   static const String artCulture = '/discover/artCulture';
   static const String gastronomy = '/discover/gastronomy';
-
+  static const String tasteProfileCategory = '/onboarding/taste-profile/category';
+  static const String tasteProfileTag = '/onboarding/taste-profile/tag';
+  static const String tasteProfileDietary = '/onboarding/taste-profile/dietary';
+  static const String tasteProfileBudget = '/onboarding/taste-profile/budget';
+  static const String tasteProfileDistance =
+      '/onboarding/taste-profile/distance';
+  static const String tasteProfileResult = '/onboarding/taste-profile/result';
   static Route<void> onGenerateRoute(RouteSettings settings) {
     return switch (settings.name) {
       splash => MaterialPageRoute<void>(
@@ -76,6 +91,10 @@ abstract final class AppRouter {
       ),
       editProfile => MaterialPageRoute<void>(
         builder: (_) => const EditProfilePage(),
+        settings: settings,
+      ),
+      editTasteProfile => MaterialPageRoute<void>(
+        builder: (_) => const EditTasteProfilePage(),
         settings: settings,
       ),
       privacySecurity => MaterialPageRoute<void>(
@@ -130,6 +149,31 @@ abstract final class AppRouter {
         builder: (_) => const GastronomyPage(),
         settings: settings,
       ),
+      tasteProfileCategory => MaterialPageRoute<void>(
+        builder: (_) => const CategoryPreferencePage(),
+        settings: settings,
+      ),
+      tasteProfileTag => MaterialPageRoute<void>(
+        builder: (_) => const TagPreferencePage(),
+        settings: settings,
+      ),
+      tasteProfileDietary => MaterialPageRoute<void>(
+        builder: (_) => const DietaryPreferencePage(),
+        settings: settings,
+      ),
+      tasteProfileBudget => MaterialPageRoute<void>(
+        builder: (_) => const BudgetPreferencePage(),
+        settings: settings,
+      ),
+      tasteProfileDistance => MaterialPageRoute<void>(
+        builder: (_) => const DistancePreferencePage(),
+        settings: settings,
+      ),
+      tasteProfileResult => MaterialPageRoute<void>(
+        builder: (_) => const TasteProfileResultPage(),
+        settings: settings,
+      ),
+      // TODO: add other routes when pages are created
       _ => MaterialPageRoute<void>(
         builder: (_) => const SplashPage(),
         settings: settings,

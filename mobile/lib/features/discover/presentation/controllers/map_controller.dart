@@ -21,7 +21,11 @@ final mapControllerProvider = FutureProvider.autoDispose<MapState>((ref) async {
   final double lat = 40.990;
   final double lon = 29.020;
 
-  final neighborhoods = await repository.getNearbyNeighborhoods(lat, lon, limit: 5);
+  final neighborhoods = await repository.getNearbyNeighborhoods(
+    lat,
+    lon,
+    limit: 5,
+  );
 
   final List<SpatialPlaceDto> allPlaces = [];
   for (var neighborhood in neighborhoods) {

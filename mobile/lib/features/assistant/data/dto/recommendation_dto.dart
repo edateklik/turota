@@ -32,7 +32,9 @@ class RecommendationAcceptedResponseDto {
     required this.statusUrl,
   });
 
-  factory RecommendationAcceptedResponseDto.fromJson(Map<String, dynamic> json) {
+  factory RecommendationAcceptedResponseDto.fromJson(
+    Map<String, dynamic> json,
+  ) {
     return RecommendationAcceptedResponseDto(
       runId: json['runId'] as String,
       status: json['status'] as String,
@@ -56,8 +58,8 @@ class RecommendationRunResponseDto {
     return RecommendationRunResponseDto(
       runId: json['runId'] as String,
       status: json['status'] as String,
-      result: json['result'] != null 
-          ? RecommendationResponseDto.fromJson(json['result']) 
+      result: json['result'] != null
+          ? RecommendationResponseDto.fromJson(json['result'])
           : null,
     );
   }
@@ -81,7 +83,8 @@ class RecommendationResponseDto {
       runId: json['runId'] as String,
       status: json['status'] as String,
       overallExplanation: json['overallExplanation'] as String? ?? '',
-      timeline: (json['timeline'] as List<dynamic>?)
+      timeline:
+          (json['timeline'] as List<dynamic>?)
               ?.map((e) => TimelineRecommendationResponseDto.fromJson(e))
               .toList() ??
           [],
@@ -106,7 +109,9 @@ class TimelineRecommendationResponseDto {
     required this.explanation,
   });
 
-  factory TimelineRecommendationResponseDto.fromJson(Map<String, dynamic> json) {
+  factory TimelineRecommendationResponseDto.fromJson(
+    Map<String, dynamic> json,
+  ) {
     return TimelineRecommendationResponseDto(
       sequence: json['sequence'] as int? ?? 0,
       placeId: json['placeId'] as String? ?? '',

@@ -35,9 +35,13 @@ public sealed class IdentityDbContext(DbContextOptions<IdentityDbContext> option
             builder.Property(x => x.UserId).HasColumnName("user_id").ValueGeneratedNever();
             builder.Property(x => x.PreferredCategoryIds).HasColumnName("preferred_category_ids").HasColumnType("uuid[]").IsRequired();
             builder.Property(x => x.PreferredTagIds).HasColumnName("preferred_tag_ids").HasColumnType("uuid[]").IsRequired();
+            // Legacy field — kept for backward compatibility, new records will have empty array
             builder.Property(x => x.DietaryPreferences).HasColumnName("dietary_preferences").HasColumnType("text[]").IsRequired();
+            // New singular enum fields
+            builder.Property(x => x.DietaryPreference).HasColumnName("dietary_preference").HasConversion<string>().HasMaxLength(20).IsRequired();
             builder.Property(x => x.BudgetLevel).HasColumnName("budget_level").HasConversion<string>().HasMaxLength(20).IsRequired();
             builder.Property(x => x.TravelPace).HasColumnName("travel_pace").HasConversion<string>().HasMaxLength(20).IsRequired();
+            builder.Property(x => x.DistancePreference).HasColumnName("distance_preference").HasConversion<string>().HasMaxLength(20).IsRequired();
             builder.Property(x => x.UpdatedAt).HasColumnName("updated_at");
             builder.HasOne(x => x.User).WithOne(x => x.TasteProfile).HasForeignKey<TasteProfile>(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
         });

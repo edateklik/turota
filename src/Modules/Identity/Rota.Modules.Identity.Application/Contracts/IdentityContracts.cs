@@ -46,23 +46,80 @@ public sealed record UserResponse(
     string Role,
     DateTimeOffset CreatedAt);
 
-/// <summary>Kullanıcının kişiselleştirme girdileri. Discovery kimlikleri modüller arası gevşek referanstır.</summary>
+/// <summary>
+/// Kullanıcının kişiselleştirme girdileri.
+/// Discovery module kimlik referansları (CategoryIds, TagIds) gevşek bağlıdır — ID'ler
+/// <c>GET /api/admin/categories</c> ve <c>GET /api/admin/tags</c> endpoint'lerinden elde edilmelidir.
+/// </summary>
+/// <remarks>
+/// Örnek istek:
+/// <code>
+/// {
+///   "preferredCategoryIds": ["3fa85f64-5717-4562-b3fc-2c963f66afa6"],
+///   "preferredTagIds":      ["6ba7b810-9dad-11d1-80b4-00c04fd430c8"],
+///   "dietaryPreference":    "Vegetarian",
+///   "budgetLevel":          "Moderate",
+///   "travelPace":           "Balanced",
+///   "distancePreference":   "Max3Km"
+/// }
+/// </code>
+/// </remarks>
 public sealed class UpdateTasteProfileRequest
 {
+    /// <summary>
+    /// Tercih edilen mekan kategorileri.
+    /// Geçerli değerler <c>GET /api/admin/categories</c> endpoint'inden alınır.
+    /// </summary>
+    /// <example>["3fa85f64-5717-4562-b3fc-2c963f66afa6"]</example>
+    [MaxLength(50)]
     public IReadOnlyList<Guid> PreferredCategoryIds { get; init; } = [];
+
+    /// <summary>
+    /// Tercih edilen atmosfer ve mekan etiketleri.
+    /// Geçerli değerler <c>GET /api/admin/tags</c> endpoint'inden alınır.
+    /// </summary>
+    /// <example>["6ba7b810-9dad-11d1-80b4-00c04fd430c8"]</example>
+    [MaxLength(50)]
     public IReadOnlyList<Guid> PreferredTagIds { get; init; } = [];
-    public IReadOnlyList<string> DietaryPreferences { get; init; } = [];
+
+    /// <summary>
+    /// Beslenme tercihi.
+    /// Geçerli değerler: <c>Everything</c>, <c>Vegetarian</c>, <c>Vegan</c>, <c>GlutenFree</c>, <c>NoPreference</c>.
+    /// </summary>
+    /// <example>Vegetarian</example>
+    public DietaryPreference DietaryPreference { get; init; } = DietaryPreference.NoPreference;
+
+    /// <summary>
+    /// Bütçe tercihi.
+    /// Geçerli değerler: <c>Economy</c>, <c>Moderate</c>, <c>Premium</c>, <c>Mixed</c>.
+    /// </summary>
+    /// <example>Moderate</example>
     public BudgetLevel BudgetLevel { get; init; } = BudgetLevel.Moderate;
+
+    /// <summary>
+    /// Gezi temposu.
+    /// Geçerli değerler: <c>Relaxed</c>, <c>Balanced</c>, <c>Intensive</c>.
+    /// </summary>
+    /// <example>Balanced</example>
     public TravelPace TravelPace { get; init; } = TravelPace.Balanced;
+
+    /// <summary>
+    /// Mesafe tercihi.
+    /// Geçerli değerler: <c>WalkingDistance</c>, <c>Max3Km</c>, <c>Max10Km</c>, <c>CityWide</c>, <c>Flexible</c>.
+    /// </summary>
+    /// <example>Max3Km</example>
+    public DistancePreference DistancePreference { get; init; } = DistancePreference.Flexible;
 }
 
+/// <summary>Kullanıcının zevk profili yanıtı.</summary>
 public sealed record TasteProfileResponse(
     Guid UserId,
     IReadOnlyList<Guid> PreferredCategoryIds,
     IReadOnlyList<Guid> PreferredTagIds,
-    IReadOnlyList<string> DietaryPreferences,
+    DietaryPreference DietaryPreference,
     BudgetLevel BudgetLevel,
     TravelPace TravelPace,
+    DistancePreference DistancePreference,
     DateTimeOffset UpdatedAt);
 
 public interface IIdentityService

@@ -26,9 +26,10 @@ public sealed class RecommendationSimulationService(
                 new TasteProfileSnapshot(
                     request.PreferredCategoryIds.Distinct().ToArray(),
                     request.PreferredTagIds.Distinct().ToArray(),
-                    request.DietaryPreferences.Select(item => item.Trim()).Distinct(StringComparer.OrdinalIgnoreCase).ToArray(),
+                    request.DietaryPreference.ToString(),
                     request.BudgetLevel.Trim(),
-                    request.TravelPace.Trim())),
+                    request.TravelPace.Trim(),
+                    request.DistancePreference.ToString())),
             cancellationToken);
 
         return new RecommendationSimulationResponse(

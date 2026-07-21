@@ -56,16 +56,16 @@ class CityLightsPage extends StatelessWidget {
                   Text(
                     'Şehrin Işıkları',
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textPrimary,
-                        ),
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     'Bu akşam şehir seni bekliyor.',
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
+                      color: AppColors.textSecondary,
+                    ),
                   ),
                 ],
               ),
@@ -78,11 +78,7 @@ class CityLightsPage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
               child: Row(
                 children: [
-                  _MoodChip(
-                    icon: '🎉',
-                    label: 'Eğlence',
-                    isSelected: true,
-                  ),
+                  _MoodChip(icon: '🎉', label: 'Eğlence', isSelected: true),
                   _MoodChip(icon: '🍸', label: 'Sakin'),
                   _MoodChip(icon: '🎵', label: 'Canlı Müzik'),
                   _MoodChip(icon: '💃', label: 'Dans'),
@@ -100,7 +96,9 @@ class CityLightsPage extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.3)),
+                  border: Border.all(
+                    color: AppColors.outlineVariant.withValues(alpha: 0.3),
+                  ),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withValues(alpha: 0.05),
@@ -113,9 +111,15 @@ class CityLightsPage extends StatelessWidget {
                   decoration: InputDecoration(
                     hintText: 'Mekan veya etkinlik ara...',
                     hintStyle: TextStyle(color: AppColors.outline),
-                    prefixIcon: const Icon(Icons.search, color: AppColors.outline),
+                    prefixIcon: const Icon(
+                      Icons.search,
+                      color: AppColors.outline,
+                    ),
                     border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
                   ),
                 ),
               ),
@@ -148,8 +152,8 @@ class CityLightsPage extends StatelessWidget {
                   Text(
                     'Bu Akşam En Popüler',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.md),
                   Container(
@@ -179,7 +183,10 @@ class CityLightsPage extends StatelessWidget {
                               top: 16,
                               right: 16,
                               child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
                                 decoration: BoxDecoration(
                                   color: Colors.white.withValues(alpha: 0.9),
                                   borderRadius: BorderRadius.circular(8),
@@ -187,11 +194,18 @@ class CityLightsPage extends StatelessWidget {
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    const Icon(Icons.star, color: Colors.amber, size: 16),
+                                    const Icon(
+                                      Icons.star,
+                                      color: Colors.amber,
+                                      size: 16,
+                                    ),
                                     const SizedBox(width: 4),
                                     Text(
                                       '4.9',
-                                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelMedium
+                                          ?.copyWith(
                                             fontWeight: FontWeight.bold,
                                           ),
                                     ),
@@ -208,18 +222,24 @@ class CityLightsPage extends StatelessWidget {
                             children: [
                               Text(
                                 'Sky Lounge Rooftop',
-                                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                style: Theme.of(context).textTheme.titleLarge
+                                    ?.copyWith(fontWeight: FontWeight.bold),
                               ),
                               const SizedBox(height: 4),
                               Row(
                                 children: [
-                                  const Icon(Icons.schedule, size: 16, color: AppColors.textSecondary),
+                                  const Icon(
+                                    Icons.schedule,
+                                    size: 16,
+                                    color: AppColors.textSecondary,
+                                  ),
                                   const SizedBox(width: 4),
                                   Text(
                                     '18:00 - 02:00',
-                                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelMedium
+                                        ?.copyWith(
                                           color: AppColors.textSecondary,
                                         ),
                                   ),
@@ -234,13 +254,22 @@ class CityLightsPage extends StatelessWidget {
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: AppColors.primary,
                                         foregroundColor: Colors.white,
-                                        padding: const EdgeInsets.symmetric(vertical: 12),
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 12,
+                                        ),
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(12),
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
                                         ),
                                         elevation: 2,
                                       ),
-                                      child: const Text('Detaylar', style: TextStyle(fontWeight: FontWeight.w600)),
+                                      child: const Text(
+                                        'Detaylar',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                   const SizedBox(width: AppSpacing.sm),
@@ -250,11 +279,16 @@ class CityLightsPage extends StatelessWidget {
                                       icon: const Icon(Icons.map, size: 18),
                                       label: const Text('Haritada Gör'),
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.primaryContainer,
+                                        backgroundColor:
+                                            AppColors.primaryContainer,
                                         foregroundColor: AppColors.onPrimary,
-                                        padding: const EdgeInsets.symmetric(vertical: 12),
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 12,
+                                        ),
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(12),
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
                                         ),
                                         elevation: 0,
                                       ),
@@ -285,15 +319,15 @@ class CityLightsPage extends StatelessWidget {
                       Text(
                         'Yakınındaki Mekanlar',
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                       Text(
                         'Tümünü Gör',
                         style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.w600,
-                            ),
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ],
                   ),
@@ -361,15 +395,23 @@ class CityLightsPage extends StatelessWidget {
                                 color: Colors.white,
                                 shape: BoxShape.circle,
                                 boxShadow: [
-                                  BoxShadow(color: Colors.black12, blurRadius: 4),
+                                  BoxShadow(
+                                    color: Colors.black12,
+                                    blurRadius: 4,
+                                  ),
                                 ],
                               ),
-                              child: const Icon(Icons.smart_toy, color: AppColors.primary, size: 20),
+                              child: const Icon(
+                                Icons.smart_toy,
+                                color: AppColors.primary,
+                                size: 20,
+                              ),
                             ),
                             const SizedBox(width: 8),
                             Text(
                               'YAPAY ZEKA ÖNERİSİ',
-                              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                              style: Theme.of(context).textTheme.labelMedium
+                                  ?.copyWith(
                                     color: AppColors.onPrimary,
                                     fontWeight: FontWeight.bold,
                                     letterSpacing: 1.2,
@@ -380,7 +422,8 @@ class CityLightsPage extends StatelessWidget {
                         const SizedBox(height: 16),
                         Text(
                           "Cumartesi akşamı için Kadıköy'de canlı müzik ve rooftop mekanlarından oluşan 3 duraklı bir gece rotası hazırladık.",
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(
                                 color: AppColors.onPrimary,
                                 fontWeight: FontWeight.w500,
                                 height: 1.4,
@@ -401,7 +444,10 @@ class CityLightsPage extends StatelessWidget {
                           child: const Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text('Gece Rotasını Başlat', style: TextStyle(fontWeight: FontWeight.bold)),
+                              Text(
+                                'Gece Rotasını Başlat',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
                               SizedBox(width: 8),
                               Icon(Icons.arrow_forward, size: 20),
                             ],
@@ -420,9 +466,9 @@ class CityLightsPage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
               child: Text(
                 'Yaklaşan Etkinlikler',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
               ),
             ),
             const SizedBox(height: AppSpacing.md),
@@ -473,14 +519,27 @@ class _MoodChip extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: isSelected
             ? const LinearGradient(
-                colors: [AppColors.primary, Color(0xFF2DD4BF)], // primary to teal-400
+                colors: [
+                  AppColors.primary,
+                  Color(0xFF2DD4BF),
+                ], // primary to teal-400
               )
             : null,
         color: isSelected ? null : Colors.white,
         borderRadius: BorderRadius.circular(24),
-        border: isSelected ? null : Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.3)),
+        border: isSelected
+            ? null
+            : Border.all(
+                color: AppColors.outlineVariant.withValues(alpha: 0.3),
+              ),
         boxShadow: isSelected
-            ? [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 6, offset: const Offset(0, 2))]
+            ? [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.1),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ]
             : null,
       ),
       child: Row(
@@ -491,9 +550,9 @@ class _MoodChip extends StatelessWidget {
           Text(
             label,
             style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                  color: isSelected ? Colors.white : Colors.grey[700],
-                  fontWeight: FontWeight.w600,
-                ),
+              color: isSelected ? Colors.white : Colors.grey[700],
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ],
       ),
@@ -502,10 +561,7 @@ class _MoodChip extends StatelessWidget {
 }
 
 class _FilterChip extends StatelessWidget {
-  const _FilterChip({
-    required this.icon,
-    required this.label,
-  });
+  const _FilterChip({required this.icon, required this.label});
 
   final String icon;
   final String label;
@@ -517,9 +573,15 @@ class _FilterChip extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.2)),
+        border: Border.all(
+          color: AppColors.outlineVariant.withValues(alpha: 0.2),
+        ),
         boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 4, offset: const Offset(0, 1)),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 4,
+            offset: const Offset(0, 1),
+          ),
         ],
       ),
       child: Row(
@@ -529,9 +591,9 @@ class _FilterChip extends StatelessWidget {
           const SizedBox(width: 4),
           Text(
             label,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: Colors.grey[600],
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.labelSmall?.copyWith(color: Colors.grey[600]),
           ),
         ],
       ),
@@ -561,9 +623,15 @@ class _NearbyVenueCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.1)),
+        border: Border.all(
+          color: AppColors.outlineVariant.withValues(alpha: 0.1),
+        ),
         boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 6, offset: const Offset(0, 2)),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
         ],
       ),
       child: Row(
@@ -585,15 +653,15 @@ class _NearbyVenueCard extends StatelessWidget {
                 Text(
                   title,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
                   style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
+                    color: AppColors.textSecondary,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 Row(
@@ -602,9 +670,9 @@ class _NearbyVenueCard extends StatelessWidget {
                     const SizedBox(width: 4),
                     Text(
                       distance,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.grey[600],
-                          ),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
                     ),
                     const SizedBox(width: 12),
                     const Icon(Icons.star, size: 14, color: Colors.amber),
@@ -612,9 +680,9 @@ class _NearbyVenueCard extends StatelessWidget {
                     Text(
                       rating,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.amber[700],
-                            fontWeight: FontWeight.w600,
-                          ),
+                        color: Colors.amber[700],
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ],
                 ),
@@ -647,9 +715,15 @@ class _EventCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.1)),
+        border: Border.all(
+          color: AppColors.outlineVariant.withValues(alpha: 0.1),
+        ),
         boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 6, offset: const Offset(0, 2)),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
         ],
       ),
       clipBehavior: Clip.antiAlias,
@@ -670,17 +744,17 @@ class _EventCard extends StatelessWidget {
                 Text(
                   date,
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1,
-                      ),
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   title,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                    fontWeight: FontWeight.w600,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -688,15 +762,17 @@ class _EventCard extends StatelessWidget {
                 Text(
                   location,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
+                    color: AppColors.textSecondary,
+                  ),
                 ),
                 const SizedBox(height: 12),
                 OutlinedButton(
                   onPressed: () {},
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.primary,
-                    side: BorderSide(color: AppColors.primary.withValues(alpha: 0.3)),
+                    side: BorderSide(
+                      color: AppColors.primary.withValues(alpha: 0.3),
+                    ),
                     minimumSize: const Size(double.infinity, 36),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),

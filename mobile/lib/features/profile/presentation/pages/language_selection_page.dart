@@ -72,14 +72,20 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
                 prefixIcon: const Icon(Icons.search, color: AppColors.outline),
                 filled: true,
                 fillColor: AppColors.surfaceLow,
-                contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.lg,
+                  vertical: AppSpacing.md,
+                ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(32),
                   borderSide: BorderSide.none,
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(32),
-                  borderSide: const BorderSide(color: AppColors.primary, width: 2),
+                  borderSide: const BorderSide(
+                    color: AppColors.primary,
+                    width: 2,
+                  ),
                 ),
               ),
             ),
@@ -88,9 +94,12 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
             child: filteredList.isEmpty
                 ? _buildEmptyState()
                 : ListView.separated(
-                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.md,
+                    ),
                     itemCount: filteredList.length,
-                    separatorBuilder: (context, index) => const SizedBox(height: AppSpacing.xs),
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(height: AppSpacing.xs),
                     itemBuilder: (context, index) {
                       final lang = filteredList[index];
                       final isSelected = _selectedLanguage == lang['name'];
@@ -106,18 +115,24 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
                           duration: const Duration(milliseconds: 300),
                           padding: const EdgeInsets.all(AppSpacing.md),
                           decoration: BoxDecoration(
-                            color: isSelected ? AppColors.surface : Colors.transparent,
+                            color: isSelected
+                                ? AppColors.surface
+                                : Colors.transparent,
                             borderRadius: BorderRadius.circular(AppRadius.lg),
                             border: Border.all(
-                              color: isSelected ? AppColors.primaryContainer : Colors.transparent,
+                              color: isSelected
+                                  ? AppColors.primaryContainer
+                                  : Colors.transparent,
                             ),
                             boxShadow: isSelected
                                 ? [
                                     BoxShadow(
-                                      color: Colors.black.withValues(alpha: 0.05),
+                                      color: Colors.black.withValues(
+                                        alpha: 0.05,
+                                      ),
                                       blurRadius: 12,
                                       offset: const Offset(0, 4),
-                                    )
+                                    ),
                                   ]
                                 : null,
                           ),
@@ -131,22 +146,32 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
                                   children: [
                                     Text(
                                       lang['name']!,
-                                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                        fontWeight: FontWeight.w600,
-                                        color: isSelected ? AppColors.primary : AppColors.textPrimary,
-                                      ),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.w600,
+                                            color: isSelected
+                                                ? AppColors.primary
+                                                : AppColors.textPrimary,
+                                          ),
                                     ),
                                     Text(
                                       lang['nativeName']!,
-                                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                        color: AppColors.outlineVariant,
-                                      ),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelSmall
+                                          ?.copyWith(
+                                            color: AppColors.outlineVariant,
+                                          ),
                                     ),
                                   ],
                                 ),
                                 Icon(
                                   Icons.check_circle,
-                                  color: isSelected ? AppColors.primary : Colors.transparent,
+                                  color: isSelected
+                                      ? AppColors.primary
+                                      : Colors.transparent,
                                 ),
                               ],
                             ),
@@ -166,11 +191,7 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
-            Icons.language,
-            size: 64,
-            color: AppColors.outlineVariant,
-          ),
+          const Icon(Icons.language, size: 64, color: AppColors.outlineVariant),
           const SizedBox(height: AppSpacing.md),
           Text(
             'Dil bulunamadı',
@@ -183,9 +204,9 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
           Text(
             'Aramanıza uygun bir dil bulamadık.\nBaşka bir terim deneyin.',
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: AppColors.outline,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: AppColors.outline),
           ),
         ],
       ),
