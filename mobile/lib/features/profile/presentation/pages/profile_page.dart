@@ -119,6 +119,7 @@ class ProfilePage extends ConsumerWidget {
                   onTap: () async {
                     await ref.read(authRepositoryProvider).logout();
                     if (!context.mounted) return;
+                    ref.invalidate(currentUserProvider);
                     Navigator.of(
                       context,
                     ).pushReplacementNamed(AppRouter.splash);

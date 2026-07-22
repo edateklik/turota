@@ -97,6 +97,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
       if (!mounted) return;
       _hasNavigated = true;
+      ref.invalidate(currentUserProvider);
       Navigator.of(context).pushReplacementNamed(AppRouter.tasteProfileCategory);
     } on ApiException catch (e) {
       _showMessage(_registrationErrorMessage(e));
