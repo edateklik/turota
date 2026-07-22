@@ -124,7 +124,7 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
                       : 'Bilinmeyen uzaklık',
                   transportIcon: Icons.location_on_rounded,
                   imageUrl:
-                      'https://via.placeholder.com/150', // Replace with real image if API supports
+                      'https://picsum.photos/seed/${place.id}/400/300', // Replace with real image if API supports
                 ),
                 onPressed: () {
                   showModalBottomSheet(
@@ -134,7 +134,7 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
                     builder: (context) => NeighborhoodDetailBottomSheet(
                       name: place.name,
                       description: place.address,
-                      imageUrl: 'https://via.placeholder.com/150',
+                      imageUrl: 'https://picsum.photos/seed/${place.id}/400/300',
                       distance: place.distanceMeters != null
                           ? '${(place.distanceMeters! / 1000).toStringAsFixed(1)} km uzaklıkta'
                           : 'Bilinmeyen uzaklık',
