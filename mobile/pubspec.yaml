@@ -19,6 +19,7 @@ dependencies:
   image_cropper: ^12.2.1
   image_picker: ^1.2.3
   latlong2: ^0.10.1
+  mobile_scanner: ^7.4.0
   path_provider: ^2.1.6
   shared_preferences: ^2.5.5
   signalr_netcore: ^1.4.4

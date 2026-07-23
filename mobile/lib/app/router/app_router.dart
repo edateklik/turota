@@ -27,6 +27,7 @@ import 'package:turota_mobile/features/onboarding/taste_profile/presentation/pag
 import 'package:turota_mobile/features/onboarding/taste_profile/presentation/pages/budget_preference_page.dart';
 import 'package:turota_mobile/features/onboarding/taste_profile/presentation/pages/distance_preference_page.dart';
 import 'package:turota_mobile/features/onboarding/taste_profile/presentation/pages/taste_profile_result_page.dart';
+import 'package:turota_mobile/features/qr_scanner/presentation/pages/qr_scanner_page.dart';
 
 // TODO: import other taste profile pages when created
 abstract final class AppRouter {
@@ -52,13 +53,16 @@ abstract final class AppRouter {
   static const String cityLights = '/discover/cityLights';
   static const String artCulture = '/discover/artCulture';
   static const String gastronomy = '/discover/gastronomy';
-  static const String tasteProfileCategory = '/onboarding/taste-profile/category';
+  static const String tasteProfileCategory =
+      '/onboarding/taste-profile/category';
   static const String tasteProfileTag = '/onboarding/taste-profile/tag';
   static const String tasteProfileDietary = '/onboarding/taste-profile/dietary';
   static const String tasteProfileBudget = '/onboarding/taste-profile/budget';
   static const String tasteProfileDistance =
       '/onboarding/taste-profile/distance';
   static const String tasteProfileResult = '/onboarding/taste-profile/result';
+  static const String qrScanner = '/qr-scanner';
+
   static Route<void> onGenerateRoute(RouteSettings settings) {
     return switch (settings.name) {
       splash => MaterialPageRoute<void>(
@@ -172,6 +176,11 @@ abstract final class AppRouter {
       tasteProfileResult => MaterialPageRoute<void>(
         builder: (_) => const TasteProfileResultPage(),
         settings: settings,
+      ),
+      qrScanner => MaterialPageRoute<String?>(
+        builder: (_) => const QrScannerPage(),
+        settings: settings,
+        fullscreenDialog: true,
       ),
       // TODO: add other routes when pages are created
       _ => MaterialPageRoute<void>(

@@ -27,7 +27,7 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Profil fotoğrafı çekebilmeniz için kameraya erişim gerekiyor.</string>
+	<string>Turota, mekanlardaki karekodları okutabilmeniz ve profil fotoğrafı çekebilmeniz için kameranıza erişim izni istiyor.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Profil fotoğrafı seçebilmeniz için fotoğraf arşivinize erişim gerekiyor.</string>
 	<key>UIApplicationSceneManifest</key>
