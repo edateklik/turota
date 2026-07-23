@@ -67,7 +67,7 @@ public sealed class IdentityService(
     {
         var user = await dbContext.Users.AsNoTracking().SingleOrDefaultAsync(x => x.Id == userId, cancellationToken)
             ?? throw new KeyNotFoundException("Kullanıcı bulunamadı.");
-        return new(user.Id, user.Email, user.FirstName, user.LastName, user.Role.ToString(), user.CreatedAt);
+        return new(user.Id, user.Email, user.FirstName, user.LastName, user.Role.ToString(), user.CreatedAt, user.ProfilePhotoUrl);
     }
 
     public async Task<TasteProfileResponse> GetTasteProfileAsync(Guid userId, CancellationToken cancellationToken = default)

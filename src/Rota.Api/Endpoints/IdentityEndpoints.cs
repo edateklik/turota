@@ -59,6 +59,38 @@ public static class IdentityEndpoints
             .Produces<UserResponse>()
             .Produces(StatusCodes.Status401Unauthorized);
 
+        auth.MapPut("/me/profile-photo", async (
+                IFormFile file,
+                HttpContext context,
+                IProfilePhotoService service,
+                CancellationToken cancellationToken) =>
+            {
+                await using var content = file.OpenReadStream();
+                return Results.Ok(await service.UploadAsync(
+                    context.User.GetRequiredUserId(),
+                    content,
+                    file.ContentType,
+                    file.Length,
+                    cancellationToken));
+            })
+            .RequireAuthorization("User")
+            .DisableAntiforgery()
+            .WithName("UploadProfilePhoto")
+            .Accepts<IFormFile>("multipart/form-data")
+            .Produces<ProfilePhotoResponse>()
+            .Produces<ApiProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")
+            .Produces(StatusCodes.Status401Unauthorized);
+
+        auth.MapDelete("/me/profile-photo", (
+                HttpContext context,
+                IProfilePhotoService service,
+                CancellationToken cancellationToken) =>
+                service.DeleteAsync(context.User.GetRequiredUserId(), cancellationToken))
+            .RequireAuthorization("User")
+            .WithName("DeleteProfilePhoto")
+            .Produces<ProfilePhotoResponse>()
+            .Produces(StatusCodes.Status401Unauthorized);
+
         auth.MapGet("/me/taste-profile", (
                 HttpContext context,
                 IIdentityService service,

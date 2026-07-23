@@ -65,10 +65,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
     try {
       final repository = ref.read(authRepositoryProvider);
-      await repository.login(
+      final user = await repository.login(
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );
+      ref.read(authSessionUserProvider.notifier).authenticated(user);
 
       if (!mounted) return;
       _hasNavigated = true;

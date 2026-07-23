@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:turota_mobile/features/discover/presentation/widgets/category_header.dart';
 
 // Colors from the provided HTML design
 const Color _cBackground = Color(0xFFFDFBF7);
@@ -16,61 +17,18 @@ class ArtCulturePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _cBackground,
-      appBar: AppBar(
-        backgroundColor: _cBackground.withValues(alpha: 0.9),
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: _cPrimary),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: const Text(
-          'TUROTA',
-          style: TextStyle(
-            fontFamily: 'Public Sans',
-            fontWeight: FontWeight.w700,
-            fontSize: 20,
-            color: _cPrimary,
-            letterSpacing: -0.5,
-          ),
-        ),
-        centerTitle: true,
-        actions: const [
-          SizedBox(width: 48), // To balance the back button
-        ],
+      appBar: const CategoryHeader(
+        title: 'Sanat ve Kültür',
+        subtitle: 'Şehrin kültürel zenginliklerini keşfet.',
+        imageAsset: CategoryImageAssets.artCulture,
+        fallbackIcon: Icons.museum_rounded,
+        imageSemanticLabel: 'Sanat ve kültür kategorisi',
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.only(bottom: 100),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Header Section
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Sanat ve Kültür',
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontFamily: 'Public Sans',
-                      fontWeight: FontWeight.w800,
-                      color: _cOnBackground,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Şehrin kültürel zenginliklerini keşfet.',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontFamily: 'Public Sans',
-                      color: _cOnSurfaceVariant,
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
             // Mood Selector Chips
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
@@ -353,26 +311,10 @@ class ArtCulturePage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Yakınındaki Kültür Noktaları',
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontFamily: 'Public Sans',
-                          fontWeight: FontWeight.bold,
-                          color: _cOnBackground,
-                        ),
-                      ),
-                      Text(
-                        'Tümünü Gör',
-                        style: Theme.of(context).textTheme.labelMedium
-                            ?.copyWith(
-                              color: _cPrimary,
-                              fontWeight: FontWeight.w600,
-                            ),
-                      ),
-                    ],
+                  CategorySectionHeader(
+                    title: 'Yakınındaki Kültür Noktaları',
+                    actionLabel: 'Tümünü Gör',
+                    onAction: () {},
                   ),
                   const SizedBox(height: 16),
                   Row(

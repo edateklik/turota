@@ -5,6 +5,7 @@ import 'package:turota_mobile/core/theme/app_radius.dart';
 import 'package:turota_mobile/core/theme/app_spacing.dart';
 import 'package:turota_mobile/core/widgets/app_button.dart';
 import 'package:turota_mobile/core/widgets/app_card.dart';
+import 'package:turota_mobile/core/widgets/current_user_avatar.dart';
 
 class SavedPage extends StatefulWidget {
   const SavedPage({super.key});
@@ -213,23 +214,10 @@ class _SavedHeader extends StatelessWidget {
                 key: const ValueKey('saved-profile-avatar'),
                 onTap: onProfilePressed,
                 customBorder: const CircleBorder(),
-                child: Container(
-                  padding: const EdgeInsets.all(2),
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.fromBorderSide(
-                      BorderSide(color: AppColors.primary, width: 2),
-                    ),
-                  ),
-                  child: const CircleAvatar(
-                    radius: 18,
-                    backgroundColor: AppColors.surfaceLow,
-                    foregroundColor: AppColors.primaryContainer,
-                    child: Text(
-                      'Ş',
-                      style: TextStyle(fontWeight: FontWeight.w700),
-                    ),
-                  ),
+                child: const CurrentUserAvatar(
+                  radius: 16,
+                  backgroundColor: AppColors.surfaceLow,
+                  foregroundColor: AppColors.primary,
                 ),
               ),
             ),

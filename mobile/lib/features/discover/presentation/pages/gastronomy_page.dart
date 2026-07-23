@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:turota_mobile/features/discover/presentation/widgets/category_header.dart';
 
 // Colors from the provided HTML design
 const Color _cPrimary = Color(0xFF008B8B);
 const Color _cPrimaryFixedDim = Color(0xFF4DB8B8);
 const Color _cSurface = Color(0xFFFBFAF8);
-const Color _cOutline = Color(0xFFCBD5E1);
 
 // Approximated Tailwind grays used in the HTML
 const Color _cGray900 = Color(0xFF111827);
@@ -23,83 +23,18 @@ class GastronomyPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _cSurface,
-      appBar: AppBar(
-        backgroundColor: _cSurface.withValues(alpha: 0.8),
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: _cPrimary),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: const Text(
-          'TUROTA',
-          style: TextStyle(
-            fontFamily: 'Public Sans',
-            fontWeight: FontWeight.w800,
-            fontSize: 20,
-            color: _cPrimary,
-            letterSpacing: -0.5,
-          ),
-        ),
-        centerTitle: true,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: _cOutline.withValues(alpha: 0.3)),
-                image: const DecorationImage(
-                  image: NetworkImage(
-                    'https://picsum.photos/seed/useravatar/100/100',
-                  ),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-          ),
-        ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(color: _cOutline.withValues(alpha: 0.3), height: 1),
-        ),
+      appBar: const CategoryHeader(
+        title: 'Gastronomi',
+        subtitle: 'İstanbul\'un en iyi lezzet duraklarını keşfet.',
+        imageAsset: CategoryImageAssets.gastronomy,
+        fallbackIcon: Icons.restaurant_rounded,
+        imageSemanticLabel: 'Gastronomi kategorisi',
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.only(bottom: 40),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Header Section
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 24, 20, 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Gastronomi',
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontFamily: 'Public Sans',
-                      fontWeight: FontWeight.w800,
-                      color: _cGray900,
-                      letterSpacing: -0.5,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'İstanbul\'un en iyi lezzet duraklarını keşfet.',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontFamily: 'Public Sans',
-                      color: _cGray500,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
             // Search Bar
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),

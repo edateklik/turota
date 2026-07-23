@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Rota.Modules.Identity.Application.Contracts;
 using Rota.Modules.Identity.Domain.Entities;
@@ -44,6 +45,24 @@ public static class DependencyInjection
         services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
         services.AddScoped<IJwtTokenService, JwtTokenService>();
         services.AddScoped<IIdentityService, IdentityService>();
+        services.AddSingleton(serviceProvider =>
+        {
+            var profilePhotoOptions = configuration.GetSection(ProfilePhotoStorageOptions.SectionName)
+                .Get<ProfilePhotoStorageOptions>() ?? new ProfilePhotoStorageOptions();
+            if (!Path.IsPathRooted(profilePhotoOptions.RootPath))
+            {
+                var environment = serviceProvider.GetRequiredService<IHostEnvironment>();
+                profilePhotoOptions.RootPath = Path.GetFullPath(
+                    Path.Combine(environment.ContentRootPath, profilePhotoOptions.RootPath));
+            }
+            else
+            {
+                profilePhotoOptions.RootPath = Path.GetFullPath(profilePhotoOptions.RootPath);
+            }
+            return profilePhotoOptions;
+        });
+        services.AddSingleton<IProfilePhotoStorage, LocalProfilePhotoStorage>();
+        services.AddScoped<IProfilePhotoService, ProfilePhotoService>();
         services.AddScoped<IAdminIdentityService, AdminIdentityService>();
         services.AddSingleton(adminBootstrapOptions);
         services.AddHostedService<AdminBootstrapHostedService>();
