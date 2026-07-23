@@ -98,6 +98,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
       if (!mounted) return;
       _hasNavigated = true;
+      ref.invalidate(currentUserProvider);
       Navigator.of(
         context,
       ).pushReplacementNamed(AppRouter.tasteProfileCategory);

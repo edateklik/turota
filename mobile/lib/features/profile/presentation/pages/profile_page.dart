@@ -133,6 +133,7 @@ class ProfilePage extends ConsumerWidget {
                       'logout completed; runtime session cleared only',
                     );
                     if (!context.mounted) return;
+                    ref.invalidate(currentUserProvider);
                     Navigator.of(
                       context,
                     ).pushReplacementNamed(AppRouter.splash);
