@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.FileProviders;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -14,6 +15,7 @@ using Rota.Api.Endpoints;
 using Rota.Api.Errors;
 using Rota.Modules.Identity.Infrastructure;
 using Rota.Modules.Identity.Infrastructure.Persistence;
+using Rota.Modules.Identity.Infrastructure.Services;
 using Rota.Api.OpenApi;
 using Rota.Api.Security;
 using Rota.Modules.Recommendation.Infrastructure;
@@ -151,6 +153,8 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 var app = builder.Build();
+var profilePhotoOptions = app.Services.GetRequiredService<ProfilePhotoStorageOptions>();
+Directory.CreateDirectory(profilePhotoOptions.RootPath);
 app.UseMiddleware<RequestTelemetryMiddleware>();
 app.UseExceptionHandler();
 app.UseStatusCodePages(async statusCodeContext =>
@@ -200,6 +204,11 @@ if (app.Configuration.GetValue<bool>("Database:ApplyMigrationsOnStartup"))
 }
 
 app.UseCors("Frontend");
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(profilePhotoOptions.RootPath),
+    RequestPath = profilePhotoOptions.RequestPath
+});
 app.UseAuthentication();
 app.UseRateLimiter();
 app.UseAuthorization();

@@ -227,6 +227,125 @@ public sealed class ApiIntegrationTests(RotaApiFactory factory) : IClassFixture<
         Assert.Equal(2, outbox.AttemptCount);
     }
 
+    [Fact]
+    public async Task ProfilePhoto_UploadRestoreReplaceAndDelete_PersistsOnUserAccount()
+    {
+        using var unauthorized = new MultipartFormDataContent();
+        unauthorized.Add(new ByteArrayContent(CreateJpeg()), "file", "profile.jpg");
+        using var unauthorizedResponse = await _client.PutAsync(
+            "/api/identity/me/profile-photo",
+            unauthorized);
+        Assert.Equal(HttpStatusCode.Unauthorized, unauthorizedResponse.StatusCode);
+
+        var email = $"avatar-{Guid.NewGuid():N}@example.com";
+        using var registerResponse = await _client.PostAsJsonAsync("/api/identity/register", new
+        {
+            email,
+            password = "Rota123!",
+            firstName = "Avatar",
+            lastName = "Test"
+        });
+        var registration = await registerResponse.Content.ReadFromJsonAsync<JsonElement>();
+        var token = registration.GetProperty("accessToken").GetString()!;
+
+        using var oversized = CreatePhotoContent(
+            new byte[(5 * 1024 * 1024) + 1],
+            "image/jpeg",
+            "large.jpg");
+        using var oversizedRequest = new HttpRequestMessage(HttpMethod.Put, "/api/identity/me/profile-photo")
+        {
+            Content = oversized
+        };
+        oversizedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        using var oversizedResponse = await _client.SendAsync(oversizedRequest);
+        Assert.Equal(HttpStatusCode.BadRequest, oversizedResponse.StatusCode);
+
+        using var wrongMime = CreatePhotoContent(CreateJpeg(), "text/plain", "fake.jpg");
+        using var wrongMimeRequest = new HttpRequestMessage(HttpMethod.Put, "/api/identity/me/profile-photo")
+        {
+            Content = wrongMime
+        };
+        wrongMimeRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        using var wrongMimeResponse = await _client.SendAsync(wrongMimeRequest);
+        Assert.Equal(HttpStatusCode.BadRequest, wrongMimeResponse.StatusCode);
+
+        using var upload = CreatePhotoContent(CreateJpeg(), "image/jpeg", "profile.jpg");
+        using var uploadRequest = new HttpRequestMessage(HttpMethod.Put, "/api/identity/me/profile-photo")
+        {
+            Content = upload
+        };
+        uploadRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        using var uploadResponse = await _client.SendAsync(uploadRequest);
+        var uploaded = await uploadResponse.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(HttpStatusCode.OK, uploadResponse.StatusCode);
+        var firstUrl = uploaded.GetProperty("profilePhotoUrl").GetString();
+        Assert.False(string.IsNullOrWhiteSpace(firstUrl));
+
+        using var currentUser = await SendAuthorizedAsync(HttpMethod.Get, "/api/identity/me", token);
+        var currentUserJson = await currentUser.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(firstUrl, currentUserJson.GetProperty("profilePhotoUrl").GetString());
+
+        using var loginResponse = await _client.PostAsJsonAsync("/api/identity/login", new
+        {
+            email,
+            password = "Rota123!"
+        });
+        var login = await loginResponse.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(firstUrl, login.GetProperty("user").GetProperty("profilePhotoUrl").GetString());
+
+        using var invalid = CreatePhotoContent("<svg/>"u8.ToArray(), "image/svg+xml", "bad.svg");
+        using var invalidRequest = new HttpRequestMessage(HttpMethod.Put, "/api/identity/me/profile-photo")
+        {
+            Content = invalid
+        };
+        invalidRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        using var invalidResponse = await _client.SendAsync(invalidRequest);
+        Assert.Equal(HttpStatusCode.BadRequest, invalidResponse.StatusCode);
+
+        using var replacement = CreatePhotoContent(CreateJpeg(0x22), "image/jpeg", "replacement.jpg");
+        using var replacementRequest = new HttpRequestMessage(HttpMethod.Put, "/api/identity/me/profile-photo")
+        {
+            Content = replacement
+        };
+        replacementRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        using var replacementResponse = await _client.SendAsync(replacementRequest);
+        var replaced = await replacementResponse.Content.ReadFromJsonAsync<JsonElement>();
+        var secondUrl = replaced.GetProperty("profilePhotoUrl").GetString();
+        Assert.NotEqual(firstUrl, secondUrl);
+        using var oldFileResponse = await _client.GetAsync(firstUrl);
+        Assert.Equal(HttpStatusCode.NotFound, oldFileResponse.StatusCode);
+
+        using var deleteResponse = await SendAuthorizedAsync(
+            HttpMethod.Delete,
+            "/api/identity/me/profile-photo",
+            token);
+        Assert.Equal(HttpStatusCode.OK, deleteResponse.StatusCode);
+        using var afterDelete = await SendAuthorizedAsync(HttpMethod.Get, "/api/identity/me", token);
+        var afterDeleteJson = await afterDelete.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(JsonValueKind.Null, afterDeleteJson.GetProperty("profilePhotoUrl").ValueKind);
+        using var deletedFileResponse = await _client.GetAsync(secondUrl);
+        Assert.Equal(HttpStatusCode.NotFound, deletedFileResponse.StatusCode);
+    }
+
+    private static MultipartFormDataContent CreatePhotoContent(
+        byte[] bytes,
+        string contentType,
+        string fileName)
+    {
+        var result = new MultipartFormDataContent();
+        var file = new ByteArrayContent(bytes);
+        file.Headers.ContentType = new MediaTypeHeaderValue(contentType);
+        result.Add(file, "file", fileName);
+        return result;
+    }
+
+    private static byte[] CreateJpeg(byte payload = 0x11) =>
+    [
+        0xFF, 0xD8,
+        0xFF, 0xC0, 0x00, 0x05, 0x08, payload, payload,
+        0xFF, 0xD9
+    ];
+
     private async Task<string> RegisterAndGetTokenAsync()
     {
         using var response = await _client.PostAsJsonAsync("/api/identity/register", new

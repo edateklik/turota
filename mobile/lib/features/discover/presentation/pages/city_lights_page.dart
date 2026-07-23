@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:turota_mobile/core/theme/app_colors.dart';
 import 'package:turota_mobile/core/theme/app_spacing.dart';
+import 'package:turota_mobile/features/discover/presentation/widgets/category_header.dart';
 
 class CityLightsPage extends StatelessWidget {
   const CityLightsPage({super.key});
@@ -9,69 +10,18 @@ class CityLightsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: AppColors.surface.withValues(alpha: 0.8),
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.primary),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: const Text(
-          'TUROTA',
-          style: TextStyle(
-            fontFamily: 'Montserrat',
-            fontWeight: FontWeight.w700,
-            fontSize: 24,
-            color: AppColors.primary,
-            letterSpacing: -0.5,
-          ),
-        ),
-        centerTitle: true,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: AppSpacing.md),
-            child: CircleAvatar(
-              radius: 16,
-              backgroundColor: Colors.grey[200],
-              backgroundImage: const NetworkImage(
-                'https://picsum.photos/seed/avatar/100/100',
-              ),
-            ),
-          ),
-        ],
+      appBar: const CategoryHeader(
+        title: 'Şehrin Işıkları',
+        subtitle: 'Bu akşam şehir seni bekliyor.',
+        imageAsset: CategoryImageAssets.cityLights,
+        fallbackIcon: Icons.location_city_rounded,
+        imageSemanticLabel: 'Şehrin ışıkları kategorisi',
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.only(bottom: 100), // padding for bottom nav
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const SizedBox(height: AppSpacing.md),
-            // Header Section
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Şehrin Işıkları',
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Bu akşam şehir seni bekliyor.',
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: AppSpacing.lg),
-
             // Mood Selector
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,

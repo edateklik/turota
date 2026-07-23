@@ -88,16 +88,19 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     try {
       final nameParts = _nameController.text.trim().split(RegExp(r'\s+'));
       final repository = ref.read(authRepositoryProvider);
-      await repository.register(
+      final user = await repository.register(
         email: _emailController.text.trim(),
         password: _passwordController.text,
         firstName: nameParts.first,
         lastName: nameParts.skip(1).join(' '),
       );
+      ref.read(authSessionUserProvider.notifier).authenticated(user);
 
       if (!mounted) return;
       _hasNavigated = true;
-      Navigator.of(context).pushReplacementNamed(AppRouter.tasteProfileCategory);
+      Navigator.of(
+        context,
+      ).pushReplacementNamed(AppRouter.tasteProfileCategory);
     } on ApiException catch (e) {
       _showMessage(_registrationErrorMessage(e));
     } catch (_) {

@@ -44,7 +44,22 @@ public sealed record UserResponse(
     string FirstName,
     string LastName,
     string Role,
-    DateTimeOffset CreatedAt);
+    DateTimeOffset CreatedAt,
+    string? ProfilePhotoUrl);
+
+public sealed record ProfilePhotoResponse(string? ProfilePhotoUrl);
+
+public interface IProfilePhotoService
+{
+    Task<ProfilePhotoResponse> UploadAsync(Guid userId, Stream content, string contentType, long length, CancellationToken cancellationToken = default);
+    Task<ProfilePhotoResponse> DeleteAsync(Guid userId, CancellationToken cancellationToken = default);
+}
+
+public interface IProfilePhotoStorage
+{
+    Task<string> SaveAsync(Stream content, string extension, CancellationToken cancellationToken = default);
+    Task DeleteAsync(string? publicUrl, CancellationToken cancellationToken = default);
+}
 
 /// <summary>
 /// Kullanıcının kişiselleştirme girdileri.

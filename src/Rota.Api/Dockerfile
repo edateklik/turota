@@ -18,7 +18,8 @@ RUN apt-get update \
     && apt-get install --yes --no-install-recommends curl \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir -p /home/app/.aspnet/DataProtection-Keys \
-    && chown -R $APP_UID:$APP_UID /home/app/.aspnet
+    && mkdir -p /app/uploads/profile-photos \
+    && chown -R $APP_UID:$APP_UID /home/app/.aspnet /app/uploads
 
 COPY --from=build --chown=$APP_UID:$APP_UID /app/publish .
 USER $APP_UID

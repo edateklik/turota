@@ -64,23 +64,38 @@ services:
       RateLimits__GlobalPermitLimit: ${RATE_LIMIT_GLOBAL_PERMIT:-120}
       RateLimits__RecommendationPermitLimit: ${RATE_LIMIT_RECOMMENDATION_PERMIT:-20}
       Database__ApplyMigrationsOnStartup: "true"
+      ProfilePhotos__RootPath: /app/uploads/profile-photos
+      ProfilePhotos__RequestPath: /uploads/profile-photos
       Cors__AllowedOrigins__0: http://localhost:3000
       Cors__AllowedOrigins__1: http://localhost:5173
     ports:
       - "5121:8080"
     volumes:
       - rota_api_data_protection_keys:/home/app/.aspnet/DataProtection-Keys
+      - rota_profile_photos:/app/uploads/profile-photos
     depends_on:
       postgres:
         condition: service_healthy
       ai-recommendation:
         condition: service_healthy
+      profile-photo-storage-init:
+        condition: service_completed_successfully
     healthcheck:
       test: ["CMD", "curl", "--fail", "--silent", "http://127.0.0.1:8080/health"]
       interval: 10s
       timeout: 3s
       retries: 5
       start_period: 15s
+
+  profile-photo-storage-init:
+    image: turota-api
+    user: root
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - 'chown -R "$$APP_UID:$$APP_UID" /app/uploads/profile-photos && chmod 0755 /app/uploads/profile-photos'
+    volumes:
+      - rota_profile_photos:/app/uploads/profile-photos
+    restart: "no"
 
   load-test:
     image: grafana/k6:2.1.0
@@ -97,3 +112,4 @@ services:
 volumes:
   rota_postgres_data:
   rota_api_data_protection_keys:
+  rota_profile_photos:

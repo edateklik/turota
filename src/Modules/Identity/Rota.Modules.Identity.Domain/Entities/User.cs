@@ -31,10 +31,12 @@ public sealed class User
     public UserRole Role { get; private set; }
     public bool IsActive { get; private set; }
     public DateTimeOffset CreatedAt { get; private set; }
+    public string? ProfilePhotoUrl { get; private set; }
     public TasteProfile? TasteProfile { get; private set; }
 
     public void SetPasswordHash(string passwordHash) => PasswordHash = passwordHash;
     public void ChangeRole(UserRole role) => Role = role;
     public void Deactivate() => IsActive = false;
     public void Activate() => IsActive = true;
+    public void SetProfilePhotoUrl(string? profilePhotoUrl) => ProfilePhotoUrl = profilePhotoUrl;
 }

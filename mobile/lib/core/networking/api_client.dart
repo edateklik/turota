@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:turota_mobile/core/config/api_config.dart';
 import 'package:turota_mobile/core/networking/api_exception.dart';
 import 'package:turota_mobile/core/storage/token_storage.dart';
@@ -113,6 +114,60 @@ class ApiClient {
           )
           .timeout(const Duration(seconds: 15));
 
+      return _processResponse(response);
+    } on SocketException {
+      throw const ApiException(
+        statusCode: 0,
+        errorCode: 'NETWORK_ERROR',
+        message: 'İnternet bağlantınızı kontrol edin.',
+        traceId: '',
+      );
+    }
+  }
+
+  Future<dynamic> putFile(
+    String path, {
+    required String field,
+    required String filePath,
+  }) async {
+    try {
+      final request = http.MultipartRequest(
+        'PUT',
+        Uri.parse('${ApiConfig.baseUrl}$path'),
+      );
+      final headers = await _getHeaders();
+      headers.remove(HttpHeaders.contentTypeHeader);
+      request.headers.addAll(headers);
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          field,
+          filePath,
+          filename: 'profile.jpg',
+          contentType: MediaType('image', 'jpeg'),
+        ),
+      );
+      final streamed = await _httpClient
+          .send(request)
+          .timeout(const Duration(seconds: 30));
+      return _processResponse(await http.Response.fromStream(streamed));
+    } on SocketException {
+      throw const ApiException(
+        statusCode: 0,
+        errorCode: 'NETWORK_ERROR',
+        message: 'İnternet bağlantınızı kontrol edin.',
+        traceId: '',
+      );
+    }
+  }
+
+  Future<dynamic> delete(String path) async {
+    try {
+      final response = await _httpClient
+          .delete(
+            Uri.parse('${ApiConfig.baseUrl}$path'),
+            headers: await _getHeaders(),
+          )
+          .timeout(const Duration(seconds: 15));
       return _processResponse(response);
     } on SocketException {
       throw const ApiException(

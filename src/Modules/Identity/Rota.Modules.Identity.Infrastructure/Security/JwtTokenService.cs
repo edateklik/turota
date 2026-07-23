@@ -39,6 +39,6 @@ public sealed class JwtTokenService(IOptions<JwtOptions> options, TimeProvider t
             new JwtSecurityTokenHandler().WriteToken(token),
             "Bearer",
             expiresAt,
-            new UserResponse(user.Id, user.Email, user.FirstName, user.LastName, user.Role.ToString(), user.CreatedAt));
+            new UserResponse(user.Id, user.Email, user.FirstName, user.LastName, user.Role.ToString(), user.CreatedAt, user.ProfilePhotoUrl));
     }
 }

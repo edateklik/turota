@@ -31,6 +31,7 @@ class UserResponseDto {
     required this.lastName,
     required this.role,
     required this.createdAt,
+    this.profilePhotoUrl,
   });
 
   factory UserResponseDto.fromJson(Map<String, dynamic> json) {
@@ -41,6 +42,7 @@ class UserResponseDto {
       lastName: json['lastName'] as String,
       role: json['role'] as String,
       createdAt: DateTime.parse(json['createdAt'] as String),
+      profilePhotoUrl: json['profilePhotoUrl'] as String?,
     );
   }
 
@@ -50,6 +52,7 @@ class UserResponseDto {
   final String lastName;
   final String role;
   final DateTime createdAt;
+  final String? profilePhotoUrl;
 
   AuthUser toDomain() {
     return AuthUser(
@@ -58,6 +61,7 @@ class UserResponseDto {
       firstName: firstName,
       lastName: lastName,
       role: role,
+      profilePhotoUrl: profilePhotoUrl,
     );
   }
 }

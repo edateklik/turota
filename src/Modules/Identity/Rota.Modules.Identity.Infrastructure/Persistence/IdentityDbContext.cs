@@ -25,6 +25,7 @@ public sealed class IdentityDbContext(DbContextOptions<IdentityDbContext> option
             builder.Property(x => x.Role).HasColumnName("role").HasConversion<string>().HasMaxLength(20).IsRequired();
             builder.Property(x => x.IsActive).HasColumnName("is_active");
             builder.Property(x => x.CreatedAt).HasColumnName("created_at");
+            builder.Property(x => x.ProfilePhotoUrl).HasColumnName("profile_photo_url").HasMaxLength(500);
             builder.HasIndex(x => x.NormalizedEmail).IsUnique().HasDatabaseName("ux_users_normalized_email");
         });
 

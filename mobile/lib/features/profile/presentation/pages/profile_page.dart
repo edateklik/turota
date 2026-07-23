@@ -8,6 +8,10 @@ import 'package:turota_mobile/core/theme/app_radius.dart';
 import 'package:turota_mobile/core/theme/app_spacing.dart';
 import 'package:turota_mobile/core/theme/app_typography.dart';
 import 'package:turota_mobile/core/widgets/app_card.dart';
+import 'package:turota_mobile/core/widgets/current_user_avatar.dart';
+import 'package:turota_mobile/core/utils/user_avatar_initial.dart';
+import 'package:turota_mobile/features/profile/data/services/profile_photo_debug_log.dart';
+import 'package:turota_mobile/features/profile/presentation/controllers/profile_photo_controller.dart';
 
 class ProfilePage extends ConsumerWidget {
   const ProfilePage({super.key});
@@ -117,7 +121,17 @@ class ProfilePage extends ConsumerWidget {
                   label: 'Çıkış Yap',
                   isDestructive: true,
                   onTap: () async {
+                    profilePhotoDebugLog(
+                      'logout started; persistent photo removal: not called',
+                    );
+                    await ref
+                        .read(profilePhotoControllerProvider.notifier)
+                        .prepareForLogout();
                     await ref.read(authRepositoryProvider).logout();
+                    ref.read(authSessionUserProvider.notifier).signedOut();
+                    profilePhotoDebugLog(
+                      'logout completed; runtime session cleared only',
+                    );
                     if (!context.mounted) return;
                     Navigator.of(
                       context,
@@ -139,51 +153,33 @@ class _ProfileHeader extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final userState = ref.watch(currentUserProvider);
-    final fullName = userState.value != null
-        ? '${userState.value!.firstName} ${userState.value!.lastName}'
-        : '...';
+    final user = userState.value;
+    final fullName = currentUserGreetingName(
+      firstName: user?.firstName,
+      fullName: user == null ? null : '${user.firstName} ${user.lastName}',
+      email: user?.email,
+    );
 
     return Column(
       children: [
-        Container(
-          width: 100,
-          height: 100,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: AppColors.surfaceLow,
-            border: Border.all(color: AppColors.surface, width: 4),
-            boxShadow: const [
-              BoxShadow(
-                color: AppColors.shadow,
-                blurRadius: 20,
-                offset: Offset(0, 4),
-              ),
-            ],
-          ),
-          child: const ClipOval(
-            child: Icon(
-              Icons.person,
-              size: 50,
-              color: AppColors.outlineVariant,
+        const CurrentUserAvatar(radius: 48, borderWidth: 3),
+        const SizedBox(height: AppSpacing.md),
+        if (fullName != null)
+          Text(
+            fullName,
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.w700,
+              color: AppColors.textPrimary,
             ),
           ),
-        ),
-        const SizedBox(height: AppSpacing.md),
-        Text(
-          fullName,
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.w700,
-            color: AppColors.textPrimary,
-          ),
-        ),
-        if (userState.value != null && userState.value!.email.isNotEmpty)
+        if (user != null && user.email.isNotEmpty)
           Padding(
             padding: const EdgeInsets.only(top: 4.0),
             child: Text(
-              userState.value!.email,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppColors.textSecondary,
-              ),
+              user.email,
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: AppColors.textSecondary),
             ),
           ),
       ],

@@ -10,6 +10,8 @@ import 'package:turota_mobile/core/theme/app_colors.dart';
 import 'package:turota_mobile/core/theme/app_radius.dart';
 import 'package:turota_mobile/core/theme/app_spacing.dart';
 import 'package:turota_mobile/core/widgets/app_card.dart';
+import 'package:turota_mobile/core/utils/user_avatar_initial.dart';
+import 'package:turota_mobile/core/widgets/current_user_avatar.dart';
 import 'package:turota_mobile/features/discover/presentation/widgets/neighborhood_detail_bottom_sheet.dart';
 
 class DiscoverPage extends ConsumerStatefulWidget {
@@ -204,7 +206,13 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
   @override
   Widget build(BuildContext context) {
     final userState = ref.watch(currentUserProvider);
-    final userName = userState.value?.firstName ?? '...';
+    final user = userState.value;
+    final fullName = user == null ? null : '${user.firstName} ${user.lastName}';
+    final userName = currentUserGreetingName(
+      firstName: user?.firstName,
+      fullName: fullName,
+      email: user?.email,
+    );
 
     final headerModel = _DiscoverHeaderModel(
       userName: userName,
@@ -282,7 +290,7 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
 class _DiscoverHeaderModel {
   const _DiscoverHeaderModel({required this.userName, required this.dateLabel});
 
-  final String userName;
+  final String? userName;
   final String dateLabel;
 }
 
@@ -355,7 +363,9 @@ class _DiscoverHeader extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Günaydın, ${model.userName}',
+                      model.userName == null
+                          ? 'Günaydın'
+                          : 'Günaydın, ${model.userName}',
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                     const SizedBox(height: AppSpacing.xs),
@@ -380,23 +390,10 @@ class _DiscoverHeader extends StatelessWidget {
                   key: const ValueKey('discover-profile-avatar'),
                   onTap: onProfilePressed,
                   customBorder: const CircleBorder(),
-                  child: Container(
-                    padding: const EdgeInsets.all(2),
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.fromBorderSide(
-                        BorderSide(color: AppColors.primary, width: 2),
-                      ),
-                    ),
-                    child: const CircleAvatar(
-                      radius: 20,
-                      backgroundColor: AppColors.primaryContainer,
-                      foregroundColor: AppColors.onPrimary,
-                      child: Text(
-                        'Ş',
-                        style: TextStyle(fontWeight: FontWeight.w700),
-                      ),
-                    ),
+                  child: const CurrentUserAvatar(
+                    radius: 18,
+                    backgroundColor: AppColors.primaryContainer,
+                    foregroundColor: AppColors.onPrimary,
                   ),
                 ),
               ),

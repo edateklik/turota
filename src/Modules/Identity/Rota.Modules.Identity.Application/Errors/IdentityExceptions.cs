@@ -16,3 +16,5 @@ public sealed class InactiveUserException : Exception
 }
 
 public sealed class IdentityConflictException(string message) : Exception(message);
+
+public sealed class InvalidProfilePhotoException(string message) : Exception(message);

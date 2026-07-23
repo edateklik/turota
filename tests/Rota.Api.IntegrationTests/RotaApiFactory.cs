@@ -16,6 +16,9 @@ namespace Rota.Api.IntegrationTests;
 
 public sealed class RotaApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
+    private readonly string _profilePhotoStoragePath = Path.Combine(
+        Path.GetTempPath(),
+        $"rota-profile-photo-tests-{Guid.NewGuid():N}");
     private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder("postgis/postgis:16-3.4-alpine")
         .WithDatabase("rota_tests")
         .WithUsername("rota_tests")
@@ -52,6 +55,8 @@ public sealed class RotaApiFactory : WebApplicationFactory<Program>, IAsyncLifet
         builder.UseSetting("OutboxWorker:RetryDelayMilliseconds", "50");
         builder.UseSetting("Logging:LogLevel:Default", "Warning");
         builder.UseSetting("Logging:LogLevel:Microsoft.EntityFrameworkCore", "Warning");
+        builder.UseSetting("ProfilePhotos:RootPath", _profilePhotoStoragePath);
+        builder.UseSetting("ProfilePhotos:RequestPath", "/uploads/profile-photos");
         builder.ConfigureServices(services =>
         {
             services.RemoveAll<IRecommendationService>();
@@ -96,6 +101,8 @@ public sealed class RotaApiFactory : WebApplicationFactory<Program>, IAsyncLifet
     {
         await base.DisposeAsync();
         await _postgres.DisposeAsync();
+        if (Directory.Exists(_profilePhotoStoragePath))
+            Directory.Delete(_profilePhotoStoragePath, recursive: true);
     }
 }
 

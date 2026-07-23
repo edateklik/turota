@@ -1,10 +1,14 @@
-import 'package:flutter/material.dart';
-import 'package:turota_mobile/core/theme/app_colors.dart';
-import 'package:turota_mobile/core/theme/app_spacing.dart';
-import 'package:turota_mobile/core/theme/app_radius.dart';
+import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:turota_mobile/core/theme/app_colors.dart';
+import 'package:turota_mobile/core/theme/app_radius.dart';
+import 'package:turota_mobile/core/theme/app_spacing.dart';
+import 'package:turota_mobile/core/widgets/current_user_avatar.dart';
 import 'package:turota_mobile/features/authentication/presentation/providers/auth_providers.dart';
+import 'package:turota_mobile/features/profile/data/services/profile_photo_service.dart';
+import 'package:turota_mobile/features/profile/presentation/controllers/profile_photo_controller.dart';
 
 class EditProfilePage extends ConsumerStatefulWidget {
   const EditProfilePage({super.key});
@@ -12,6 +16,8 @@ class EditProfilePage extends ConsumerStatefulWidget {
   @override
   ConsumerState<EditProfilePage> createState() => _EditProfilePageState();
 }
+
+enum _PhotoAction { gallery, camera, clipboard, edit, remove, cancel }
 
 class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   final _formKey = GlobalKey<FormState>();
@@ -94,26 +100,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: AppSpacing.screen),
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.surfaceLow,
-                boxShadow: const [
-                  BoxShadow(
-                    color: AppColors.shadow,
-                    blurRadius: 20,
-                    offset: Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: const Icon(
-                Icons.person,
-                color: AppColors.outline,
-                size: 22,
-              ),
-            ),
+            child: const CurrentUserAvatar(radius: 16),
           ),
         ],
       ),
@@ -157,7 +144,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                     // Email (read-only)
                     _buildLabel('E-posta Adresi'),
                     const SizedBox(height: 8),
-                    _buildReadOnlyEmail(userState.value?.email ?? '...'),
+                    _buildReadOnlyEmail(userState.value?.email ?? ''),
                     const SizedBox(height: 6),
                     const Padding(
                       padding: EdgeInsets.only(left: 4),
@@ -190,7 +177,9 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                         color: AppColors.surfaceLow,
                         borderRadius: BorderRadius.circular(AppRadius.lg),
                         border: Border.all(
-                          color: AppColors.outlineVariant.withOpacity(0.3),
+                          color: AppColors.outlineVariant.withValues(
+                            alpha: 0.3,
+                          ),
                         ),
                       ),
                       child: Column(
@@ -201,8 +190,8 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                               Container(
                                 padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                  color: AppColors.primaryContainer.withOpacity(
-                                    0.5,
+                                  color: AppColors.primaryContainer.withValues(
+                                    alpha: 0.5,
                                   ),
                                   shape: BoxShape.circle,
                                 ),
@@ -294,63 +283,226 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   // ─── Profile Photo ──────────────────────────────────────────────────────────
 
   Widget _buildProfilePhoto() {
+    final photoState = ref.watch(profilePhotoControllerProvider);
     return Center(
       child: Stack(
         children: [
-          Container(
-            width: 128,
-            height: 128,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: AppColors.surfaceLow,
-              border: Border.all(color: AppColors.surface, width: 4),
-              boxShadow: const [
-                BoxShadow(
-                  color: AppColors.shadow,
-                  blurRadius: 20,
-                  offset: Offset(0, 4),
+          Semantics(
+            button: true,
+            label: photoState.hasPhoto
+                ? 'Profil fotoğrafını değiştir'
+                : 'Profil fotoğrafı ekle',
+            child: GestureDetector(
+              onTap: photoState.isProcessing ? null : _showPhotoActions,
+              child: Container(
+                width: 128,
+                height: 128,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.surfaceLow,
+                  border: Border.all(color: AppColors.surface, width: 4),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: AppColors.shadow,
+                      blurRadius: 20,
+                      offset: Offset(0, 4),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            child: const ClipOval(
-              child: Icon(
-                Icons.person,
-                size: 64,
-                color: AppColors.outlineVariant,
+                child: ClipOval(child: _buildPhotoContent(photoState)),
               ),
             ),
           ),
           Positioned(
             bottom: 4,
             right: 4,
-            child: GestureDetector(
-              onTap: () {
-                // TODO: Implement photo picker.
-              },
-              child: Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColors.primary,
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.primary.withValues(alpha: 0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: const Icon(
-                  Icons.photo_camera,
-                  color: AppColors.onPrimary,
-                  size: 20,
+            child: Semantics(
+              button: true,
+              label: 'Profil fotoğrafı seçenekleri',
+              child: GestureDetector(
+                onTap: photoState.isProcessing ? null : _showPhotoActions,
+                child: Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: photoState.isProcessing
+                        ? AppColors.outlineVariant
+                        : AppColors.primary,
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primary.withValues(alpha: 0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: photoState.isProcessing
+                      ? const Padding(
+                          padding: EdgeInsets.all(12),
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: AppColors.onPrimary,
+                          ),
+                        )
+                      : const Icon(
+                          Icons.photo_camera,
+                          color: AppColors.onPrimary,
+                          size: 20,
+                        ),
                 ),
               ),
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildPhotoContent(ProfilePhotoState state) {
+    final path = state.photoPath;
+    if (path == null) {
+      return const Icon(
+        key: ValueKey('profile-photo-placeholder'),
+        Icons.person,
+        size: 64,
+        color: AppColors.outlineVariant,
+      );
+    }
+    return Image.file(
+      File(path),
+      key: const ValueKey('profile-photo-image'),
+      fit: BoxFit.cover,
+      width: 128,
+      height: 128,
+      errorBuilder: (_, _, _) =>
+          const Icon(Icons.person, size: 64, color: AppColors.outlineVariant),
+    );
+  }
+
+  Future<void> _showPhotoActions() async {
+    final hasPhoto = ref.read(profilePhotoControllerProvider).hasPhoto;
+    final action = await showModalBottomSheet<_PhotoAction>(
+      context: context,
+      backgroundColor: AppColors.surface,
+      showDragHandle: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.xl)),
+      ),
+      builder: (sheetContext) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+          child: ListView(
+            shrinkWrap: true,
+            padding: EdgeInsets.zero,
+            children: [
+              const Padding(
+                padding: EdgeInsets.fromLTRB(24, 4, 24, 12),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Profil Fotoğrafı',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                ),
+              ),
+              _photoActionTile(
+                sheetContext,
+                icon: Icons.photo_library_outlined,
+                label: 'Galeriden Seç',
+                action: _PhotoAction.gallery,
+              ),
+              _photoActionTile(
+                sheetContext,
+                icon: Icons.photo_camera_outlined,
+                label: 'Kamerayla Çek',
+                action: _PhotoAction.camera,
+              ),
+              _photoActionTile(
+                sheetContext,
+                icon: Icons.content_paste_rounded,
+                label: 'Panodan Yapıştır',
+                action: _PhotoAction.clipboard,
+              ),
+              if (hasPhoto) ...[
+                _photoActionTile(
+                  sheetContext,
+                  icon: Icons.crop,
+                  label: 'Fotoğrafı Düzenle',
+                  action: _PhotoAction.edit,
+                ),
+                _photoActionTile(
+                  sheetContext,
+                  icon: Icons.delete_outline,
+                  label: 'Fotoğrafı Kaldır',
+                  action: _PhotoAction.remove,
+                  color: AppColors.error,
+                ),
+              ],
+              const Divider(height: 1),
+              _photoActionTile(
+                sheetContext,
+                icon: Icons.close,
+                label: 'İptal',
+                action: _PhotoAction.cancel,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    if (!mounted || action == null || action == _PhotoAction.cancel) return;
+
+    final controller = ref.read(profilePhotoControllerProvider.notifier);
+    final result = switch (action) {
+      _PhotoAction.gallery => controller.select(ProfilePhotoSource.gallery),
+      _PhotoAction.camera => controller.select(ProfilePhotoSource.camera),
+      _PhotoAction.clipboard => controller.pasteFromClipboard(),
+      _PhotoAction.edit => controller.recrop(),
+      _PhotoAction.remove => controller.remove(),
+      _PhotoAction.cancel => Future.value(
+        const ProfilePhotoActionResult(ProfilePhotoActionStatus.cancelled),
+      ),
+    };
+    await _showPhotoResult(await result);
+  }
+
+  Widget _photoActionTile(
+    BuildContext sheetContext, {
+    required IconData icon,
+    required String label,
+    required _PhotoAction action,
+    Color color = AppColors.textPrimary,
+  }) {
+    return ListTile(
+      minTileHeight: 52,
+      leading: Icon(icon, color: color),
+      title: Text(label, style: TextStyle(color: color)),
+      onTap: () => Navigator.of(sheetContext).pop(action),
+    );
+  }
+
+  Future<void> _showPhotoResult(ProfilePhotoActionResult result) async {
+    if (!mounted || result.status == ProfilePhotoActionStatus.cancelled) return;
+    if (result.status == ProfilePhotoActionStatus.updated) {
+      final path = ref.read(profilePhotoControllerProvider).photoPath;
+      if (path != null) await FileImage(File(path)).evict();
+      if (!mounted) return;
+      setState(() {});
+    }
+    final message = switch (result.status) {
+      ProfilePhotoActionStatus.updated => 'Profil fotoğrafı güncellendi.',
+      ProfilePhotoActionStatus.removed => 'Profil fotoğrafı kaldırıldı.',
+      ProfilePhotoActionStatus.failed =>
+        result.message ?? 'Fotoğraf işlemi tamamlanamadı.',
+      ProfilePhotoActionStatus.cancelled => '',
+    };
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
     );
   }
 

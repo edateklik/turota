@@ -121,6 +121,11 @@ namespace Rota.Modules.Identity.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(500)")
                         .HasColumnName("password_hash");
 
+                    b.Property<string>("ProfilePhotoUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("profile_photo_url");
+
                     b.Property<string>("Role")
                         .IsRequired()
                         .HasMaxLength(20)
