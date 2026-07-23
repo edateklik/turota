@@ -1,16 +1,62 @@
 PODS:
+  - clipboard (3.0.9):
+    - Flutter
   - Flutter (1.0.0)
+  - flutter_secure_storage_darwin (10.0.0):
+    - Flutter
+    - FlutterMacOS
+  - image_cropper (0.0.5):
+    - Flutter
+    - TOCropViewController (~> 3.1.2)
+  - image_picker_ios (0.0.1):
+    - Flutter
+  - mobile_scanner (7.0.0):
+    - Flutter
+    - FlutterMacOS
+  - shared_preferences_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
+  - TOCropViewController (3.1.2)
 
 DEPENDENCIES:
+  - clipboard (from `.symlinks/plugins/clipboard/ios`)
   - Flutter (from `Flutter`)
+  - flutter_secure_storage_darwin (from `.symlinks/plugins/flutter_secure_storage_darwin/darwin`)
+  - image_cropper (from `.symlinks/plugins/image_cropper/ios`)
+  - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
+  - mobile_scanner (from `.symlinks/plugins/mobile_scanner/darwin`)
+  - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
+
+SPEC REPOS:
+  trunk:
+    - TOCropViewController
 
 EXTERNAL SOURCES:
+  clipboard:
+    :path: ".symlinks/plugins/clipboard/ios"
   Flutter:
     :path: Flutter
+  flutter_secure_storage_darwin:
+    :path: ".symlinks/plugins/flutter_secure_storage_darwin/darwin"
+  image_cropper:
+    :path: ".symlinks/plugins/image_cropper/ios"
+  image_picker_ios:
+    :path: ".symlinks/plugins/image_picker_ios/ios"
+  mobile_scanner:
+    :path: ".symlinks/plugins/mobile_scanner/darwin"
+  shared_preferences_foundation:
+    :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
 
 SPEC CHECKSUMS:
+  clipboard: 1dfb1b37c0b722d20b0ca76a89bb2e7194e85811
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
+  flutter_secure_storage_darwin: 557817588b80e60213cbecb573c45c76b788018d
+  image_cropper: d3ba338ce166ebe54a4e1de742829354b521d473
+  image_picker_ios: 4f2f91b01abdb52842a8e277617df877e40f905b
+  mobile_scanner: 77265f3dc8d580810e91849d4a0811a90467ed5e
+  shared_preferences_foundation: 5086985c1d43c5ba4d5e69a4e8083a389e2909e6
+  TOCropViewController: a916930c465b5d9445a74d95e0c0da931771b4df
 
 PODFILE CHECKSUM: 3c63482e143d1b91d2d2560aee9fb04ecc74ac7e
 
-COCOAPODS: 1.17.0
+COCOAPODS: 1.16.2

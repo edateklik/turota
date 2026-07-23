@@ -6,6 +6,8 @@ class TurotaBottomNavScaffold extends StatelessWidget {
   final int currentIndex;
   final Function(int) onTabSelected;
   final VoidCallback onQrScanPressed;
+  final bool showQrButton;
+  final bool extendBody;
 
   const TurotaBottomNavScaffold({
     super.key,
@@ -13,14 +15,16 @@ class TurotaBottomNavScaffold extends StatelessWidget {
     required this.currentIndex,
     required this.onTabSelected,
     required this.onQrScanPressed,
+    this.showQrButton = true,
+    this.extendBody = true,
   });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBody: true, // Allows body to extend under the BottomAppBar
+      extendBody: extendBody, // Allows body to extend under the BottomAppBar
       body: body,
-      floatingActionButton: Container(
+      floatingActionButton: showQrButton ? Container(
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           boxShadow: [
@@ -42,7 +46,7 @@ class TurotaBottomNavScaffold extends StatelessWidget {
             size: 32,
           ),
         ),
-      ),
+      ) : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
         shape: const CircularNotchedRectangle(),

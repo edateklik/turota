@@ -33,6 +33,8 @@ class _MainShellPageState extends State<MainShellPage> {
   Widget build(BuildContext context) {
     return TurotaBottomNavScaffold(
       currentIndex: _currentIndex,
+      showQrButton: _currentIndex != 1, // Hide on AI Assistant
+      extendBody: _currentIndex != 1, // Disable extendBody on AI Assistant so prompt bar sits flush
       onTabSelected: (index) {
         setState(() => _currentIndex = index);
       },

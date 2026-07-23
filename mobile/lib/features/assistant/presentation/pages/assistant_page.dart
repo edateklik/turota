@@ -151,13 +151,13 @@ class _AssistantPageState extends ConsumerState<AssistantPage> {
           Positioned(
             left: 0,
             right: 0,
-            bottom: 0, // Above bottom nav
+            bottom: 0, // Sits exactly above the BottomAppBar when extendBody is false
             child: Container(
               padding: const EdgeInsets.fromLTRB(
                 AppSpacing.md,
                 AppSpacing.lg,
                 AppSpacing.md,
-                AppSpacing.lg,
+                0,
               ),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
