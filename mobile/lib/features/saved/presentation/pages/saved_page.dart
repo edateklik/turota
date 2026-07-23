@@ -5,7 +5,6 @@ import 'package:turota_mobile/core/theme/app_radius.dart';
 import 'package:turota_mobile/core/theme/app_spacing.dart';
 import 'package:turota_mobile/core/widgets/app_button.dart';
 import 'package:turota_mobile/core/widgets/app_card.dart';
-import 'package:turota_mobile/core/widgets/current_user_avatar.dart';
 
 class SavedPage extends StatefulWidget {
   const SavedPage({super.key});
@@ -88,8 +87,6 @@ class _SavedPageState extends State<SavedPage> {
           _SavedHeader(
             onSearchPressed: () =>
                 _showMessage('Kayıtlı içeriklerde arama yakında eklenecek.'),
-            onProfilePressed: () =>
-                _showMessage('Profil ekranı yakında eklenecek.'),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
@@ -166,63 +163,47 @@ class _SavedPlaceUiModel {
 }
 
 class _SavedHeader extends StatelessWidget {
-  const _SavedHeader({
-    required this.onSearchPressed,
-    required this.onProfilePressed,
-  });
+  const _SavedHeader({required this.onSearchPressed});
 
   final VoidCallback onSearchPressed;
-  final VoidCallback onProfilePressed;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.md,
-        AppSpacing.sm,
-        AppSpacing.md,
-        AppSpacing.sm,
-      ),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 48,
-            child: IconButton(
-              key: const ValueKey('saved-search'),
-              onPressed: onSearchPressed,
-              tooltip: 'Kayıtlı içeriklerde ara',
-              icon: const Icon(Icons.search_rounded),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              'Kaydedilenler',
-              key: const ValueKey('saved-page-title'),
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: AppColors.primary,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-          SizedBox(
-            width: 48,
-            child: Semantics(
-              button: true,
-              label: 'Profil',
-              child: InkWell(
-                key: const ValueKey('saved-profile-avatar'),
-                onTap: onProfilePressed,
-                customBorder: const CircleBorder(),
-                child: const CurrentUserAvatar(
-                  radius: 16,
-                  backgroundColor: AppColors.surfaceLow,
-                  foregroundColor: AppColors.primary,
+    return SafeArea(
+      bottom: false,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(
+          AppSpacing.md,
+          AppSpacing.sm,
+          AppSpacing.md,
+          AppSpacing.sm,
+        ),
+        child: SizedBox(
+          height: 48,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Text(
+                'Kaydedilenler',
+                key: const ValueKey('saved-page-title'),
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
-            ),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: IconButton(
+                  key: const ValueKey('saved-search'),
+                  onPressed: onSearchPressed,
+                  tooltip: 'Kayıtlı içeriklerde ara',
+                  icon: const Icon(Icons.search_rounded),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
